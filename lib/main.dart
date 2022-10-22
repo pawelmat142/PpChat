@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
+import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
 
 void main() {
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       routes: {
         BlankScreen.id: (context) => const BlankScreen(),
         HomeScreen.id: (context) => const HomeScreen(),
+        LoginFormScreen.id: (context) => LoginFormScreen(),
       },
     );
   }

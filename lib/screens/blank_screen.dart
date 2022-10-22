@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 
+import 'forms/login_form_screen.dart';
 import 'home_screen.dart';
 
 class BlankScreen extends StatelessWidget {
@@ -16,8 +17,8 @@ class BlankScreen extends StatelessWidget {
         padding: BASIC_HORIZONTAL_PADDING,
         child: Center(
           child: PpButton(
-            onPressed: () => Navigator.pushNamed(context, HomeScreen.id),
-            text: 'GO TO HOME SCREEN',
+            onPressed: () => Navigator.pushNamed(context, LoginFormScreen.id),
+            text: 'GO TO LOGIN SCREEN',
           ),
         ),
       ),
