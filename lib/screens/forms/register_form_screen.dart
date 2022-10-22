@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_submit.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_text_field.dart';
+import 'package:flutter_chat_app/screens/forms/validators.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 abstract class Fields {
@@ -20,7 +21,10 @@ class RegisterFormScreen extends StatelessWidget {
     Fields.relogin: FormControl<String>(),
     Fields.password: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
     Fields.repassword: FormControl<String>(),
-  });
+  }, validators: [
+    myMustMatch(Fields.login, Fields.relogin),
+    myMustMatch(Fields.password, Fields.repassword)
+  ]);
 
   void _submitForm(BuildContext context) {
     if (form.valid) {
@@ -57,6 +61,7 @@ class RegisterFormScreen extends StatelessWidget {
             PpTextField(
                 fieldName: Fields.relogin,
                 labelHint: 'REPEAT LOGIN',
+                mustMatchMsg: 'Login must match.',
                 onSubmitted: () => form.focus(Fields.password)
             ),
 
@@ -72,6 +77,7 @@ class RegisterFormScreen extends StatelessWidget {
             PpTextField(
                 fieldName: Fields.repassword,
                 labelHint: 'REPEAT PASSWORD',
+                mustMatchMsg: 'Password must match.',
                 passwordMode: true,
                 onSubmitted: () => _submitForm(context),
             ),

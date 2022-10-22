@@ -9,6 +9,7 @@ class PpTextField extends StatelessWidget {
   final bool passwordMode;
   final String requiredMsg;
   final String minLengthMsg;
+  final String mustMatchMsg;
   const PpTextField({
     super.key,
     required this.fieldName,
@@ -17,6 +18,7 @@ class PpTextField extends StatelessWidget {
     this.passwordMode = false,
     this.requiredMsg = 'Field is required.',
     this.minLengthMsg = 'Too short!',
+    this.mustMatchMsg = 'Must match!',
   });
 
   @override
@@ -38,6 +40,7 @@ class PpTextField extends StatelessWidget {
         validationMessages: {
           'required': (error) => requiredMsg,
           'minLength': (error) => minLengthMsg,
+          'mustMatch': (error) => mustMatchMsg,
         },
       ),
     );

@@ -36,3 +36,7 @@ Submit button added to reactive form what automatically activates / deactivates 
 ### [007] register page
 Register page, navigate button with new color and form submit methods added.
 </br></br>
+
+### [008] custom form validation - must match
+Added must match custom validation to register form and error messages also.
+</br></br>
