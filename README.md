@@ -12,3 +12,7 @@ As blank app as possible Flutter application.
 ### [001] routing and navigation
 Added screens directory, two Scaffold screens as stateless widgets and routing in main file.
 </br></br>
+
+### [002] custom button widget - styles constants
+Added styles files with constant values and custom button widget with configurable styles but default set by constants.
+</br></br>

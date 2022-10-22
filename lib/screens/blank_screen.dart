@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 
 import 'home_screen.dart';
 
@@ -10,10 +12,13 @@ class BlankScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      body: Center(
-        child: TextButton(
-          onPressed: () => Navigator.pushNamed(context, HomeScreen.id),
-          child: const Text('GO TO HOME SCREEN'),
+      body: Padding(
+        padding: BASIC_HORIZONTAL_PADDING,
+        child: Center(
+          child: PpButton(
+            onPressed: () => Navigator.pushNamed(context, HomeScreen.id),
+            text: 'GO TO HOME SCREEN',
+          ),
         ),
       ),
     );
