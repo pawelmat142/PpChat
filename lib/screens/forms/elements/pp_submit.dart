@@ -19,7 +19,7 @@ class PpFormSubmit extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    bool isValid = false;
+    bool isValid = initActive;
 
     PpButtonControllable button = PpButtonControllable(
       onPressed: onSubmit,

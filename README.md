@@ -32,3 +32,7 @@ Added animation what changes color, used in controllable stateful widget with st
 ### [006] reactive form submit made with controllable button widget
 Submit button added to reactive form what automatically activates / deactivates when form is valid / invalid.
 </br></br>
+
+### [007] register page
+Register page, navigate button with new color and form submit methods added.
+</br></br>

@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
-import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_submit.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_text_field.dart';
-import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 abstract class Fields {
   static const String login = 'login';
+  static const String relogin = 'relogin';
   static const String password = 'password';
+  static const String repassword = 'repassword';
 }
 
-class LoginFormScreen extends StatelessWidget {
-  LoginFormScreen({super.key});
-  static const String id = 'login_form_screen';
-
+class RegisterFormScreen extends StatelessWidget {
+  RegisterFormScreen({super.key});
+  static const String id = 'register_form_screen';
 
   final form = FormGroup({
     Fields.login: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
+    Fields.relogin: FormControl<String>(),
     Fields.password: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
+    Fields.repassword: FormControl<String>(),
   });
 
   void _submitForm(BuildContext context) {
@@ -36,7 +37,7 @@ class LoginFormScreen extends StatelessWidget {
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text('LOGIN'),
+        title: const Text('REGISTRATION'),
       ),
 
       body: ReactiveForm(
@@ -50,6 +51,12 @@ class LoginFormScreen extends StatelessWidget {
                 labelHint: 'LOGIN',
                 requiredMsg: 'Login is required.',
                 minLengthMsg: 'Login must have at least 6 characters',
+                onSubmitted: () => form.focus(Fields.relogin)
+            ),
+
+            PpTextField(
+                fieldName: Fields.relogin,
+                labelHint: 'REPEAT LOGIN',
                 onSubmitted: () => form.focus(Fields.password)
             ),
 
@@ -59,18 +66,19 @@ class LoginFormScreen extends StatelessWidget {
                 requiredMsg: 'Password is required.',
                 minLengthMsg: 'Password must have at least 6 characters',
                 passwordMode: true,
+                onSubmitted: () => form.focus(Fields.repassword)
+            ),
+
+            PpTextField(
+                fieldName: Fields.repassword,
+                labelHint: 'REPEAT PASSWORD',
+                passwordMode: true,
                 onSubmitted: () => _submitForm(context),
             ),
 
             PpFormSubmit(
                 formStatusChanged: form.statusChanged,
                 onSubmit: () => _submitForm(context),
-            ),
-
-            PpButton(
-              onPressed: () => Navigator.pushNamed(context, RegisterFormScreen.id),
-              text: 'GO TO REGISTER',
-              color: PRIMARY_COLOR_DARKER,
             ),
 
           ],
