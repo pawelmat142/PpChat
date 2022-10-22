@@ -24,3 +24,7 @@ Added reactive form package, custom text field widget, login form screen.
 ### [004] basic reactive form validators
 Added basic reactive form validators and error messages to text fields.
 </br></br>
+
+### [005] animation, stream, stateful controllable button widget
+Added animation what changes color, used in controllable stateless widget with stream usage example.
+</br></br>
