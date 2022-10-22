@@ -26,5 +26,9 @@ Added basic reactive form validators and error messages to text fields.
 </br></br>
 
 ### [005] animation, stream, stateful controllable button widget
-Added animation what changes color, used in controllable stateless widget with stream usage example.
+Added animation what changes color, used in controllable stateful widget with stream usage example.
+</br></br>
+
+### [006] reactive form submit made with controllable button widget
+Submit button added to reactive form what automatically activates / deactivates when form is valid / invalid.
 </br></br>

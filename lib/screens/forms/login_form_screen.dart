@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/screens/forms/elements/pp_submit.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_text_field.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
@@ -47,6 +48,11 @@ class LoginFormScreen extends StatelessWidget {
               requiredMsg: 'Password is required.',
               minLengthMsg: 'Password must have at least 6 characters',
               passwordMode: true,
+            ),
+
+            PpFormSubmit(
+                formStatusChanged: form.statusChanged,
+                onSubmit: () {}
             ),
 
           ],
