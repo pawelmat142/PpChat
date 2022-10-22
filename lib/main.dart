@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/screens/blank_screen.dart';
+import 'package:flutter_chat_app/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +14,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter chat app',
       theme: ThemeData.light(),
-      home: const Text('Flutter chat app'),
+      initialRoute: BlankScreen.id,
+      routes: {
+        BlankScreen.id: (context) => const BlankScreen(),
+        HomeScreen.id: (context) => const HomeScreen(),
+      },
     );
   }
 }

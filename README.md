@@ -8,3 +8,7 @@ This project is meant to be an example of building my flutter application step b
 ### [000] initial commit - blank Flutter app
 As blank app as possible Flutter application.
 </br></br>
+
+### [001] routing and navigation
+Added screens directory, two Scaffold screens as stateless widgets and routing in main file.
+</br></br>
