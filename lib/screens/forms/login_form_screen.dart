@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/config/getIt.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_submit.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_text_field.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
+import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 abstract class Fields {
@@ -15,6 +17,7 @@ class LoginFormScreen extends StatelessWidget {
   LoginFormScreen({super.key});
   static const String id = 'login_form_screen';
 
+  final _authService = getIt.get<AuthenticationService>();
 
   final form = FormGroup({
     Fields.login: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
@@ -23,8 +26,10 @@ class LoginFormScreen extends StatelessWidget {
 
   void _submitForm(BuildContext context) {
     if (form.valid) {
-      print(form.control(Fields.login).value);
-      print(form.control(Fields.password).value);
+      _authService.login(
+          login: form.control(Fields.login).value,
+          password: form.control(Fields.password).value
+      );
       form.reset();
       FocusScope.of(context).unfocus();
     }
