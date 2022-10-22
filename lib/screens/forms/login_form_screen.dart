@@ -14,8 +14,8 @@ class LoginFormScreen extends StatelessWidget {
 
 
   final form = FormGroup({
-    Fields.login: FormControl<String>(),
-    Fields.password: FormControl<String>(),
+    Fields.login: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
+    Fields.password: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
   });
 
   @override
@@ -36,12 +36,16 @@ class LoginFormScreen extends StatelessWidget {
             PpTextField(
                 fieldName: Fields.login,
                 labelHint: 'LOGIN',
+                requiredMsg: 'Login is required.',
+                minLengthMsg: 'Login must have at least 6 characters',
                 onSubmitted: () => form.focus(Fields.password)
             ),
 
             PpTextField(
               fieldName: Fields.password,
               labelHint: 'PASSWORD',
+              requiredMsg: 'Password is required.',
+              minLengthMsg: 'Password must have at least 6 characters',
               passwordMode: true,
             ),
 

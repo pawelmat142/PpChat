@@ -18,5 +18,9 @@ Added styles files with constant values and custom button widget with configurab
 </br></br>
 
 ### [003] login form screen - reactive form
-Added reactive form package, custom text field widget, login form screen
+Added reactive form package, custom text field widget, login form screen.
+</br></br>
+
+### [004] basic reactive form validators
+Added basic reactive form validators and error messages to text fields.
 </br></br>

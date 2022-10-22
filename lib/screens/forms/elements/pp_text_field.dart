@@ -7,12 +7,16 @@ class PpTextField extends StatelessWidget {
   final String labelHint;
   final Function? onSubmitted;
   final bool passwordMode;
+  final String requiredMsg;
+  final String minLengthMsg;
   const PpTextField({
     super.key,
     required this.fieldName,
     required this.labelHint,
     this.onSubmitted,
     this.passwordMode = false,
+    this.requiredMsg = 'Field is required.',
+    this.minLengthMsg = 'Too short!',
   });
 
   @override
@@ -31,6 +35,10 @@ class PpTextField extends StatelessWidget {
         obscureText: passwordMode,
         textInputAction: TextInputAction.next,
         onSubmitted: onSubmitted != null ? (x) => onSubmitted!() : (x){},
+        validationMessages: {
+          'required': (error) => requiredMsg,
+          'minLength': (error) => minLengthMsg,
+        },
       ),
     );
   }
