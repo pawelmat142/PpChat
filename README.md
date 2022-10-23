@@ -51,3 +51,10 @@ Authentication service template as dependency injection example made with getIt 
 Implementation reusable and configurable UI popup component and navigation service what provides current BuildContext at any place in the application.</br>
 Popup used in registration / login methods, injected as lazy singleton by getIt.
 </br></br>
+
+### [011] firebase authentication - configuration and implementation
+Firebase core initialization:
+</br>`flutter pub add firebase_core`
+</br>Firebase authentication initialization:
+</br>`flutter pub add firebase_auth`
+</br></br>
