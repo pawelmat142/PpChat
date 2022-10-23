@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/config/getIt.dart';
+import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter chat app',
       theme: ThemeData.light(),
+      navigatorKey: NavigationService.navigatorKey,
       initialRoute: BlankScreen.id,
       routes: {
         BlankScreen.id: (context) => const BlankScreen(),

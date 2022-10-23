@@ -19,7 +19,7 @@ Added styles files with constant values and custom button widget with configurab
 
 ### [003] login form screen - reactive form
 Added reactive form package, custom text field widget, login form screen.
-`flutter pub add reactive_forms`
+</br>`flutter pub add reactive_forms`
 </br></br>
 
 ### [004] basic reactive form validators
@@ -44,5 +44,10 @@ Added must match custom validation to register form and error messages also.
 
 ### [009] getIt - dependency injection package
 Authentication service template as dependency injection example made with getIt package.
-`flutter pub add get_it`
+</br>`flutter pub add get_it`
+</br></br>
+
+### [010] alert / popup, navigation service
+Implementation reusable and configurable UI popup component and navigation service what provides current BuildContext at any place in the application.</br>
+Popup used in registration / login methods, injected as lazy singleton by getIt.
 </br></br>
