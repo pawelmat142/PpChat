@@ -58,3 +58,8 @@ Firebase core initialization:
 </br>Firebase authentication initialization:
 </br>`flutter pub add firebase_auth`
 </br></br>
+
+### [012] authentication error handling and spinner
+Spinner UI component implemented what shows that something is loading. </br>
+Logout option, log / logout navigation and error handling with popups.
+</br></br>

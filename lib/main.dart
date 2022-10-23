@@ -9,13 +9,13 @@ import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
   await initGetIt();
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
