@@ -63,3 +63,12 @@ Firebase core initialization:
 Spinner UI component implemented what shows that something is loading. </br>
 Logout option, log / logout navigation and error handling with popups.
 </br></br>
+
+### [013] user data model
+basic user data model is prepared
+</br> + little fix with form_styles and validators files moving
+</br></br>
+
+### [014] -||- fix
+little fix with form_styles and validators files moving
+</br></br>
