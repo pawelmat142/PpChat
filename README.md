@@ -80,3 +80,8 @@ cloud firestore example implementation
 </br>`flutter pub add cloud_firestore`
 </br> user service prepared, test screen to test first firestore requests
 </br></br>
+
+### [017] firestore - security rules
+basic firebase security rules written
+</br> little refactor what makes nickname equals user document id so nickname is unique
+</br> 

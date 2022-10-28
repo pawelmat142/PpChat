@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
-import 'package:flutter_chat_app/models/user/pp_user_roles.dart';
 
 class PpUserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -16,15 +15,11 @@ class PpUserService {
   }
 
   Future<void> createNewUser({required String nickname}) async {
-      _documentReference = await _collection.add({
-          PpUserFields.nickname: nickname,
-          PpUserFields.logged: false,
-          PpUserFields.role: PpUserRoles.USER,
-      });
+      await _collection.doc(nickname).set(PpUser.create(nickname: nickname).asMap);
   }
 
-  Future<PpUser> get({String? docId}) async {
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await _collection.doc(docId ?? _userDocRef.id).get();
+  Future<PpUser> getByNickname(String nickname) async {
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await _collection.doc(nickname).get();
       return snapshot.exists ? PpUser.fromMap(snapshot.data()!) : throw Exception(['NO DATA']);
   }
 

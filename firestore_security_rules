@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+  	function logged() { return request.auth != null; }
+
+  	match /User/{userDocId} {
+    	allow create: if logged();
+    	allow get: if logged();
+    }
+  }
+}

@@ -40,7 +40,7 @@ class TestScreen extends StatelessWidget {
 
             PpButton(text: 'get user',
               onPressed: () async {
-                final result = await userService.get();
+                final result = await userService.getByNickname(textFieldValue);
                 print(result);
                 print(result.nickname);
               }
