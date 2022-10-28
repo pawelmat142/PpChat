@@ -7,6 +7,7 @@ import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
+import 'package:flutter_chat_app/screens/test_screen.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         HomeScreen.id: (context) => const HomeScreen(),
         LoginFormScreen.id: (context) => LoginFormScreen(),
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
+        TestScreen.id: (context) => TestScreen(),
       },
     );
   }

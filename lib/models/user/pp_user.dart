@@ -1,4 +1,3 @@
-
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
 import 'package:flutter_chat_app/models/user/pp_user_roles.dart';
 
@@ -19,10 +18,10 @@ class PpUser {
       PpUserFields.role: role,
   };
 
-  static PpUser fromMap(Map<String, dynamic>? ppUserMap) {
+  static PpUser fromMap(Map<String, dynamic> ppUserMap) {
       _validatePpUserMap(ppUserMap);
       return PpUser(
-          nickname: ppUserMap![PpUserFields.nickname],
+          nickname: ppUserMap[PpUserFields.nickname],
           role: ppUserMap[PpUserFields.role],
           logged: ppUserMap[PpUserFields.logged],
       );

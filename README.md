@@ -73,4 +73,10 @@ basic user data model is prepared
 little fix with form_styles and validators files moving
 </br></br>
 
-### [016] -||- still fix moving files fix
+### [015] -||- still fix moving files fix
+
+### [016] firestore implementation - user service
+cloud firestore example implementation
+</br>`flutter pub add cloud_firestore`
+</br> user service prepared, test screen to test first firestore requests
+</br></br>
