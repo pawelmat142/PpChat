@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/constants/form_styles.dart';
+import 'package:flutter_chat_app/screens/forms/others/form_styles.dart';
 
 class PpButton extends StatelessWidget {
   final Function onPressed;

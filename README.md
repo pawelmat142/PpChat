@@ -72,3 +72,5 @@ basic user data model is prepared
 ### [014] -||- fix
 little fix with form_styles and validators files moving
 </br></br>
+
+### [016] -||- still fix moving files fix

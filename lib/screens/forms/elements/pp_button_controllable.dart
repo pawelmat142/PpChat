@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/animations/color_from_to_animation.dart';
-import 'package:flutter_chat_app/constants/form_styles.dart';
+import 'package:flutter_chat_app/screens/forms/others/form_styles.dart';
 
 // ignore: must_be_immutable
 class PpButtonControllable extends StatefulWidget {
