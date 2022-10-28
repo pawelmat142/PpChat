@@ -85,3 +85,9 @@ cloud firestore example implementation
 basic firebase security rules written
 </br> little refactor what makes nickname equals user document id so nickname is unique
 </br> 
+
+### [018] firestore - security rules - continued
+private sub collection created inside user what makes user modifiable only for owner
+</br> additional rules added
+</br> that makes user document modifiable only for owner
+</br> 

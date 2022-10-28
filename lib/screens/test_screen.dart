@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
-import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 
@@ -10,6 +9,7 @@ class TestScreen extends StatelessWidget {
   static const String id = 'test_screen';
 
   final userService = getIt.get<PpUserService>();
+  bool logged = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +38,26 @@ class TestScreen extends StatelessWidget {
               }
             ),
 
-            PpButton(text: 'get user',
+            PpButton(text: 'get user snapshot',
               onPressed: () async {
-                final result = await userService.getByNickname(textFieldValue);
+                final result = await userService.userSnapshot;
                 print(result);
                 print(result.nickname);
+              }
+            ),
+
+            PpButton(text: 'get user from service',
+              onPressed: () {
+                final result = userService.user;
+                print(result);
+                print(result.nickname);
+              }
+            ),
+
+            PpButton(text: 'toggle logged - update',
+              onPressed: () async {
+                logged = !logged;
+                await userService.setLogged(logged);
               }
             ),
           ],
