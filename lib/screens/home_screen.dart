@@ -22,11 +22,19 @@ class HomeScreen extends StatelessWidget {
 
       body: Padding(
         padding: BASIC_HORIZONTAL_PADDING,
-        child: Center(child: PpButton(
-          text: 'LOGOUT',
-          onPressed: authService.logout,
-          active: authService.logged,
-        )),
+        child: Column(
+            children: [
+
+              PpButton(text: 'LOGOUT',
+                onPressed: authService.logout,
+              ),
+
+              PpButton(text: 'DELETE ACCOUNT',
+                onPressed: authService.deleteAccount,
+              ),
+
+          ]
+        ),
       ),
     );
 

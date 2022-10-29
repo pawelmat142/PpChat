@@ -94,3 +94,6 @@ private sub collection created inside user what makes user modifiable only for o
 
 ### [019] user service develop
 findByNickname and delete methods
+
+### [020] user and auth services integration
+authentication system completed

@@ -14,11 +14,23 @@ class PpUserService {
     _collection = _firestore.collection(Collections.User);
   }
 
-  DocumentReference<Map<String, dynamic>> get _document => _collection.doc(user.nickname);
-  DocumentReference<Map<String, dynamic>> get _privateDocument => _document.collection(Collections.PRIVATE).doc(user.nickname);
+  String? _nickname;
+  String get nickname => _nickname != null ? _nickname! : throw Exception(['NO CURRENT NICKNAME IS SET IN SERVICE']);
 
-  PpUser? _user;
-  PpUser get user => _user != null ? _user! : throw Exception(['NO CURRENT USER IN SERVICE']);
+
+  login({required String nickname}) async {
+    _nickname = nickname;
+    await _updateLogged(true);
+  }
+
+  logout() async {
+    await _updateLogged(false);
+    _nickname = null;
+  }
+
+
+  DocumentReference<Map<String, dynamic>> get _document => _collection.doc(nickname);
+  DocumentReference<Map<String, dynamic>> get _privateDocument => _document.collection(Collections.PRIVATE).doc(nickname);
 
 
   Future<PpUser> get userSnapshot async {
@@ -34,10 +46,12 @@ class PpUserService {
 
 
   Future<void> createNewUser({required String nickname}) async {
-    _user = PpUser.create(nickname: nickname);
+    final newUser = PpUser.create(nickname: nickname);
     final batch = _firestore.batch();
-    batch.set(_document, user.asMap);
+    batch.set(_collection.doc(newUser.nickname), newUser.asMap);
+    _nickname = nickname;
     batch.set(_privateDocument, _privateDocumentData);
+    _nickname = null;
     await batch.commit();
   }
 
@@ -50,13 +64,12 @@ class PpUserService {
   }
 
 
-  updateLogged(bool logged) async {
+  _updateLogged(bool logged) async {
     await _document.update({PpUserFields.logged : logged});
   }
 
-
   get _privateDocumentData => {
-    'uid': _fireAuth.currentUser!.uid,
+    'uid': _fireAuth.currentUser != null ? _fireAuth.currentUser!.uid : throw Exception('NO USER LOGGED IN'),
     'created': DateTime.now(),
   };
 }

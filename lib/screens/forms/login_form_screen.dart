@@ -9,7 +9,7 @@ import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 abstract class Fields {
-  static const String login = 'login';
+  static const String nickname = 'nickname';
   static const String password = 'password';
 }
 
@@ -20,14 +20,14 @@ class LoginFormScreen extends StatelessWidget {
   final _authService = getIt.get<AuthenticationService>();
 
   final form = FormGroup({
-    Fields.login: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
+    Fields.nickname: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
     Fields.password: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
   });
 
   void _submitForm(BuildContext context) {
     if (form.valid) {
       _authService.login(
-          login: form.control(Fields.login).value,
+          nickname: form.control(Fields.nickname).value,
           password: form.control(Fields.password).value
       );
       form.reset();
@@ -51,8 +51,8 @@ class LoginFormScreen extends StatelessWidget {
           children: [
 
             PpTextField(
-                fieldName: Fields.login,
-                labelHint: 'LOGIN',
+                fieldName: Fields.nickname,
+                labelHint: 'NICKNAME',
                 requiredMsg: 'Login is required.',
                 minLengthMsg: 'Login must have at least 6 characters',
                 onSubmitted: () => form.focus(Fields.password)
