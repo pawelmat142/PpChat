@@ -29,37 +29,32 @@ class TestScreen extends StatelessWidget {
                   border: OutlineInputBorder(),
                   hintText: 'nickname',
                 ),
-
             ),
 
-            PpButton(text: 'create user',
-              onPressed: () {
+            PpButton(text: 'get by nickname',
+              onPressed: () async {
+                final user = await userService.findByNickname(textFieldValue);
+                if (user != null) {
+                  print(user.nickname);
+                  print(user.role);
+                } else {
+                  print('didnt find');
+                }
+              }
+            ),
+
+            PpButton(text: 'create',
+              onPressed: () async {
                 userService.createNewUser(nickname: textFieldValue);
               }
             ),
 
-            PpButton(text: 'get user snapshot',
+            PpButton(text: 'delete my acc',
               onPressed: () async {
-                final result = await userService.userSnapshot;
-                print(result);
-                print(result.nickname);
+                userService.deleteUserDocument();
               }
             ),
 
-            PpButton(text: 'get user from service',
-              onPressed: () {
-                final result = userService.user;
-                print(result);
-                print(result.nickname);
-              }
-            ),
-
-            PpButton(text: 'toggle logged - update',
-              onPressed: () async {
-                logged = !logged;
-                await userService.setLogged(logged);
-              }
-            ),
           ],
         ),
       ),

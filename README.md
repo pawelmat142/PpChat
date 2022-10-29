@@ -90,4 +90,7 @@ basic firebase security rules written
 private sub collection created inside user what makes user modifiable only for owner
 </br> additional rules added
 </br> that makes user document modifiable only for owner
-</br> 
+</br>
+
+### [019] user service develop
+findByNickname and delete methods

@@ -17,27 +17,45 @@ class PpUserService {
   DocumentReference<Map<String, dynamic>> get _document => _collection.doc(user.nickname);
   DocumentReference<Map<String, dynamic>> get _privateDocument => _document.collection(Collections.PRIVATE).doc(user.nickname);
 
+  PpUser? _user;
+  PpUser get user => _user != null ? _user! : throw Exception(['NO CURRENT USER IN SERVICE']);
+
+
   Future<PpUser> get userSnapshot async {
     DocumentSnapshot<Map<String, dynamic>> snapshot = await _document.get();
     return snapshot.exists ? PpUser.fromMap(snapshot.data()!) : throw Exception(['NO USER DATA IN FIRESTORE']);
   }
 
-  PpUser? _user;
-  PpUser get user => _user != null ? _user! : throw Exception(['NO CURRENT USER IN SERVICE']);
+
+  Future<PpUser?> findByNickname(String nickname) async {
+    final snapshot = await _collection.doc(nickname).get();
+    return snapshot.exists ? PpUser.fromMap(snapshot.data()!) : null;
+  }
+
 
   Future<void> createNewUser({required String nickname}) async {
-      _user = PpUser.create(nickname: nickname);
-      final batch = _firestore.batch();
-      batch.set(_document, user.asMap);
-      batch.set(_privateDocument, _privateData);
-      await batch.commit();
+    _user = PpUser.create(nickname: nickname);
+    final batch = _firestore.batch();
+    batch.set(_document, user.asMap);
+    batch.set(_privateDocument, _privateDocumentData);
+    await batch.commit();
   }
 
-  setLogged(bool logged) async {
-      await _document.update({PpUserFields.logged : logged});
+
+  deleteUserDocument() async {
+    final batch = _firestore.batch();
+    batch.delete(_privateDocument);
+    batch.delete(_document);
+    await batch.commit();
   }
 
-  get _privateData => {
+
+  updateLogged(bool logged) async {
+    await _document.update({PpUserFields.logged : logged});
+  }
+
+
+  get _privateDocumentData => {
     'uid': _fireAuth.currentUser!.uid,
     'created': DateTime.now(),
   };
