@@ -8,3 +8,9 @@ const Color PRIMARY_COLOR = Color(0xFF2193F3);
 const Color PRIMARY_COLOR_LIGHTER = Color(0xFF51abf6);
 const Color SECONDARY_COLOR = Color(0xFF21f3ea);
 const Color BACKGROUND_COLOR = Colors.white;
+
+
+const double CONTACTS_AVATAR_SIZE = 55;
+
+const double TILE_PADDING_HORIZONTAL = 10;
+const double TILE_PADDING_VERTICAL = 6;

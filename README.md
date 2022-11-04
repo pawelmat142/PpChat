@@ -97,3 +97,6 @@ findByNickname and delete methods
 
 ### [020] user and auth services integration
 authentication system completed
+
+### [021] prepare contacts screen
+prepared contacts screen and contact tile component
