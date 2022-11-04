@@ -63,3 +63,37 @@ Firebase core initialization:
 Spinner UI component implemented what shows that something is loading. </br>
 Logout option, log / logout navigation and error handling with popups.
 </br></br>
+
+### [013] user data model
+basic user data model is prepared
+</br> + little fix with form_styles and validators files moving
+</br></br>
+
+### [014] -||- fix
+little fix with form_styles and validators files moving
+</br></br>
+
+### [015] -||- still fix moving files fix
+
+### [016] firestore implementation - user service
+cloud firestore example implementation
+</br>`flutter pub add cloud_firestore`
+</br> user service prepared, test screen to test first firestore requests
+</br></br>
+
+### [017] firestore - security rules
+basic firebase security rules written
+</br> little refactor what makes nickname equals user document id so nickname is unique
+</br> 
+
+### [018] firestore - security rules - continued
+private sub collection created inside user what makes user modifiable only for owner
+</br> additional rules added
+</br> that makes user document modifiable only for owner
+</br>
+
+### [019] user service develop
+findByNickname and delete methods
+
+### [020] user and auth services integration
+authentication system completed

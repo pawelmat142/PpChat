@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
-import 'package:flutter_chat_app/screens/forms/elements/pp_button_controllable.dart';
-import 'forms/login_form_screen.dart';
+import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
+import 'package:flutter_chat_app/screens/home_screen.dart';
+import 'package:flutter_chat_app/screens/test_screen.dart';
 
 class BlankScreen extends StatelessWidget {
   const BlankScreen({Key? key}) : super(key: key);
@@ -10,12 +12,6 @@ class BlankScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final PpButtonControllable controllableButton = PpButtonControllable(
-      onPressed: () => Navigator.pushNamed(context, LoginFormScreen.id),
-      text: 'GO TO LOGIN SCREEN',
-      active: false,
-    );
 
     return Scaffold(
 
@@ -25,18 +21,28 @@ class BlankScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              controllableButton,
 
               PpButton(
-                text: 'activate/deactivate',
-                onPressed: () {
-                  if (controllableButton.active) {
-                    controllableButton.deactivation();
-                  } else {
-                    controllableButton.activation();
-                  }
-                }
-              )
+                  text: 'GO TO LOGIN SCREEN',
+                  onPressed: () => Navigator.pushNamed(context, LoginFormScreen.id),
+              ),
+
+              PpButton(
+                  text: 'GO TO TEST SCREEN',
+                  onPressed: () => Navigator.pushNamed(context, TestScreen.id),
+              ),
+
+              PpButton(
+                  text: 'GO TO HOME SCREEN',
+                  onPressed: () {
+                    if (FirebaseAuth.instance.currentUser != null) {
+                      Navigator.pushNamed(context, HomeScreen.id);
+                    } else {
+                      print('not logged!');
+                    }
+                  },
+              ),
+
             ]
           ),
         ),

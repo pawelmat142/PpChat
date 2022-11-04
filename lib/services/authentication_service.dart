@@ -4,32 +4,39 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
 
 class AuthenticationService {
-
   final _fireAuth = FirebaseAuth.instance;
+  final _userService = getIt.get<PpUserService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
 
   get context => NavigationService.context;
 
-  bool logged = false;
+  bool _firstUserListen = true;
+  bool _registerInProgress = false;
 
   AuthenticationService() {
     _fireAuth.idTokenChanges().listen((user) async {
-      user == null ? _logout() : _login();
+      if (user == null) {
+        _logoutResult();
+      } else if (_firstUserListen) {
+        _loginResult();
+      }
       _firstUserListen = false;
     });
   }
 
-  void register({required String login, required String password}) async {
+  void register({required String nickname, required String password}) async {
     try {
       _spinner.start();
       _registerInProgress = true;
-      await _fireAuth.createUserWithEmailAndPassword(email: _toEmail(login), password: password);
+      await _fireAuth.createUserWithEmailAndPassword(email: _toEmail(nickname), password: password);
+      await _userService.createNewUser(nickname: nickname);
       await _fireAuth.signOut();
       _registerInProgress = false;
       _spinner.stop();
@@ -42,22 +49,25 @@ class AuthenticationService {
     }
     catch (error) {
       _registerInProgress = false;
+      _spinner.stop();
       if (error.toString().contains('email-already-in-use')) {
         _popup.show('Login already in use!', error: true);
-        _spinner.stop();
         return;
       }
       _errorPopup();
     }
   }
 
-  void login({required String login, required String password}) async {
+  void login({required String nickname, required String password}) async {
     try {
       _spinner.start();
-      await _fireAuth.signInWithEmailAndPassword(email: _toEmail(login), password: password);
+      await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
+      await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
       _spinner.stop();
+      await Navigator.pushNamed(context, HomeScreen.id);
     }
     catch (error) {
+      if (_fireAuth.currentUser != null) await _fireAuth.signOut();
       _spinner.stop();
       await _popup.show('Wrong credentials!',
         text: 'Please try again.',
@@ -70,6 +80,7 @@ class AuthenticationService {
   void logout() async {
     try {
       _spinner.start();
+      await _userService.logout();
       await _fireAuth.signOut();
     }
     catch (error) {
@@ -77,24 +88,32 @@ class AuthenticationService {
     }
   }
 
+  void deleteAccount() async {
+    try {
+      _spinner.start();
+      await _userService.deleteUserDocument();
+      await _fireAuth.signOut();
+      _spinner.stop();
+    }
+    catch (error) {
+      _errorPopup();
+    }
+  }
 
-  bool _firstUserListen = true;
-  bool _registerInProgress = false;
 
-  void _login() async {
+  void _loginResult() async {
+    if (_firstUserListen) await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
     if (!_registerInProgress) {
       _spinner.stop();
-      logged = true;
       await Navigator.pushNamed(context, HomeScreen.id);
     }
   }
 
-  void _logout() async {
+  void _logoutResult() async {
     if (!_firstUserListen && !_registerInProgress) {
       _spinner.stop();
-      logged = false;
-      Navigator.pop(context, LoginFormScreen.id);
       await _popup.show('You are logged out!');
+      Navigator.of(context).popUntil((route) => route.isFirst);
     }
   }
 
@@ -106,5 +125,5 @@ class AuthenticationService {
 
   static const String _firebaseEmailSuffix = '@no.email';
   String _toEmail(String login) => login + _firebaseEmailSuffix;
-  String _toLogin(String email) => email.replaceAll(_firebaseEmailSuffix, '');
+  String _toNickname(String email) => email.replaceAll(_firebaseEmailSuffix, '');
 }

@@ -3,13 +3,13 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_submit.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_text_field.dart';
-import 'package:flutter_chat_app/screens/forms/validators.dart';
+import 'package:flutter_chat_app/screens/forms/others/validators.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 abstract class Fields {
-  static const String login = 'login';
-  static const String relogin = 'relogin';
+  static const String nickname = 'login';
+  static const String renickname = 'relogin';
   static const String password = 'password';
   static const String repassword = 'repassword';
 }
@@ -21,19 +21,19 @@ class RegisterFormScreen extends StatelessWidget {
   final _authService = getIt.get<AuthenticationService>();
 
   final form = FormGroup({
-    Fields.login: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
-    Fields.relogin: FormControl<String>(),
+    Fields.nickname: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
+    Fields.renickname: FormControl<String>(),
     Fields.password: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
     Fields.repassword: FormControl<String>(),
   }, validators: [
-    myMustMatch(Fields.login, Fields.relogin),
+    myMustMatch(Fields.nickname, Fields.renickname),
     myMustMatch(Fields.password, Fields.repassword)
   ]);
 
   void _submitForm(BuildContext context) {
     if (form.valid) {
       _authService.register(
-          login: form.control(Fields.login).value,
+          nickname: form.control(Fields.nickname).value,
           password: form.control(Fields.password).value
       );
       form.reset();
@@ -57,16 +57,16 @@ class RegisterFormScreen extends StatelessWidget {
           children: [
 
             PpTextField(
-                fieldName: Fields.login,
-                labelHint: 'LOGIN',
+                fieldName: Fields.nickname,
+                labelHint: 'NICKNAME',
                 requiredMsg: 'Login is required.',
                 minLengthMsg: 'Login must have at least 6 characters',
-                onSubmitted: () => form.focus(Fields.relogin)
+                onSubmitted: () => form.focus(Fields.renickname)
             ),
 
             PpTextField(
-                fieldName: Fields.relogin,
-                labelHint: 'REPEAT LOGIN',
+                fieldName: Fields.renickname,
+                labelHint: 'REPEAT NICKNAME',
                 mustMatchMsg: 'Login must match.',
                 onSubmitted: () => form.focus(Fields.password)
             ),

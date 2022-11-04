@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/constants/form_styles.dart';
+import 'package:flutter_chat_app/screens/forms/others/form_styles.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class PpTextField extends StatelessWidget {
