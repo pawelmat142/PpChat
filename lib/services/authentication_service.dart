@@ -51,7 +51,7 @@ class AuthenticationService {
       _registerInProgress = false;
       _spinner.stop();
       if (error.toString().contains('email-already-in-use')) {
-        _popup.show('Login already in use!', error: true);
+        _popup.show('Nickname already in use!', error: true);
         return;
       }
       _errorPopup();

@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       routes: {
         BlankScreen.id: (context) => const BlankScreen(),
         HomeScreen.id: (context) => const HomeScreen(),
-        ContactsScreen.id: (context) => const ContactsScreen(),
+        ContactsScreen.id: (context) => ContactsScreen(),
         LoginFormScreen.id: (context) => LoginFormScreen(),
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
         TestScreen.id: (context) => TestScreen(),

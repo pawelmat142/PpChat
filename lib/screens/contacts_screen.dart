@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/contacts_tile/contact_tile.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/dialogs/process/find_contact.dart';
 
 class ContactsScreen extends StatelessWidget {
-  const ContactsScreen({Key? key}) : super(key: key);
+  ContactsScreen({Key? key}) : super(key: key);
   static const String id = 'contacts_screen';
 
   @override
@@ -30,7 +31,7 @@ class ContactsScreen extends StatelessWidget {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => FindContact(),
         elevation: 15,
         child: const Icon(Icons.search, size: 40),
       ),

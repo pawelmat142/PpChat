@@ -23,6 +23,8 @@ class Popup {
   static final PopupButton okButton = PopupButton('OK', bold: false);
   static final PopupButton navigateBackButton = PopupButton('Back', onPressed: defaultPopAction, error: true, bold: false);
 
+  int openPopups = 0;
+
   List<Widget> _getButtonsWidgets(List<PopupButton> buttons, Function? defaultAction) {
     return buttons.map((btn) => TextButton(
       onPressed: () {
@@ -52,12 +54,15 @@ class Popup {
     Color textColor = Colors.black87,
     List<PopupButton>? buttons,
     Function? defaultAction,
-  }) {
+    Widget? content
+  }) async {
 
     List<PopupButton> $buttons = buttons ?? [];
     $buttons = enableOkButton ? [okButton] + $buttons : $buttons;
     $buttons = enableDefaultButton ? [defaultButton] + $buttons : $buttons;
     $buttons = enableNavigateBack ? [navigateBackButton] + $buttons : $buttons;
+
+    openPopups++;
 
     return showDialog(
       context: NavigationService.context,
@@ -74,11 +79,26 @@ class Popup {
             text == null
                 ? const SizedBox(height: 0, width: 0)
                 : Text(text, style: TextStyle(color: textColor)),
+
+            content ?? const SizedBox(height: 0, width: 0)
+
           ],
         ),
         actions: _getButtonsWidgets($buttons, defaultAction),
       ),
-    );
+    ).then((value) => openPopups--);
+  }
+
+  closeAll() {
+    for(int i = 0; i < openPopups; i++) {
+      defaultPopAction();
+    }
+  }
+
+  closeOne() {
+    if (openPopups > 0) {
+      defaultPopAction();
+    }
   }
 
 }
