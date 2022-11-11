@@ -4,7 +4,6 @@ import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
-import 'package:flutter_chat_app/screens/test_screen.dart';
 
 class BlankScreen extends StatelessWidget {
   const BlankScreen({Key? key}) : super(key: key);
@@ -25,11 +24,6 @@ class BlankScreen extends StatelessWidget {
               PpButton(
                   text: 'GO TO LOGIN SCREEN',
                   onPressed: () => Navigator.pushNamed(context, LoginFormScreen.id),
-              ),
-
-              PpButton(
-                  text: 'GO TO TEST SCREEN',
-                  onPressed: () => Navigator.pushNamed(context, TestScreen.id),
               ),
 
               PpButton(

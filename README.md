@@ -108,3 +108,8 @@ contact finding UI process
 basic notification data model is prepared
 </br> send invitation option
 </br> basic notification security rules
+
+### [024] Stream builder - notifications screen
+notifications screen,
+</br> notifications service,
+</br> stream builder with notification tile implemented

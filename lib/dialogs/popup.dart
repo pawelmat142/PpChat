@@ -54,7 +54,8 @@ class Popup {
     Color textColor = Colors.black87,
     List<PopupButton>? buttons,
     Function? defaultAction,
-    Widget? content
+    Widget? content,
+    int? delay
   }) async {
 
     List<PopupButton> $buttons = buttons ?? [];
@@ -63,6 +64,10 @@ class Popup {
     $buttons = enableNavigateBack ? [navigateBackButton] + $buttons : $buttons;
 
     openPopups++;
+
+    if (delay != null) {
+      await Future.delayed(Duration(milliseconds: delay));
+    }
 
     return showDialog(
       context: NavigationService.context,

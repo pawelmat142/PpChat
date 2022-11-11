@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 
@@ -29,6 +30,14 @@ class PpNotification {
       isRead: notificationMap[PpNotificationFields.isRead],
       text: notificationMap[PpNotificationFields.text],
     );
+  }
+
+  static PpNotification fromDB(QueryDocumentSnapshot<Object?> doc) {
+    try {
+      return PpNotification.fromMap(doc.data() as Map<String, dynamic>);
+    } catch (error) {
+      throw Exception(['FIREBASE OBJECT CAST TO MAP ERROR - NOTIFICATION']);
+    }
   }
 
   static PpNotification createInvitation({required String text, required String fromNickname}) => PpNotification(

@@ -60,12 +60,11 @@ class FindContact {
       _spinner.start();
       await _sendInvitationNotification();
       _spinner.stop();
-      _popup.closeOne();
-      _popup.show('Invitation sent!');
+      _popup.show('Invitation sent!', delay: 200);
     //  TODO: add to contacts with status like not accepted
     } catch (error) {
       _spinner.stop();
-      _popup.show('Something went wrong', error: true);
+      _popup.show('Something went wrong', error: true, delay: 200);
     }
     _popup.closeOne();
   }
