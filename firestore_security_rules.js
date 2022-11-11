@@ -16,7 +16,16 @@ service cloud.firestore {
 
       match /PRIVATE/{nickname} {
       	allow create: if request.resource.data.uid == request.auth.uid;
+        allow delete: if resource.data.uid == request.auth.uid;
+        allow write: if request.resource.data.uid == request.auth.uid;
       }
+
+      match /NOTIFICATIONS/{from} {
+      	allow create: if logged();
+        allow read, delete, update: if (owner());
+      }
+
+
     }
 
   }

@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 
 class FindContact {
@@ -9,6 +12,7 @@ class FindContact {
   final _userService = getIt.get<PpUserService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String nickname = '';
 
@@ -34,6 +38,7 @@ class FindContact {
     else if (nickname == _userService.nickname) {
       await _popup.show('You have found yourself.', error: true);
     }
+    //TODO: add checking if not already in contacts
     else {
       _spinner.start();
       final result = await _userService.findByNickname(nickname);
@@ -51,11 +56,31 @@ class FindContact {
   }
 
   _onInvite() async {
-    _spinner.start();
-    print('invitation sent');
-    _spinner.stop();
-    print('after invite');
+    try {
+      _spinner.start();
+      await _sendInvitationNotification();
+      _spinner.stop();
+      _popup.closeOne();
+      _popup.show('Invitation sent!');
+    //  TODO: add to contacts with status like not accepted
+    } catch (error) {
+      _spinner.stop();
+      _popup.show('Something went wrong', error: true);
+    }
     _popup.closeOne();
+  }
+
+  _sendInvitationNotification() async {
+    final ref = _firestore
+        .collection(Collections.User)
+        .doc(nickname)
+        .collection(Collections.NOTIFICATIONS)
+        .doc(_userService.nickname);
+    final invitationDoc = PpNotification.createInvitation(
+        text: 'invitation',
+        fromNickname: _userService.nickname).asMap;
+
+    await ref.set(invitationDoc);
   }
 
 }

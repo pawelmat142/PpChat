@@ -103,3 +103,8 @@ contacts screen view, basic contact tile component
 
 ### [022] contact search option
 contact finding UI process
+
+### [023] notification data model
+basic notification data model is prepared
+</br> send invitation option
+</br> basic notification security rules
