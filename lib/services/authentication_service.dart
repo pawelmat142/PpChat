@@ -4,6 +4,7 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_chat_app/screens/home_screen.dart';
 class AuthenticationService {
   final _fireAuth = FirebaseAuth.instance;
   final _userService = getIt.get<PpUserService>();
+  final _notificationsService = getIt.get<PpNotificationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
 
@@ -58,11 +60,12 @@ class AuthenticationService {
     }
   }
 
+  //when user login by form
   void login({required String nickname, required String password}) async {
     try {
       _spinner.start();
       await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
-      await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
+      await _loginServices();
       _spinner.stop();
       await Navigator.pushNamed(context, HomeScreen.id);
     }
@@ -80,7 +83,7 @@ class AuthenticationService {
   void logout() async {
     try {
       _spinner.start();
-      await _userService.logout();
+      await _logoutServices();
       await _fireAuth.signOut();
     }
     catch (error) {
@@ -92,6 +95,7 @@ class AuthenticationService {
     try {
       _spinner.start();
       await _userService.deleteUserDocument();
+      //TODO: send information about deleted account - fire auth acc needs to be deleted manually
       await _fireAuth.signOut();
       _spinner.stop();
     }
@@ -100,9 +104,9 @@ class AuthenticationService {
     }
   }
 
-
+  //when user is already logged and start app
   void _loginResult() async {
-    if (_firstUserListen) await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
+    if (_firstUserListen) _loginServices();
     if (!_registerInProgress) {
       _spinner.stop();
       await Navigator.pushNamed(context, HomeScreen.id);
@@ -111,10 +115,21 @@ class AuthenticationService {
 
   void _logoutResult() async {
     if (!_firstUserListen && !_registerInProgress) {
+      await _logoutServices();
       _spinner.stop();
       await _popup.show('You are logged out!');
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
+  }
+
+  _loginServices() async {
+    await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
+    _notificationsService.login();
+  }
+
+  _logoutServices() async {
+    await _userService.logout();
+    _notificationsService.logout();
   }
 
   void _errorPopup() {

@@ -4,7 +4,7 @@ import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/process/find_contact.dart';
 
 class ContactsScreen extends StatelessWidget {
-  ContactsScreen({Key? key}) : super(key: key);
+  const ContactsScreen({Key? key}) : super(key: key);
   static const String id = 'contacts_screen';
 
   @override

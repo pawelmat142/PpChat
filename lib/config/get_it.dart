@@ -15,8 +15,7 @@ Future<void> initGetIt() async {
 
   getIt.registerLazySingleton(() => PpUserService());
 
-  getIt.registerSingleton(AuthenticationService());
-
   getIt.registerLazySingleton(() => PpNotificationService());
 
+  getIt.registerSingleton(AuthenticationService());
 }

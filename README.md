@@ -113,3 +113,8 @@ basic notification data model is prepared
 notifications screen,
 </br> notifications service,
 </br> stream builder with notification tile implemented
+
+### [025] State services refactor
+services what keeps some user state refactored with login/logout triggering 
+notifications screen refactor - no more stream builder
+little screens refactors
