@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/components/notifications_info.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
@@ -27,6 +28,8 @@ class HomeScreen extends StatelessWidget {
         child: Column(
             children: [
 
+              const NotificationInfo(),
+
               PpButton(text: 'LOGOUT',
                 onPressed: authService.logout,
               ),
@@ -37,10 +40,6 @@ class HomeScreen extends StatelessWidget {
 
               PpButton(text: 'CONTACTS',
                 onPressed: () => Navigator.pushNamed(context, ContactsScreen.id),
-              ),
-
-              PpButton(text: 'NOTIFICATIONS',
-                onPressed: () => Navigator.pushNamed(context, NotificationsScreen.id),
               ),
 
           ]

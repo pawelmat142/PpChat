@@ -118,3 +118,6 @@ notifications screen,
 services what keeps some user state refactored with login/logout triggering 
 notifications screen refactor - no more stream builder
 little screens refactors
+
+### [026] Notification tile
+Made with stream listener notification tile shows notifications number
