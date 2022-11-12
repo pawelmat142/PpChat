@@ -121,3 +121,7 @@ little screens refactors
 
 ### [026] Notification tile
 Made with stream listener notification tile shows notifications number
+
+### [027] Notification flushbar
+`flutter pub add another_flushbar`
+</br> flushbar notifications implementation

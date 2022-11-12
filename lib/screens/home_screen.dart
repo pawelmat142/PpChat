@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/notifications_info.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
-import 'package:flutter_chat_app/screens/notifications_screen.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -40,6 +40,18 @@ class HomeScreen extends StatelessWidget {
 
               PpButton(text: 'CONTACTS',
                 onPressed: () => Navigator.pushNamed(context, ContactsScreen.id),
+              ),
+
+              PpButton(text: 'flushbar',
+                onPressed: () {
+                  PpFlushbar.invitationNotification();
+                },
+              ),
+              
+              PpButton(text: 'flushbar',
+                onPressed: () {
+                  PpFlushbar.showBasic();
+                },
               ),
 
           ]
