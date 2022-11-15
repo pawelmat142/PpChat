@@ -39,6 +39,7 @@ class FindContact {
       await _popup.show('You have found yourself.', error: true);
     }
     //TODO: add checking if not already in contacts
+    // TODO: invitation send not possible when invitation received or send
     else {
       _spinner.start();
       final result = await _userService.findByNickname(nickname);

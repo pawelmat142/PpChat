@@ -5,6 +5,7 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 
@@ -61,5 +62,9 @@ class PpNotificationService {
     final currentNotificationsFroms = _current.map((n) => n.from).toList();
     List<PpNotification> result = newList.where((n) => !currentNotificationsFroms.contains(n.from)).toList();
     return result.isNotEmpty ? result.first : null;
+  }
+
+  markNotificationAsRead({required String docId}) {
+    _myNotificationsCollectionRef.doc(docId).update({PpNotificationFields.isRead: true});
   }
 }

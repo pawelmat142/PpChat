@@ -125,3 +125,6 @@ Made with stream listener notification tile shows notifications number
 ### [027] Notification flushbar
 `flutter pub add another_flushbar`
 </br> flushbar notifications implementation
+
+### [028] Invitation view
+notification view - mark as read when open
