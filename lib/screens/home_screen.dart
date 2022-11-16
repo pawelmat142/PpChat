@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
             children: [
 
-              const NotificationInfo(),
+              NotificationInfo(),
 
               PpButton(text: 'LOGOUT',
                 onPressed: authService.logout,
@@ -45,12 +45,6 @@ class HomeScreen extends StatelessWidget {
               PpButton(text: 'flushbar',
                 onPressed: () {
                   PpFlushbar.invitationNotification();
-                },
-              ),
-              
-              PpButton(text: 'flushbar',
-                onPressed: () {
-                  PpFlushbar.showBasic();
                 },
               ),
 

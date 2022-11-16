@@ -10,13 +10,13 @@ class NotificationView extends StatelessWidget {
   final PpNotification notification;
   NotificationView(this.notification, {Key? key}) : super(key: key);
 
-  final _service = getIt.get<PpNotificationService>();
+  final _notificationService = getIt.get<PpNotificationService>();
 
   @override
   Widget build(BuildContext context) {
 
     if (!notification.isRead) {
-      _service.markNotificationAsRead(docId: notification.from);
+      _notificationService.markNotificationAsRead(docId: notification.from);
     }
 
     return Scaffold(

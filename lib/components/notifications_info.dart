@@ -1,40 +1,46 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/screens/forms/others/form_styles.dart';
 import 'package:flutter_chat_app/screens/notifications_screen.dart';
 
 class NotificationInfo extends StatefulWidget {
-  const NotificationInfo({Key? key}) : super(key: key);
+  NotificationInfo({Key? key}) : super(key: key);
+
+  final notificationService = getIt.get<PpNotificationService>();
 
   @override
   State<NotificationInfo> createState() => _NotificationInfoState();
 }
 
+
 class _NotificationInfoState extends State<NotificationInfo> {
 
-  final notificationService = getIt.get<PpNotificationService>();
+  String unreadNotifications = "X";
+  String totalNotifications = "X";
 
-  String unreadNotifications = "0";
-  String totalNotifications = "0";
-
-  late StreamSubscription subscription;
+  StreamSubscription? notificationsListenerOne;
 
   @override
   void initState() {
     super.initState();
-    subscription = notificationService.streamCtrl.stream.listen((snapshot) {
+    notificationsListenerOne = widget.notificationService.stream.listen(_setState);
+  }
+
+  _setState(event) {
+    if (event != null) {
       setState(() {
-        unreadNotifications = snapshot.where((notification) => !notification.isRead).toList().length.toString();
-        totalNotifications = snapshot.length.toString();
+        unreadNotifications = PpNotification.filterUnread(event as List<PpNotification>).length.toString();
+        totalNotifications = event.length.toString();
       });
-    });
+    }
   }
 
   @override
   void dispose() {
-    subscription.cancel();
+    notificationsListenerOne!.cancel();
     super.dispose();
   }
 

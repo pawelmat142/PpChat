@@ -128,3 +128,7 @@ Made with stream listener notification tile shows notifications number
 
 ### [028] Invitation view
 notification view - mark as read when open
+
+### [029] Stream broadcast - notifications screen
+multiple stream usage example with widget building and storage listening
+</br> Refactor notifications service and screen to make screen reactive

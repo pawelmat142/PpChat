@@ -19,31 +19,33 @@ class PpNotificationService {
         .collection(Collections.NOTIFICATIONS);
   }
 
-  final StreamController<List<PpNotification>> streamCtrl = StreamController.broadcast();
-  Stream<List<PpNotification>> get stream => streamCtrl.stream;
-  late StreamSubscription _listener;
-
+  //CURRENT VALUE
   List<PpNotification> _current = [];
   List<PpNotification> get currentNotifications => _current;
 
+  //STREAM
+  StreamSubscription? _firestoreListener;
+  final _controller = StreamController.broadcast();
+  get stream => _controller.stream;
+
   login() {
     bool first = true;
-    _listener = _myNotificationsCollectionRef.snapshots().listen((querySnapshot) {
+    _firestoreListener = _myNotificationsCollectionRef.snapshots().listen((querySnapshot) {
       final notifications = querySnapshot.docs.map((doc) => PpNotification.fromMap(doc.data())).toList();
       if (!first) _notificationFlush(notifications);
       _current = notifications;
-      streamCtrl.sink.add(notifications);
+      _controller.sink.add(notifications);
       first = false;
     }, onError:(error) {
       _current = [];
-      streamCtrl.sink.add([]);
+      _controller.sink.add([]);
     });
   }
 
   logout() {
-    _listener.cancel();
+    _firestoreListener!.cancel();
     _current = [];
-    streamCtrl.sink.add([]);
+    _controller.sink.add([]);
   }
 
   _notificationFlush(List<PpNotification> newList) async {

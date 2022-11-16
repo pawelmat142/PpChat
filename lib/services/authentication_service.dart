@@ -13,7 +13,7 @@ import 'package:flutter_chat_app/screens/home_screen.dart';
 class AuthenticationService {
   final _fireAuth = FirebaseAuth.instance;
   final _userService = getIt.get<PpUserService>();
-  final _notificationsService = getIt.get<PpNotificationService>();
+  final _notificationService = getIt.get<PpNotificationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
 
@@ -124,12 +124,12 @@ class AuthenticationService {
 
   _loginServices() async {
     await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
-    _notificationsService.login();
+    _notificationService.login();
   }
 
   _logoutServices() async {
     await _userService.logout();
-    _notificationsService.logout();
+    _notificationService.logout();
   }
 
   void _errorPopup() {
