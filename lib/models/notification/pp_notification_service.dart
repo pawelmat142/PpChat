@@ -52,7 +52,7 @@ class PpNotificationService {
     final newNotification = _getNewOneFromList(newList);
     if (newNotification != null) {
       if (newNotification.type == PpNotificationTypes.invitation) {
-        PpFlushbar.invitationNotification();
+        PpFlushbar.invitationNotification(newNotification);
       } else {
         PpFlushbar.showBasic();
       }

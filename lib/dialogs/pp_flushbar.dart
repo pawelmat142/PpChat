@@ -1,23 +1,27 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
-import 'package:flutter_chat_app/screens/notifications_screen.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification.dart';
+import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
 
 class PpFlushbar {
 
-  static void invitationNotification() {
-    Flushbar? bb;
-    bb = basic(
+  static void invitationNotification(PpNotification notification) {
+    Flushbar? flushbar;
+    flushbar = basic(
       title: 'New contacts invitation',
       message: 'Tap to checkout',
       icon: const Icon(Icons.person_add, size: 30, color: Colors.white),
       duration: const Duration(seconds: 10),
       onTap: () {
-        // TODO: navigate to invitation view and mark it as read
-        Navigator.pushNamed(NavigationService.context, NotificationsScreen.id);
+        flushbar!.dismiss();
+        Navigator.push(
+          NavigationService.context,
+          MaterialPageRoute(builder: (context) => NotificationView(notification)),
+        );
       },
     );
-    bb.show(NavigationService.context);
+    flushbar.show(NavigationService.context);
   }
 
   static showBasic(){
@@ -34,17 +38,17 @@ class PpFlushbar {
     bool hideButtonEnable = true,
     TextButton? mainButton
   }) {
-    Flushbar? bar;
+    Flushbar? flushbar;
     TextButton? mainButton;
 
     if (hideButtonEnable) {
       mainButton = TextButton(
-        onPressed: () => bar!.dismiss(),
+        onPressed: () => flushbar!.dismiss(),
         child: const Text('HIDE')
       );
     }
 
-    bar = Flushbar(
+    flushbar = Flushbar(
       flushbarPosition: FlushbarPosition.TOP,
       margin: const EdgeInsets.only(top: 10, left: 6, right: 6),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
@@ -56,6 +60,6 @@ class PpFlushbar {
       mainButton: mainButton,
       onTap: onTap != null ? (x) => onTap() : (x){},
     );
-    return bar;
+    return flushbar;
   }
 }

@@ -42,12 +42,6 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(context, ContactsScreen.id),
               ),
 
-              PpButton(text: 'flushbar',
-                onPressed: () {
-                  PpFlushbar.invitationNotification();
-                },
-              ),
-
           ]
         ),
       ),
