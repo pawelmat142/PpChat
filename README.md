@@ -138,3 +138,6 @@ navigate to notification view if tap flushbar
 
 ### [031] Notifications screen sort
 unread notifications are on the top of notifications screen
+
+### [032] Self notification
+sending invitation triggers invitation self notification what is read by default

@@ -59,7 +59,7 @@ class FindContact {
   _onInvite() async {
     try {
       _spinner.start();
-      await _sendInvitationNotification();
+      await _sendInvitationNotifications();
       _spinner.stop();
       _popup.show('Invitation sent!', delay: 200);
     //  TODO: add to contacts with status like not accepted
@@ -70,17 +70,33 @@ class FindContact {
     _popup.closeOne();
   }
 
-  _sendInvitationNotification() async {
-    final ref = _firestore
+  _sendInvitationNotifications() async {
+    final batch = _firestore.batch();
+        //TODO: implement invitation first message
+    //    TODO: implement invitation self notification tile
+    //    TODO: implement invitation self notification view
+    final message = 'todo: implement invitation first message';
+
+    final receiverRef = _firestore
         .collection(Collections.User)
         .doc(nickname)
         .collection(Collections.NOTIFICATIONS)
         .doc(_userService.nickname);
-    final invitationDoc = PpNotification.createInvitation(
-        text: 'invitation',
-        fromNickname: _userService.nickname).asMap;
 
-    await ref.set(invitationDoc);
+    batch.set(receiverRef, PpNotification.createInvitation(
+        text: message,
+        fromNickname: _userService.nickname).asMap);
+
+    final selfRef = _firestore
+        .collection(Collections.User)
+        .doc(_userService.nickname)
+        .collection(Collections.NOTIFICATIONS)
+        .doc(nickname);
+
+    batch.set(selfRef, PpNotification.createInvitationSelfNotification(
+        text: message,
+        fromNickname: nickname).asMap);
+
+    await batch.commit();
   }
-
 }

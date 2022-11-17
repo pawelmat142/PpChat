@@ -47,6 +47,13 @@ class PpNotification {
       text: text
   );
 
+  static PpNotification createInvitationSelfNotification({required String text, required String fromNickname}) => PpNotification(
+      from: fromNickname,
+      type: PpNotificationTypes.invitationSelfNotification,
+      isRead: true,
+      text: text
+  );
+
   static List<PpNotification> filterUnread(List<PpNotification> input) {
     return input.where((notification) => !notification.isRead).toList();
   }
