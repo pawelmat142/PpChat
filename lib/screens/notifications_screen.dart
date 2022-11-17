@@ -27,12 +27,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   void initState() {
     super.initState();
     tiles = _notificationTilesMapper(widget.notificationService.currentNotifications);
-    notificationsListenerTwo = widget.notificationService.stream.map(_notificationTilesMapper).listen(_setState);
-  //TODO: sort notifications - unread first
+    notificationsListenerTwo = widget.notificationService.stream
+        .map(_notificationTilesMapper)
+        .listen(_setState);
   }
 
   List<NotificationTile> _notificationTilesMapper(event) {
-    return event != null ? (event as List<PpNotification>).map((n) => NotificationTile(n)).toList() : [];
+    List<PpNotification> list = event == null ? [] : event as List<PpNotification>;
+    list.sort((a, b) => (b.isRead ? 0 : 1));
+    return list.map((n) => NotificationTile(n)).toList();
   }
 
   _setState(event) {

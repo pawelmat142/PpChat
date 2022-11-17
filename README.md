@@ -135,3 +135,6 @@ multiple stream usage example with widget building and storage listening
 
 ### [030] Notification flushbar tap
 navigate to notification view if tap flushbar
+
+### [031] Notifications screen sort
+unread notifications are on the top of notifications screen
