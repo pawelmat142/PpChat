@@ -4,18 +4,16 @@ import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
-import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
+import 'package:flutter_chat_app/screens/data_screens/invitation_view.dart';
 
 class NotificationTile extends StatelessWidget {
   final PpNotification notification;
-  const NotificationTile(this.notification, {
-    Key? key,
-  }) : super(key: key);
+  const NotificationTile(this.notification, {super.key});
 
   _navigateToNotificationView() {
     Navigator.push(
         NavigationService.context,
-        MaterialPageRoute(builder: (context) => NotificationView(notification)),
+        MaterialPageRoute(builder: (context) => InvitationView(notification)),
     );
   }
 
@@ -42,7 +40,9 @@ class NotificationTile extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: TILE_PADDING_VERTICAL),
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                      //  TODO: implement swap little bit left and delete icon shows
+                      },
                       icon: Icon(Icons.message,
                           color: notification.isRead ? Colors.green : Colors.red,
                           size: 35,
@@ -96,6 +96,7 @@ class NotificationTile extends StatelessWidget {
   getTitle() {
     switch(notification.type) {
       case PpNotificationTypes.invitation: return 'Invitation';
+      case PpNotificationTypes.invitationSelfNotification: return 'Your invitation';
       case PpNotificationTypes.message: return 'New message';
       default: return 'Unknown';
     }

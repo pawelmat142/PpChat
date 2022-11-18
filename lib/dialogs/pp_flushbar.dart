@@ -2,7 +2,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
-import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
+import 'package:flutter_chat_app/screens/data_screens/invitation_view.dart';
 
 class PpFlushbar {
 
@@ -17,7 +17,7 @@ class PpFlushbar {
         flushbar!.dismiss();
         Navigator.push(
           NavigationService.context,
-          MaterialPageRoute(builder: (context) => NotificationView(notification)),
+          MaterialPageRoute(builder: (context) => InvitationView(notification)),
         );
       },
     );
