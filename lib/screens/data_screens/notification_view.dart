@@ -3,8 +3,21 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
+import 'package:flutter_chat_app/screens/data_screens/invitation_self_notification_view.dart';
+import 'package:flutter_chat_app/screens/data_screens/invitation_view.dart';
 
 class NotificationView extends StatelessWidget {
+
+  //FACTORY PATTERN
+  static NotificationView factory(PpNotification notification) {
+    switch (notification.type) {
+      case PpNotificationTypes.invitation: return InvitationView(notification);
+      case PpNotificationTypes.invitationSelfNotification: return InvitationSelfNotificationView(notification);
+      default: return NotificationView(notification);
+    }
+  }
+
   final PpNotification notification;
   final notificationService = getIt.get<PpNotificationService>();
 

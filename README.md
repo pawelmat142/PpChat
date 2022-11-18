@@ -144,3 +144,6 @@ sending invitation triggers invitation self notification what is read by default
 
 ### [033] Widget class extension example
 refactor notification view and create invitation view as extension
+
+### [034] Factory project pattern
+Invitation self notification view with factory pattern implemented

@@ -4,7 +4,7 @@ import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
-import 'package:flutter_chat_app/screens/data_screens/invitation_view.dart';
+import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
 
 class NotificationTile extends StatelessWidget {
   final PpNotification notification;
@@ -13,7 +13,7 @@ class NotificationTile extends StatelessWidget {
   _navigateToNotificationView() {
     Navigator.push(
         NavigationService.context,
-        MaterialPageRoute(builder: (context) => InvitationView(notification)),
+        MaterialPageRoute(builder: (context) => NotificationView.factory(notification)),
     );
   }
 
