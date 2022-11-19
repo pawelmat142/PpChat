@@ -54,6 +54,18 @@ class PpFlushbar {
     flushbar.show(NavigationService.context);
   }
 
+  static void notificationsDeleted() async {
+    Flushbar? flushbar;
+    flushbar = basic(
+      title: 'Done!',
+      message: 'All notification are deleted',
+      icon: const Icon(Icons.comments_disabled, size: 30, color: Colors.white),
+      duration: const Duration(seconds: 10),
+      onTap: () => flushbar!.dismiss(),
+    );
+    flushbar.show(NavigationService.context);
+  }
+
   static showBasic(){
     final basicFlushbar = basic();
     basicFlushbar.show(NavigationService.context);

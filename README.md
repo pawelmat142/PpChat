@@ -151,4 +151,7 @@ Invitation self notification view with factory pattern implemented
 ### [035] UX improvements and invitation reject feature
 reject / cancel invitation
 </br> flushbar for invitation sent / deleted
-</br> navigation to notifications from flushbar, 
+</br> navigation to notifications from flushbar
+
+### [036] Delete all notifications feature
+notifications ale deleted also for senders

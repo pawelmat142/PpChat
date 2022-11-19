@@ -95,6 +95,7 @@ class AuthenticationService {
     try {
       _spinner.start();
       await _userService.deleteUserDocument();
+      await _notificationService.deleteAllNotifications();
       //TODO: send information about deleted account - fire auth acc needs to be deleted manually
       await _fireAuth.signOut();
       _spinner.stop();

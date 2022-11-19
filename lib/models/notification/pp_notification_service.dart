@@ -94,4 +94,31 @@ class PpNotificationService {
   _getFromNotificationDocumentRef(PpNotification notification)  {
     return _firestore.collection(Collections.User).doc(notification.from).collection(Collections.NOTIFICATIONS).doc(_userService.nickname);
   }
+
+  deleteAllNotifications() async {
+    try {
+      final batch = _firestore.batch();
+      for (var notification in _current) {
+        batch.delete(_myNotificationsCollectionRef.doc(notification.from));
+        batch.delete(_getFromNotificationDocumentRef(notification));
+      }
+      await batch.commit();
+    } catch (error) {
+      _spinner.stop();
+      _popup.show('delete all notifications error!', error: true);
+    }
+  }
+
+  deleteAllNotificationsPopup() {
+    _popup.show('Are you shure?',
+        text: 'All notification will be deleted also for senders',
+        error: true,
+        buttons: [PopupButton('Delete', onPressed: () async {
+          _spinner.start();
+          await deleteAllNotifications();
+          _spinner.stop();
+          PpFlushbar.notificationsDeleted();
+        })]);
+  }
+
 }

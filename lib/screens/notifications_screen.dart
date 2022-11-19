@@ -6,6 +6,7 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
+import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 
 class NotificationsScreen extends StatefulWidget {
   NotificationsScreen({super.key});
@@ -63,7 +64,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
         : ListView(
           padding: const EdgeInsets.only(top: TILE_PADDING_VERTICAL*2),
-          children: tiles,
+          children: [
+
+            Column(children: tiles),
+
+            Padding(
+              padding: BASIC_HORIZONTAL_PADDING,
+              child: PpButton(text: 'DELETE ALL', color: Colors.red, onPressed: () {
+                widget.notificationService.deleteAllNotificationsPopup();
+              }),
+            )
+
+          ],
         ),
     );
   }
