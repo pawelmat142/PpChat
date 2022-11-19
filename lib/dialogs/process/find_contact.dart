@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
+import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
@@ -15,6 +16,7 @@ class FindContact {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String nickname = '';
+  PpNotification? selfNotification;
 
   FindContact() {
     _searchPopup();
@@ -60,21 +62,18 @@ class FindContact {
     try {
       _spinner.start();
       await _sendInvitationNotifications();
-      _spinner.stop();
-      _popup.show('Invitation sent!', delay: 200);
-    //  TODO: add to contacts with status like not accepted
+      PpFlushbar.invitationSent(delay: 100, notification: selfNotification);
     } catch (error) {
       _spinner.stop();
       _popup.show('Something went wrong', error: true, delay: 200);
     }
+    _spinner.stop();
     _popup.closeOne();
   }
 
   _sendInvitationNotifications() async {
     final batch = _firestore.batch();
         //TODO: implement invitation first message
-    //    TODO: implement invitation self notification tile
-    //    TODO: implement invitation self notification view
     final message = 'todo: implement invitation first message';
 
     final receiverRef = _firestore
@@ -93,9 +92,11 @@ class FindContact {
         .collection(Collections.NOTIFICATIONS)
         .doc(nickname);
 
-    batch.set(selfRef, PpNotification.createInvitationSelfNotification(
+    selfNotification = PpNotification.createInvitationSelfNotification(
         text: message,
-        fromNickname: nickname).asMap);
+        fromNickname: nickname
+    );
+    batch.set(selfRef, selfNotification!.asMap);
 
     await batch.commit();
   }

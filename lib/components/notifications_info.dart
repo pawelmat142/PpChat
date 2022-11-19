@@ -32,7 +32,7 @@ class _NotificationInfoState extends State<NotificationInfo> {
   _setState(event) {
     if (event != null) {
       setState(() {
-        unreadNotifications = PpNotification.filterUnread(event as List<PpNotification>).length.toString();
+        unreadNotifications = PpNotification.getUnread(event).length.toString();
         totalNotifications = event.length.toString();
       });
     }

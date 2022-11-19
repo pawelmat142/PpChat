@@ -13,8 +13,8 @@ class InvitationSelfNotificationView extends NotificationView {
   @override
   get buttons {
     return [
-      PpButton(text: 'CANCEL', onPressed: () {
-        //TODO: cancel invitation implementation
+      PpButton(text: 'CANCEL', onPressed: () async {
+        await super.notificationService.deleteInvitation(super.notification);
       })
     ];
   }

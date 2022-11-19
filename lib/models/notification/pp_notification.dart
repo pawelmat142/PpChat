@@ -57,4 +57,8 @@ class PpNotification {
   static List<PpNotification> filterUnread(List<PpNotification> input) {
     return input.where((notification) => !notification.isRead).toList();
   }
+
+  static List<PpNotification> getUnread(List input) {
+    return input.isEmpty ? [] : filterUnread(input as List<PpNotification>);
+  }
 }

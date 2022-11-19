@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
@@ -16,6 +17,13 @@ class NotificationView extends StatelessWidget {
       case PpNotificationTypes.invitationSelfNotification: return InvitationSelfNotificationView(notification);
       default: return NotificationView(notification);
     }
+  }
+
+  static navigate(PpNotification notification) {
+      Navigator.push(
+        NavigationService.context,
+        MaterialPageRoute(builder: (context) => NotificationView.factory(notification)),
+      );
   }
 
   final PpNotification notification;

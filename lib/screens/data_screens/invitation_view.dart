@@ -25,8 +25,8 @@ class InvitationView extends NotificationView {
       PpButton(
         text: 'REJECT',
         color: PRIMARY_COLOR_DARKER,
-        onPressed: (){
-        //    TODO: reject invitation, delete notification
+        onPressed: () {
+          super.notificationService.deleteInvitation(super.notification);
         }
       ),
 

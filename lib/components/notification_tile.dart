@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/contacts_tile/contact_avatar.dart';
-import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
@@ -10,17 +9,10 @@ class NotificationTile extends StatelessWidget {
   final PpNotification notification;
   const NotificationTile(this.notification, {super.key});
 
-  _navigateToNotificationView() {
-    Navigator.push(
-        NavigationService.context,
-        MaterialPageRoute(builder: (context) => NotificationView.factory(notification)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: _navigateToNotificationView,
+      onTap: () => NotificationView.navigate(notification),
       child: Column(
           children: [
             Padding(

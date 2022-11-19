@@ -147,3 +147,8 @@ refactor notification view and create invitation view as extension
 
 ### [034] Factory project pattern
 Invitation self notification view with factory pattern implemented
+
+### [035] UX improvements and invitation reject feature
+reject / cancel invitation
+</br> flushbar for invitation sent / deleted
+</br> navigation to notifications from flushbar, 

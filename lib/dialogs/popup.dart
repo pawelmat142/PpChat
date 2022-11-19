@@ -18,7 +18,9 @@ class PopupButton {
 }
 
 class Popup {
-  static final Function defaultPopAction = Navigator.of(NavigationService.context).pop;
+  static defaultPopAction() {
+    Navigator.of(NavigationService.context).pop();
+  }
   static final PopupButton defaultButton = PopupButton('Close', bold: false);
   static final PopupButton okButton = PopupButton('OK', bold: false);
   static final PopupButton navigateBackButton = PopupButton('Back', onPressed: defaultPopAction, error: true, bold: false);
@@ -95,8 +97,9 @@ class Popup {
   }
 
   closeAll() {
-    for(int i = 0; i < openPopups; i++) {
-      defaultPopAction();
+    final openPopupsLocal = openPopups;
+    for(int i = 0; i < openPopupsLocal; i++) {
+      closeOne();
     }
   }
 

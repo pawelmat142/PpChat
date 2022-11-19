@@ -15,12 +15,42 @@ class PpFlushbar {
       duration: const Duration(seconds: 10),
       onTap: () {
         flushbar!.dismiss();
-        Navigator.push(
-          NavigationService.context,
-          MaterialPageRoute(builder: (context) => NotificationView.factory(notification)),
-        );
+        NotificationView.navigate(notification);
       },
     );
+    flushbar.show(NavigationService.context);
+  }
+
+  static void invitationSent({PpNotification? notification, int? delay}) async {
+    Flushbar? flushbar;
+    flushbar = basic(
+      title: 'Invitation successfully sent!',
+      message: 'Tap to checkout',
+      icon: const Icon(Icons.person_add, size: 30, color: Colors.white),
+      duration: const Duration(seconds: 10),
+      onTap: () {
+        flushbar!.dismiss();
+        if (notification != null) NotificationView.navigate(notification);
+      },
+    );
+    if (delay != null) {
+      await Future.delayed(Duration(milliseconds: delay));
+    }
+    flushbar.show(NavigationService.context);
+  }
+
+  static void invitationDeleted({int? delay}) async {
+    Flushbar? flushbar;
+    flushbar = basic(
+      title: 'Invitation successfully deleted!',
+      message: 'Tap to hide',
+      icon: const Icon(Icons.person_add_disabled, size: 30, color: Colors.white),
+      duration: const Duration(seconds: 10),
+      onTap: () => flushbar!.dismiss(),
+    );
+    if (delay != null) {
+      await Future.delayed(Duration(milliseconds: delay));
+    }
     flushbar.show(NavigationService.context);
   }
 
@@ -31,7 +61,7 @@ class PpFlushbar {
 
   static Flushbar basic({
     String title = 'Title',
-    String message = 'Message',
+    String? message,
     Duration duration = const Duration(seconds: 5),
     Icon? icon,
     Function? onTap,
