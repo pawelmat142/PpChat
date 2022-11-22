@@ -161,3 +161,6 @@ delete account includes delete user and PRIVATE docs
 </br> includes also delete all notifications also for senders
 </br> adds record to DELETED_ACCOUNTS collection to show info about deleted account
 </br> fireAuth account needs to be deleted manually
+
+### [038] Contacts service
+contacts service prepared and registered
