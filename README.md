@@ -155,3 +155,9 @@ reject / cancel invitation
 
 ### [036] Delete all notifications feature
 notifications ale deleted also for senders
+
+### [037] Delete account feature
+delete account includes delete user and PRIVATE docs
+</br> includes also delete all notifications also for senders
+</br> adds record to DELETED_ACCOUNTS collection to show info about deleted account
+</br> fireAuth account needs to be deleted manually

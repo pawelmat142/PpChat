@@ -34,7 +34,7 @@ class HomeScreen extends StatelessWidget {
               ),
 
               PpButton(text: 'DELETE ACCOUNT',
-                onPressed: authService.deleteAccount,
+                onPressed: authService.onDeleteAccount,
               ),
 
               PpButton(text: 'CONTACTS',

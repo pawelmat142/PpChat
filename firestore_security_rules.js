@@ -21,11 +21,14 @@ service cloud.firestore {
       }
 
       match /NOTIFICATIONS/{from} {
-      	allow create: if logged();
+      	allow create, delete: if logged();
         allow read, delete, update: if (owner());
       }
+    }
 
 
+    match /DELETED_ACCOUNTS/{nickname} {
+    	allow create: if request.resource.data.uid == request.auth.uid
     }
 
   }
