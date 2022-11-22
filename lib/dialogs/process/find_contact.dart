@@ -83,8 +83,9 @@ class FindContact {
         .doc(_userService.nickname);
 
     batch.set(receiverRef, PpNotification.createInvitation(
-        text: message,
-        fromNickname: _userService.nickname).asMap);
+        sender: _userService.nickname,
+        receiver: nickname,
+        text: message).asMap);
 
     final selfRef = _firestore
         .collection(Collections.User)
@@ -93,8 +94,9 @@ class FindContact {
         .doc(nickname);
 
     selfNotification = PpNotification.createInvitationSelfNotification(
+        sender: _userService.nickname,
+        receiver: nickname,
         text: message,
-        fromNickname: nickname
     );
     batch.set(selfRef, selfNotification!.asMap);
 

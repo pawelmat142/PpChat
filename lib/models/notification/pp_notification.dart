@@ -3,20 +3,23 @@ import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 
 class PpNotification {
-  final String from;
+  final String sender;
+  final String receiver;
   final String type;
   bool isRead;
   final String text;
 
   PpNotification({
-    required this.from,
+    required this.sender,
+    required this.receiver,
     required this.type,
     required this.isRead,
     required this.text
   });
 
   Map<String, dynamic> get asMap => {
-    PpNotificationFields.from: from,
+    PpNotificationFields.sender: sender,
+    PpNotificationFields.receiver: receiver,
     PpNotificationFields.type: type,
     PpNotificationFields.isRead: isRead,
     PpNotificationFields.text: text,
@@ -25,7 +28,8 @@ class PpNotification {
   static PpNotification fromMap(Map<String, dynamic> notificationMap) {
     PpNotificationFields.validate(notificationMap);
     return PpNotification(
-      from: notificationMap[PpNotificationFields.from],
+      sender: notificationMap[PpNotificationFields.sender],
+      receiver: notificationMap[PpNotificationFields.receiver],
       type: notificationMap[PpNotificationFields.type],
       isRead: notificationMap[PpNotificationFields.isRead],
       text: notificationMap[PpNotificationFields.text],
@@ -40,15 +44,17 @@ class PpNotification {
     }
   }
 
-  static PpNotification createInvitation({required String text, required String fromNickname}) => PpNotification(
-      from: fromNickname,
+  static PpNotification createInvitation({required String text, required String sender, required String receiver}) => PpNotification(
+      sender: sender,
+      receiver: receiver,
       type: PpNotificationTypes.invitation,
       isRead: false,
       text: text
   );
 
-  static PpNotification createInvitationSelfNotification({required String text, required String fromNickname}) => PpNotification(
-      from: fromNickname,
+  static PpNotification createInvitationSelfNotification({required String text, required String sender, required String receiver}) => PpNotification(
+      sender: sender,
+      receiver: receiver,
       type: PpNotificationTypes.invitationSelfNotification,
       isRead: true,
       text: text

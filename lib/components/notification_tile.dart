@@ -75,7 +75,7 @@ class NotificationTile extends StatelessWidget {
 
           const SizedBox(height: 4),
 
-          Text(notification.from, style: const TextStyle(
+          Text(notification.sender, style: const TextStyle(
             fontSize: 15,
             color: PRIMARY_COLOR_LIGHTER,
           )),

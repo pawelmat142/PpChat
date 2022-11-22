@@ -164,3 +164,7 @@ delete account includes delete user and PRIVATE docs
 
 ### [038] Contacts service
 contacts service prepared and registered
+
+### [039] Notifications refactor
+notifications has sender and receiver properties now
+new notification type - invitation acceptance

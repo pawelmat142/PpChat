@@ -39,7 +39,7 @@ class NotificationView extends StatelessWidget {
   Widget build(BuildContext context) {
 
     if (!notification.isRead) {
-      notificationService.markNotificationAsRead(docId: notification.from);
+      notificationService.markNotificationAsRead(docId: notification.sender);
     }
 
     return Scaffold(
@@ -66,7 +66,7 @@ class NotificationView extends StatelessWidget {
               ),
 
               //NICKNAME
-              Text(notification.from,
+              Text(notification.sender,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 30,

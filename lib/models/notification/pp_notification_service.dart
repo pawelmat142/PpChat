@@ -67,8 +67,8 @@ class PpNotificationService {
 
   PpNotification? _getNewOneFromList(List<PpNotification> newList) {
     if (listEquals(newList, _current)) return null;
-    final currentNotificationsFroms = _current.map((n) => n.from).toList();
-    List<PpNotification> result = newList.where((n) => !currentNotificationsFroms.contains(n.from)).toList();
+    final currentNotificationsFroms = _current.map((n) => n.sender).toList();
+    List<PpNotification> result = newList.where((n) => !currentNotificationsFroms.contains(n.sender)).toList();
     return result.isNotEmpty ? result.first.isRead ? null : result.first : null;
   }
 
@@ -82,8 +82,9 @@ class PpNotificationService {
           Navigator.pop(NavigationService.context);
           _spinner.start();
           final batch = _firestore.batch();
-          batch.delete(_myNotificationsCollectionRef.doc(notification.from));
-          batch.delete(_getFromNotificationDocumentRef(notification));
+          final imSender = _userService.nickname == notification.sender;
+          batch.delete(_myNotificationsCollectionRef.doc(imSender ? notification.receiver : notification.sender));
+          batch.delete(_getReceiverNotificationDocumentRef(notification, imSender));
           await batch.commit();
           _spinner.stop();
           PpFlushbar.invitationDeleted(delay: 100);
@@ -91,16 +92,20 @@ class PpNotificationService {
     ]);
   }
 
-  _getFromNotificationDocumentRef(PpNotification notification)  {
-    return _firestore.collection(Collections.User).doc(notification.from).collection(Collections.NOTIFICATIONS).doc(_userService.nickname);
+  _getReceiverNotificationDocumentRef(PpNotification notification, bool imSender)  {
+    return _firestore.collection(Collections.User)
+        .doc(imSender ? notification.receiver : notification.sender)
+        .collection(Collections.NOTIFICATIONS)
+        .doc(imSender ? notification.sender : notification.receiver);
   }
 
   deleteAllNotifications() async {
     try {
       final batch = _firestore.batch();
       for (var notification in _current) {
-        batch.delete(_myNotificationsCollectionRef.doc(notification.from));
-        batch.delete(_getFromNotificationDocumentRef(notification));
+        final imSender = _userService.nickname == notification.sender;
+        batch.delete(_myNotificationsCollectionRef.doc(imSender ? notification.receiver : notification.sender));
+        batch.delete(_getReceiverNotificationDocumentRef(notification, imSender));
       }
       await batch.commit();
     } catch (error) {
