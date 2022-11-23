@@ -168,3 +168,9 @@ contacts service prepared and registered
 ### [039] Notifications refactor
 notifications has sender and receiver properties now
 new notification type - invitation acceptance
+
+### [040] Invitation acceptance - receiver
+Contacts as one document subcollection of User - list of nicknames
+</br> security rules for CONTACTS subcollection - only owner
+</br>receiver accept invitation = add to contacts sender nickname
+</br>invitation acceptance view added

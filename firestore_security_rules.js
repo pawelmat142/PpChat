@@ -20,9 +20,14 @@ service cloud.firestore {
         allow write: if request.resource.data.uid == request.auth.uid;
       }
 
-      match /NOTIFICATIONS/{from} {
-      	allow create, delete: if logged();
+      match /NOTIFICATIONS/{nickname} {
+      // TODO: some more rules to lock notifications only for sender/receiver
+      	allow create, delete, update: if logged();
         allow read, delete, update: if (owner());
+      }
+
+      match /CONTACTS/{nickname} {
+        allow write, read: if owner();
       }
     }
 

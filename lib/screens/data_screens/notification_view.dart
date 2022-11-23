@@ -5,6 +5,7 @@ import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
+import 'package:flutter_chat_app/screens/data_screens/invitation_acceptance_view.dart';
 import 'package:flutter_chat_app/screens/data_screens/invitation_self_notification_view.dart';
 import 'package:flutter_chat_app/screens/data_screens/invitation_view.dart';
 
@@ -15,6 +16,7 @@ class NotificationView extends StatelessWidget {
     switch (notification.type) {
       case PpNotificationTypes.invitation: return InvitationView(notification);
       case PpNotificationTypes.invitationSelfNotification: return InvitationSelfNotificationView(notification);
+      case PpNotificationTypes.invitationAcceptance: return InvitationAcceptanceView(notification);
       default: return NotificationView(notification);
     }
   }
@@ -39,7 +41,7 @@ class NotificationView extends StatelessWidget {
   Widget build(BuildContext context) {
 
     if (!notification.isRead) {
-      notificationService.markNotificationAsRead(docId: notification.sender);
+      notificationService.markNotificationAsRead(notification);
     }
 
     return Scaffold(
