@@ -32,8 +32,9 @@ class ContactTile extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: TILE_PADDING_VERTICAL),
                   child: IconButton(
-                    onPressed: () {},
-                    //TODO: akcept/ reject invitation
+                    onPressed: () {
+                      // TODO: navigate to contact view
+                    },
                     icon: const Icon(Icons.message, size: 35, color: PRIMARY_COLOR_LIGHTER),
                     color: PRIMARY_COLOR,
                   ),

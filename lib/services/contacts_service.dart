@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
-import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
+import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart';
@@ -43,7 +42,7 @@ class ContactsService {
     _current = [];
   }
 
-  acceptInvitation(PpNotification notification, {bool pop = true}) async {
+  acceptInvitationForReceiver(PpNotification notification, {bool pop = true}) async {
     try {
       _spinner.start();
       final batch = _firestore.batch();
@@ -66,16 +65,30 @@ class ContactsService {
       newList.add(notification.sender);
       batch.set(_contactsListRef, {contactsFieldName: newList});
 
-      //TODO: security rules
       await batch.commit();
       _spinner.stop();
-      // _current = newList;
-      if (pop) {
-        Navigator.pop(NavigationService.context);
-      }
-    //  TODO: add flushbar
+      _current = newList;
     } catch (error) {
       _spinner.stop();
+      print(error);
+    }
+  }
+
+  resolveInvitationAcceptancesForSender(List<PpNotification> notifications) async {
+    try {
+      final invitationAcceptances = PpNotification.filterInvitationAcceptances(notifications);
+      if (invitationAcceptances.isNotEmpty) {
+        var newList = _current.map((n) => n).toList();
+
+        for (var notification in invitationAcceptances) {
+          newList.add(notification.receiver);
+        }
+
+        await _contactsListRef.set({contactsFieldName: newList});
+        _current = newList;
+        PpFlushbar.invitationAcceptanceForSender(notifications: invitationAcceptances, delay: 200);
+      }
+    } catch (error) {
       print(error);
     }
   }

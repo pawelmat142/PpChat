@@ -151,8 +151,8 @@ class AuthenticationService {
 
   _loginServices() async {
     await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
-    _notificationService.login();
     _contactsService.login();
+    _notificationService.login();
   }
 
   _logoutServices() async {

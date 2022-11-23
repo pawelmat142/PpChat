@@ -12,10 +12,12 @@ import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
+import 'package:flutter_chat_app/services/contacts_service.dart';
 
 class PpNotificationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _userService = getIt.get<PpUserService>();
+  final _contactsService = getIt.get<ContactsService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
 
@@ -41,6 +43,7 @@ class PpNotificationService {
       if (!first) _notificationFlush(notifications);
       _current = notifications;
       _controller.sink.add(notifications);
+      _contactsService.resolveInvitationAcceptancesForSender(_current);
       first = false;
     }, onError:(error) {
       _current = [];
@@ -128,13 +131,6 @@ class PpNotificationService {
           _spinner.stop();
           PpFlushbar.notificationsDeleted();
         })]);
-  }
-
-  acceptInvitation(PpNotification notification) async {
-    await _getAnotherUserNotificationDocumentRef(notification).update({
-      PpNotificationFields.type: PpNotificationTypes.invitationAcceptance,
-      PpNotificationFields.isRead: false,
-    });
   }
 
 }

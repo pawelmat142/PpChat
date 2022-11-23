@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
+import 'package:flutter_chat_app/screens/notifications_screen.dart';
 
 class PpFlushbar {
 
@@ -47,6 +48,30 @@ class PpFlushbar {
       icon: const Icon(Icons.person_add_disabled, size: 30, color: Colors.white),
       duration: const Duration(seconds: 10),
       onTap: () => flushbar!.dismiss(),
+    );
+    if (delay != null) {
+      await Future.delayed(Duration(milliseconds: delay));
+    }
+    flushbar.show(NavigationService.context);
+  }
+
+  static void invitationAcceptanceForSender({List<PpNotification>? notifications, int? delay}) async {
+    Flushbar? flushbar;
+    flushbar = basic(
+      title: 'Your invitation has been accepted!',
+      message: 'Tap to checkout',
+      icon: const Icon(Icons.person_add, size: 30, color: Colors.white),
+      duration: const Duration(seconds: 10),
+      onTap: () {
+        flushbar!.dismiss();
+        if (notifications != null) {
+          if (notifications.length == 1) {
+            NotificationView.navigate(notifications.first);
+          } else {
+            Navigator.pushNamed(NavigationService.context, NotificationsScreen.id);
+          }
+        }
+      },
     );
     if (delay != null) {
       await Future.delayed(Duration(milliseconds: delay));

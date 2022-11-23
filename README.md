@@ -174,3 +174,7 @@ Contacts as one document subcollection of User - list of nicknames
 </br> security rules for CONTACTS subcollection - only owner
 </br>receiver accept invitation = add to contacts sender nickname
 </br>invitation acceptance view added
+
+### [041] Invitation acceptance - sender
+sender get invitationAcceptance = add to contacts receiver nickname - only if not read
+</br> invitation acceptance flushbar
