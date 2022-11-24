@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
+import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
@@ -17,6 +18,7 @@ class ContactsService {
   final _firestore = FirebaseFirestore.instance;
   final _userService = getIt.get<PpUserService>();
   final _spinner = getIt.get<PpSpinner>();
+  final _popup = getIt.get<Popup>();
 
   DocumentReference<Map<String, dynamic>> get _contactNicknamesDocRef {
     return _firestore.collection(Collections.User)
@@ -42,10 +44,11 @@ class ContactsService {
     }
   }
 
-  logout() {
+  logout() async {
     for (var subscription in _userSubscriptions) {
-      subscription.cancel();
+      await subscription.cancel();
     }
+    _userSubscriptions = [];
     _currentContactNicknames = [];
     _currentContactUsers = [];
     _setStateToContactsScreen();
@@ -125,7 +128,7 @@ class ContactsService {
       _addContactUserSubscription(notification.sender);
     } catch (error) {
       _spinner.stop();
-      print(error);
+      _popup.sww(text: 'acceptInvitationForReceiver');
     }
   }
 
@@ -138,7 +141,7 @@ class ContactsService {
         PpFlushbar.invitationAcceptanceForSender(notifications: invitationAcceptances, delay: 200);
       }
     } catch (error) {
-      print(error);
+      _popup.sww(text: 'resolveInvitationAcceptancesForSender');
     }
   }
 
@@ -148,10 +151,8 @@ class ContactsService {
       final batch = _firestore.batch();
 
       //contact remove notification for sender
-      final receiverNotification = PpNotification.createContactRemove(sender: _userService.nickname, receiver: nickname);
-      final receiverDocRef = _firestore.collection(Collections.User).doc(nickname)
-          .collection(Collections.NOTIFICATIONS).doc(_userService.nickname);
-      batch.set(receiverDocRef, receiverNotification.asMap);
+      final receiverNotification = PpNotification.createContactDeleted(sender: _userService.nickname, receiver: nickname);
+      batch.set(_getNotificationReceiverDocRef(nickname), receiverNotification.asMap);
 
       //remove from contacts
       var newList = _currentContactNicknames.where((n) => n != nickname).toList();
@@ -163,8 +164,13 @@ class ContactsService {
       PpFlushbar.contactDeletedNotificationForSender(nickname: nickname, delay: 200);
     } catch (error) {
       _spinner.stop();
-      print(error);
+      _popup.sww(text: 'deleteContactForSender');
     }
+  }
+
+  _getNotificationReceiverDocRef(String nickname) {
+    return _firestore.collection(Collections.User).doc(nickname)
+        .collection(Collections.NOTIFICATIONS).doc(_userService.nickname);
   }
 
   resolveContactDeletedNotificationsForReceiver(List<PpNotification> notifications) async {
@@ -187,8 +193,27 @@ class ContactsService {
         }
       }
     } catch (error) {
-      print(error);
+      _popup.sww(text: 'resolveContactDeletedNotificationsForReceiver');
     }
+  }
+
+  deleteAllContacts() async {
+    try {
+      final batch = _firestore.batch();
+
+      for (var nickname in _currentContactNicknames) {
+        var receiverNotification = PpNotification.createContactDeleted(sender: _userService.nickname, receiver: nickname);
+        batch.set(_getNotificationReceiverDocRef(nickname), receiverNotification.asMap);
+      }
+      batch.delete(_contactNicknamesDocRef);
+
+      await batch.commit();
+      await logout();
+
+    } catch (error) {
+      _popup.sww(text: 'delete all  contacts error');
+    }
+
   }
 
   _removeCurrentContactByNickname(String nickname) async {

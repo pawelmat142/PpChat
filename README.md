@@ -193,3 +193,5 @@ contact tile shows if user is logged or not
 new notification type - contactDeletedNotification - has no view
 </br> is sent to receiver when sender deletes contact
 </br> and automatically deletes contact for receiver if logged or when login
+
+### [045] Sww popup, delete all contacts

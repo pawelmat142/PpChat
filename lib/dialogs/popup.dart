@@ -109,4 +109,8 @@ class Popup {
     }
   }
 
+  sww({String? text}) {
+    show('Something went wrong! :(', error: true, content: text != null ? Text(text) : null);
+  }
+
 }

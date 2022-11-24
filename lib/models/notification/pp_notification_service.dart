@@ -113,12 +113,14 @@ class PpNotificationService {
       final batch = _firestore.batch();
       for (var notification in _current) {
         batch.delete(_myNotificationsCollectionRef.doc(_imSender(notification) ? notification.receiver : notification.sender));
-        batch.delete(_getAnotherUserNotificationDocumentRef(notification, isSender: _imSender(notification)));
+        if (notification.type != PpNotificationTypes.contactDeletedNotification) {
+          batch.delete(_getAnotherUserNotificationDocumentRef(notification, isSender: _imSender(notification)));
+        }
       }
       await batch.commit();
     } catch (error) {
       _spinner.stop();
-      _popup.show('delete all notifications error!', error: true);
+      _popup.sww(text: 'delete all notifications error');
     }
   }
 

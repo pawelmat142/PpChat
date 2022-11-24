@@ -60,7 +60,7 @@ class PpNotification {
       text: text
   );
 
-  static PpNotification createContactRemove({required String sender, required String receiver}) => PpNotification(
+  static PpNotification createContactDeleted({required String sender, required String receiver}) => PpNotification(
       sender: sender,
       receiver: receiver,
       type: PpNotificationTypes.contactDeletedNotification,

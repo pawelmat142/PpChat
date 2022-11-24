@@ -112,8 +112,8 @@ class AuthenticationService {
     try {
       _isDeletingAccount = true;
       _spinner.start();
-      //TODO: try to make those three above as one batch
-      //TODO: delete contacts = also send contactDeletedNotification
+      //TODO: try to make those four above as one batch
+      await _contactsService.deleteAllContacts();
       await _userService.deleteUserDocument();
       await _notificationService.deleteAllNotifications();
       await _addDeletedAccountLog();
