@@ -195,3 +195,5 @@ new notification type - contactDeletedNotification - has no view
 </br> and automatically deletes contact for receiver if logged or when login
 
 ### [045] Sww popup, delete all contacts
+
+### [046] Navigator improvements and delete single notification feature

@@ -123,7 +123,7 @@ class AuthenticationService {
     }
     catch (error) {
       print(error);
-      _errorPopup();
+      _popup.sww(text: '_deleteAccount');
     }
   }
 

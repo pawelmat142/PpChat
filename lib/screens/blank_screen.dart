@@ -31,8 +31,6 @@ class BlankScreen extends StatelessWidget {
                   onPressed: () {
                     if (FirebaseAuth.instance.currentUser != null) {
                       Navigator.pushNamed(context, HomeScreen.id);
-                    } else {
-                      print('not logged!');
                     }
                   },
               ),

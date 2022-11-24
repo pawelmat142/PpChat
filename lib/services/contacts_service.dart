@@ -54,6 +54,10 @@ class ContactsService {
     _setStateToContactsScreen();
   }
 
+  getUserByNickname(String nickname) {
+    return _currentContactUsers.firstWhere((u) => u.nickname == nickname);
+  }
+
   _setStateToContactsScreen() {
     if (setStateToContactsScreen != null) {
       setStateToContactsScreen!();
@@ -100,36 +104,29 @@ class ContactsService {
   }
 
   acceptInvitationForReceiver(PpNotification notification, {bool pop = true}) async {
-    try {
-      _spinner.start();
-      final batch = _firestore.batch();
+    final batch = _firestore.batch();
 
-      //delete invitation
-      final myReceiverInvitationRef = _firestore.collection(Collections.User).doc(_userService.nickname)
-          .collection(Collections.NOTIFICATIONS).doc(notification.sender);
-      batch.delete(myReceiverInvitationRef);
+    //delete invitation
+    final myReceiverInvitationRef = _firestore.collection(Collections.User).doc(_userService.nickname)
+        .collection(Collections.NOTIFICATIONS).doc(notification.sender);
+    batch.delete(myReceiverInvitationRef);
 
-    // update sender invitationSelfNotification to invitation acceptance
-      final senderInvitationRef = _firestore.collection(Collections.User).doc(notification.sender)
-          .collection(Collections.NOTIFICATIONS).doc(notification.receiver);
-      batch.update(senderInvitationRef, {
-        PpNotificationFields.type: PpNotificationTypes.invitationAcceptance,
-        PpNotificationFields.isRead: false
-      });
+  // update sender invitationSelfNotification to invitation acceptance
+    final senderInvitationRef = _firestore.collection(Collections.User).doc(notification.sender)
+        .collection(Collections.NOTIFICATIONS).doc(notification.receiver);
+    batch.update(senderInvitationRef, {
+      PpNotificationFields.type: PpNotificationTypes.invitationAcceptance,
+      PpNotificationFields.isRead: false
+    });
 
-     // add to contacts
-      final newList = _currentContactNicknames.map((contact) => contact).toList();
-      newList.add(notification.sender);
-      batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
+   // add to contacts
+    final newList = _currentContactNicknames.map((contact) => contact).toList();
+    newList.add(notification.sender);
+    batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
 
-      await batch.commit();
-      _spinner.stop();
-      _currentContactNicknames = newList;
-      _addContactUserSubscription(notification.sender);
-    } catch (error) {
-      _spinner.stop();
-      _popup.sww(text: 'acceptInvitationForReceiver');
-    }
+    await batch.commit();
+    _currentContactNicknames = newList;
+    _addContactUserSubscription(notification.sender);
   }
 
   resolveInvitationAcceptancesForSender(List<PpNotification> notifications) async {

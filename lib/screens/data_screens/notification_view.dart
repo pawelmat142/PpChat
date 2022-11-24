@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/dialogs/popup.dart';
+import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 import 'package:flutter_chat_app/screens/data_screens/invitation_acceptance_view.dart';
 import 'package:flutter_chat_app/screens/data_screens/invitation_self_notification_view.dart';
 import 'package:flutter_chat_app/screens/data_screens/invitation_view.dart';
+import 'package:flutter_chat_app/services/contacts_service.dart';
 
 class NotificationView extends StatelessWidget {
 
@@ -30,11 +33,15 @@ class NotificationView extends StatelessWidget {
 
   final PpNotification notification;
   final notificationService = getIt.get<PpNotificationService>();
+  final contactsService = getIt.get<ContactsService>();
+  final spinner = getIt.get<PpSpinner>();
+  final popup = getIt.get<Popup>();
 
   NotificationView(this.notification, {super.key});
 
   String get title => 'Notification';
   String get content => 'You have new notification!';
+  String get nickname => notification.sender;
   List<Widget> get buttons => [];
 
   @override
@@ -68,7 +75,7 @@ class NotificationView extends StatelessWidget {
               ),
 
               //NICKNAME
-              Text(notification.sender,
+              Text(nickname,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 30,

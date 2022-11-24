@@ -8,13 +8,13 @@ import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
 
 class UserView extends DataView {
-  UserView({required super.interface,  super.key});
+  const UserView({required super.interface,  super.key});
 
-  static navigate(PpUser user) {
+  static navigate(PpUser user) async {
     final contactsService = getIt.get<ContactsService>();
     final popup = getIt.get<Popup>();
 
-    Navigator.push(
+    await Navigator.push(
         NavigationService.context,
         MaterialPageRoute(builder: (context) => UserView(interface: DataViewInterface(
           title: 'CONTACT VIEW',

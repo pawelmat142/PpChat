@@ -86,6 +86,16 @@ class PpNotificationService {
         .update({PpNotificationFields.isRead: true});
   }
 
+  deleteSingleNotification({PpNotification? notification, String? nickname}) async {
+    if (nickname != null) {
+      await _myNotificationsCollectionRef.doc(nickname).delete();
+    } else if (notification != null) {
+      await _myNotificationsCollectionRef.doc(notification.receiver).delete();
+    } else {
+      throw Exception(['need one argument!']);
+    }
+  }
+
   deleteInvitation(PpNotification notification) async {
     await _popup.show('Are you shure?', buttons: [
       PopupButton('Yes', onPressed: () async {

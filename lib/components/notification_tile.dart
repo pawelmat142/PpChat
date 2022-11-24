@@ -75,7 +75,7 @@ class NotificationTile extends StatelessWidget {
 
           const SizedBox(height: 4),
 
-          Text(notification.sender, style: const TextStyle(
+          Text(getNickname(), style: const TextStyle(
             fontSize: 15,
             color: PRIMARY_COLOR_LIGHTER,
           )),
@@ -83,6 +83,12 @@ class NotificationTile extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  getNickname() {
+    return notification.type == PpNotificationTypes.invitationAcceptance
+        ? notification.receiver
+        : notification.sender;
   }
 
   getTitle() {
