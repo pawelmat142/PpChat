@@ -31,15 +31,9 @@ class NotificationTile extends StatelessWidget {
 
                   Padding(
                     padding: const EdgeInsets.only(right: TILE_PADDING_VERTICAL),
-                    child: IconButton(
-                      onPressed: () {
-                      //  TODO: implement swap little bit left and delete icon shows
-                      },
-                      icon: Icon(Icons.message,
-                          color: notification.isRead ? Colors.green : Colors.red,
-                          size: 35,
-                      ),
-                      color: PRIMARY_COLOR,
+                    child: Icon(Icons.message,
+                      color: notification.isRead ? Colors.green : Colors.red,
+                      size: 35,
                     ),
                   ),
 

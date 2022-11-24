@@ -6,11 +6,15 @@ import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
+import 'package:flutter_chat_app/services/contacts_service.dart';
 
 class FindContact {
 
   final _userService = getIt.get<PpUserService>();
+  final _contactsService = getIt.get<ContactsService>();
+  final _notificationService = getIt.get<PpNotificationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -40,8 +44,15 @@ class FindContact {
     else if (nickname == _userService.nickname) {
       await _popup.show('You have found yourself.', error: true);
     }
-    //TODO: add checking if not already in contacts
-    // TODO: invitation send not possible when invitation received or send
+    else if (_contactsService.currentContactNicknames.contains(nickname)) {
+      await _popup.show('Already in contacts!', text: nickname, error: true);
+    }
+    else if (_notificationService.isInvitationSent(nickname)) {
+      await _popup.show('Invitation already sent to:', text: nickname, error: true);
+    }
+    else if (_notificationService.isInvitationReceived(nickname)) {
+      await _popup.show('Invitation already received from:', text: nickname, error: true);
+    }
     else {
       _spinner.start();
       final result = await _userService.findByNickname(nickname);

@@ -20,7 +20,6 @@ abstract class PpNotificationFields {
         && notificationMap[PpNotificationFields.text] is String
     ) {return;} else {
       throw Exception(["Notification MAP ERROR"]);
-      //  TODO: obsłużyć popup?
     }
   }
 }

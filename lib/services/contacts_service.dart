@@ -29,6 +29,7 @@ class ContactsService {
 
   //CURRENT VALUE
   List<String> _currentContactNicknames = [];
+  List<String> get currentContactNicknames => _currentContactNicknames;
   List<PpUser> _currentContactUsers = [];
   List<PpUser> get currentContactUsers => _currentContactUsers;
 

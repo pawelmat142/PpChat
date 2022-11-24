@@ -12,7 +12,6 @@ class ContactTile extends StatelessWidget {
 
   _navigate() {
     UserView.navigate(user);
-    //TODO: navigate to contact view
   }
 
   @override

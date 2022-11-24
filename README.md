@@ -197,3 +197,5 @@ new notification type - contactDeletedNotification - has no view
 ### [045] Sww popup, delete all contacts
 
 ### [046] Navigator improvements and delete single notification feature
+
+### [047] small todos cleanup

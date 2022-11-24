@@ -58,6 +58,24 @@ class PpNotificationService {
     _controller.sink.add([]);
   }
 
+  isInvitationReceived(String nickname) {
+    for (var notification in _current) {
+      if (notification.sender == nickname && notification.type == PpNotificationTypes.invitation) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  isInvitationSent(String nickname) {
+    for (var notification in _current) {
+      if (notification.receiver == nickname && notification.type == PpNotificationTypes.invitationSelfNotification) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   _notificationFlush(List<PpNotification> newList) async {
     final newNotification = _getNewOneFromList(newList);
     if (newNotification != null) {

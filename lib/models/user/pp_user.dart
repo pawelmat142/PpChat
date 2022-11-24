@@ -51,7 +51,6 @@ class PpUser {
           && ppUserMap[PpUserFields.logged] is bool
       ) {return;} else {
           throw Exception(["PpUser MAP ERROR"]);
-      //  TODO: obsłużyć popup?
       }
   }
 
