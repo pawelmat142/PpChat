@@ -142,6 +142,64 @@ class ContactsService {
     }
   }
 
+  deleteContactForSender(String nickname) async {
+    try {
+      _spinner.start();
+      final batch = _firestore.batch();
+
+      //contact remove notification for sender
+      final receiverNotification = PpNotification.createContactRemove(sender: _userService.nickname, receiver: nickname);
+      final receiverDocRef = _firestore.collection(Collections.User).doc(nickname)
+          .collection(Collections.NOTIFICATIONS).doc(_userService.nickname);
+      batch.set(receiverDocRef, receiverNotification.asMap);
+
+      //remove from contacts
+      var newList = _currentContactNicknames.where((n) => n != nickname).toList();
+      batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
+
+      await batch.commit();
+      await _removeCurrentContactByNickname(nickname);
+      _spinner.stop();
+      PpFlushbar.contactDeletedNotificationForSender(nickname: nickname, delay: 200);
+    } catch (error) {
+      _spinner.stop();
+      print(error);
+    }
+  }
+
+  resolveContactDeletedNotificationsForReceiver(List<PpNotification> notifications) async {
+    try {
+      final deletedContactNicknames = PpNotification.filterContactDeletedNotifications(notifications).map((n) => n.sender).toList();
+      if (deletedContactNicknames.isNotEmpty) {
+        final batch = _firestore.batch();
+
+        final newList = _currentContactNicknames.where((u) => !deletedContactNicknames.contains(u)).toList();
+        batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
+
+        for (var nickname in deletedContactNicknames) {
+          batch.delete(_firestore.collection(Collections.User).doc(_userService.nickname)
+              .collection(Collections.NOTIFICATIONS).doc(nickname));
+        }
+        await batch.commit();
+
+        for (var nickname in deletedContactNicknames) {
+          await _removeCurrentContactByNickname(nickname);
+        }
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  _removeCurrentContactByNickname(String nickname) async {
+    final index = _currentContactNicknames.indexWhere((n) => n == nickname);
+    _currentContactNicknames.removeAt(index);
+    _currentContactUsers.removeAt(index);
+    await _userSubscriptions[index].cancel();
+    _userSubscriptions.removeAt(index);
+    _setStateToContactsScreen();
+  }
+
   _addContacts(List<String> nicknames) async {
     var newList = _currentContactNicknames.map((n) => n).toList();
     for (var nickname in nicknames) {

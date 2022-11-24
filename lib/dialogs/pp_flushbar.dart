@@ -79,6 +79,21 @@ class PpFlushbar {
     flushbar.show(NavigationService.context);
   }
 
+  static void contactDeletedNotificationForSender({required String nickname, int? delay}) async {
+    Flushbar? flushbar;
+    flushbar = basic(
+      title: 'Contact deleted!',
+      message: nickname,
+      icon: const Icon(Icons.person_add_disabled, size: 30, color: Colors.white),
+      duration: const Duration(seconds: 10),
+      onTap: () => flushbar!.dismiss(),
+    );
+    if (delay != null) {
+      await Future.delayed(Duration(milliseconds: delay));
+    }
+    flushbar.show(NavigationService.context);
+  }
+
   static void notificationsDeleted() async {
     Flushbar? flushbar;
     flushbar = basic(

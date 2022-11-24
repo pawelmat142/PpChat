@@ -60,6 +60,14 @@ class PpNotification {
       text: text
   );
 
+  static PpNotification createContactRemove({required String sender, required String receiver}) => PpNotification(
+      sender: sender,
+      receiver: receiver,
+      type: PpNotificationTypes.contactDeletedNotification,
+      isRead: true,
+      text: PpNotificationTypes.contactDeletedNotification
+  );
+
   static List<PpNotification> filterUnread(List<PpNotification> input) {
     return input.where((notification) => !notification.isRead).toList();
   }
@@ -70,5 +78,9 @@ class PpNotification {
 
   static List<PpNotification> filterInvitationAcceptances(List<PpNotification> input) {
     return input.where((notification) => notification.type == PpNotificationTypes.invitationAcceptance && !notification.isRead).toList();
+  }
+
+  static List<PpNotification> filterContactDeletedNotifications(List<PpNotification> input) {
+    return input.where((notification) => notification.type == PpNotificationTypes.contactDeletedNotification).toList();
   }
 }

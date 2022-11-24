@@ -188,3 +188,8 @@ reactive contacts screen
 contact tile shows if user is logged or not
 </br> contact view added as data view extension
 </br> contact tiles sorting - logged first
+
+### [044] Delete contact feature
+new notification type - contactDeletedNotification - has no view
+</br> is sent to receiver when sender deletes contact
+</br> and automatically deletes contact for receiver if logged or when login

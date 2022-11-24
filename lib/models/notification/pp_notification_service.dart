@@ -44,6 +44,7 @@ class PpNotificationService {
       _current = notifications;
       _controller.sink.add(notifications);
       _contactsService.resolveInvitationAcceptancesForSender(_current);
+      _contactsService.resolveContactDeletedNotificationsForReceiver(_current);
       first = false;
     }, onError:(error) {
       _current = [];
