@@ -34,16 +34,12 @@ class ContactsService {
 
   Function? setStateToContactsScreen;
 
-
-
   login() async {
     _userSubscriptions = [];
     await _getCurrentContactNicknamesFromDB();
     for (var nickname in _currentContactNicknames) {
       _addContactUserSubscription(nickname);
     }
-    print('_currentContactNicknames: ');
-    print(_currentContactNicknames);
   }
 
   logout() {

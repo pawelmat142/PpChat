@@ -183,3 +183,8 @@ sender get invitationAcceptance = add to contacts receiver nickname - only if no
 reactive contacts screen
 </br> service stores each user subscription
 </br> any change sets state to contacts screen
+
+### [043] Contact tile develop
+contact tile shows if user is logged or not
+</br> contact view added as data view extension
+</br> contact tiles sorting - logged first
