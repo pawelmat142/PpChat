@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
 import 'package:flutter_chat_app/models/user/pp_user_roles.dart';
 
@@ -25,6 +26,14 @@ class PpUser {
           role: ppUserMap[PpUserFields.role],
           logged: ppUserMap[PpUserFields.logged],
       );
+  }
+
+  static PpUser fromDB(DocumentSnapshot<Object?> doc) {
+    try {
+      return PpUser.fromMap(doc.data() as Map<String, dynamic>);
+    } catch (error) {
+      throw Exception(['FIREBASE OBJECT CAST TO MAP ERROR - USER']);
+    }
   }
 
   static PpUser create({required String nickname}) => PpUser(

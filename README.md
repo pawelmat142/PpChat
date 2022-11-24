@@ -178,3 +178,8 @@ Contacts as one document subcollection of User - list of nicknames
 ### [041] Invitation acceptance - sender
 sender get invitationAcceptance = add to contacts receiver nickname - only if not read
 </br> invitation acceptance flushbar
+
+### [042] Contacts screen and service develop
+reactive contacts screen
+</br> service stores each user subscription
+</br> any change sets state to contacts screen

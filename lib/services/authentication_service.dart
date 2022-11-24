@@ -113,13 +113,16 @@ class AuthenticationService {
       _isDeletingAccount = true;
       _spinner.start();
       //TODO: try to make those three above as one batch
+      //TODO: delete contacts = also send contactDeletedNotification
       await _userService.deleteUserDocument();
       await _notificationService.deleteAllNotifications();
       await _addDeletedAccountLog();
+      await _logoutServices();
       await _fireAuth.signOut();
       _spinner.stop();
     }
     catch (error) {
+      print(error);
       _errorPopup();
     }
   }
@@ -156,9 +159,9 @@ class AuthenticationService {
   }
 
   _logoutServices() async {
-    await _userService.logout();
-    _notificationService.logout();
     _contactsService.logout();
+    _notificationService.logout();
+    await _userService.logout();
   }
 
   void _errorPopup() {
