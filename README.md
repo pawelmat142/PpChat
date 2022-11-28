@@ -206,3 +206,8 @@ new notification type - contactDeletedNotification - has no view
 
 ### [049] conversation view
 prepared as view navigated from contacts screen by tap on contact tile
+
+### [050] Message data model
+conversation service register
+</br>conversation view with listener
+</br>basic security rules

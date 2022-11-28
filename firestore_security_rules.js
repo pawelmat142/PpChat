@@ -22,12 +22,16 @@ service cloud.firestore {
 
       match /NOTIFICATIONS/{nickname} {
       // TODO: some more rules to lock notifications only for sender/receiver
-      	allow create, delete, update: if logged();
-        allow read, delete, update: if (owner());
+      	allow read, write: if logged();
       }
 
       match /CONTACTS/{nickname} {
         allow write, read: if owner();
+      }
+
+      match /Messages/{msgDocId} {
+       //TODO: make some rules to lock messages only for receiver and allow send for senders
+        allow write, read: if logged();
       }
     }
 
