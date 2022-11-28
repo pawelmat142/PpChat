@@ -211,3 +211,9 @@ prepared as view navigated from contacts screen by tap on contact tile
 conversation service register
 </br>conversation view with listener
 </br>basic security rules
+
+### [051] Hive - local storage - setup
+`flutter pub add hive`
+</br>`flutter remove add hive_flutter`
+</br>`flutter pub add hive_generator --dev`
+</br>`dart pub add build_runner --dev`
