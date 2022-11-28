@@ -115,7 +115,7 @@ class PpNotificationService {
   }
 
   deleteInvitation(PpNotification notification) async {
-    await _popup.show('Are you shure?', buttons: [
+    await _popup.show('Are you sure?', buttons: [
       PopupButton('Yes', onPressed: () async {
           Navigator.pop(NavigationService.context);
           _spinner.start();

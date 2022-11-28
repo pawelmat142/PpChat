@@ -7,8 +7,6 @@ import 'package:flutter_chat_app/screens/notifications_screen.dart';
 
 class PpFlushbar {
 
-  //TODO: implement navigate pops when navigate from flushbar to make shure there is no open for example contacts screens twice
-
   static void invitationNotification(PpNotification notification) {
     Flushbar? flushbar;
     flushbar = basic(
@@ -67,6 +65,7 @@ class PpFlushbar {
       onTap: () {
         flushbar!.dismiss();
         if (notifications != null) {
+          Navigator.pop(NavigationService.context);
           if (notifications.length == 1) {
             NotificationView.navigate(notifications.first);
           } else {

@@ -199,3 +199,5 @@ new notification type - contactDeletedNotification - has no view
 ### [046] Navigator improvements and delete single notification feature
 
 ### [047] small todos cleanup
+
+### [048] Invitation first message

@@ -26,12 +26,16 @@ class InvitationView extends NotificationView {
             spinner.start();
             await contactsService.acceptInvitationForReceiver(notification);
             Future.delayed(const Duration(milliseconds: 1000), () {
-              final user = contactsService.getUserByNickname(notification.sender);
-              NavigationService.popToHome();
-              Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-              UserView.navigate(user);
+              try {
+                final user = contactsService.getUserByNickname(notification.sender);
+                NavigationService.popToHome();
+                Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
+                UserView.navigate(user);
+                spinner.stop();
+              } catch (error) {
+                spinner.stop();
+              }
             });
-            spinner.stop();
           } catch (error) {
             spinner.stop();
             popup.show('acceptInvitationForReceiver');

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
+import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
@@ -20,6 +21,7 @@ class FindContact {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String nickname = '';
+  String message = '';
   PpNotification? selfNotification;
 
   FindContact() {
@@ -60,10 +62,41 @@ class FindContact {
       if (result == null) {
         _popup.show('Nothing found', error: true);
       } else {
-        await _popup.show('Result:',
-            text: result.nickname,
+        await _popup.show('Result!',
             enableNavigateBack: true,
-            buttons: [PopupButton('Invite', onPressed: _onInvite)]
+            content: Column(children: [
+
+              RichText(textAlign: TextAlign.left, text: TextSpan(children: [
+                const TextSpan(text: 'You have found user:  ', style: TextStyle(fontSize: 16, color: Colors.black87)),
+                TextSpan(text: result.nickname, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: PRIMARY_COLOR_DARKER)),
+              ], )),
+
+              const Padding(
+                  padding: EdgeInsets.only(top: 20, bottom: 10),
+                  child: Text('You can add invitation message sending invitation!'),
+              ),
+
+              TextField(
+                onChanged: (val) => message = val,
+                autofocus: true,
+                decoration: const InputDecoration(labelText: 'invitation message'),
+              ),
+
+            ]),
+
+            buttons: [PopupButton('Invite', onPressed: () {
+              if (message == '') {
+                _popup.show('Are you sure you want to send invitation without message?',
+                  error: true,
+                  enableDefaultButton: false,
+                  buttons: [
+                    PopupButton('No', error: true, onPressed: _onFind),
+                    PopupButton('Yes', onPressed: _onInvite),
+                  ]);
+              } else {
+                _onInvite();
+              }
+            })]
         );
       }
     }
@@ -84,8 +117,6 @@ class FindContact {
 
   _sendInvitationNotifications() async {
     final batch = _firestore.batch();
-        //TODO: implement invitation first message
-    final message = 'todo: implement invitation first message';
 
     final receiverRef = _firestore
         .collection(Collections.User)
