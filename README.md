@@ -201,3 +201,8 @@ new notification type - contactDeletedNotification - has no view
 ### [047] small todos cleanup
 
 ### [048] Invitation first message
+
+## feature/conversation
+
+### [049] conversation view
+prepared as view navigated from contacts screen by tap on contact tile
