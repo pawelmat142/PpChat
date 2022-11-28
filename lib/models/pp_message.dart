@@ -1,11 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive/hive.dart';
 
-class PpMessage {
+part 'pp_message.g.dart';
+
+@HiveType(typeId: 0)
+class PpMessage extends HiveObject {
+
+  @HiveField(0)
   final String sender;
+
+  @HiveField(1)
   final String receiver;
+
+  @HiveField(2)
   final String message;
-  final Timestamp timestamp;
+
+  @HiveField(3)
+  final DateTime timestamp;
+
+  @HiveField(4)
   final int timeToLive;
+
+  @HiveField(5)
   bool isRead;
 
   PpMessage({
@@ -34,7 +50,7 @@ class PpMessage {
       sender: messageMap[PpMessageFields.sender],
       receiver: messageMap[PpMessageFields.receiver],
       message: messageMap[PpMessageFields.message],
-      timestamp: messageMap[PpMessageFields.timestamp],
+      timestamp: messageMap[PpMessageFields.timestamp].toDate(),
       timeToLive: messageMap[PpMessageFields.timeToLive],
       isRead: messageMap[PpMessageFields.isRead],
     );
@@ -58,7 +74,7 @@ class PpMessage {
       receiver: receiver,
       sender: sender,
       message: message,
-      timestamp: Timestamp.now(),
+      timestamp: DateTime.now(),
       timeToLive: 0,
       isRead: false
     );
@@ -82,7 +98,8 @@ abstract class PpMessageFields {
         && messageMap.keys.contains(PpMessageFields.message)
         && messageMap[PpMessageFields.message] is String
         && messageMap.keys.contains(PpMessageFields.timestamp)
-        && messageMap[PpMessageFields.timestamp] is Timestamp        && messageMap.keys.contains(PpMessageFields.timeToLive)
+        && messageMap[PpMessageFields.timestamp] is Timestamp
+        && messageMap.keys.contains(PpMessageFields.timeToLive)
         && messageMap[PpMessageFields.timeToLive] is int
         && messageMap.keys.contains(PpMessageFields.isRead)
         && messageMap[PpMessageFields.isRead] is bool

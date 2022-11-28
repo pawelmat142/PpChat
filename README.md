@@ -217,3 +217,8 @@ conversation service register
 </br>`flutter remove add hive_flutter`
 </br>`flutter pub add hive_generator --dev`
 </br>`dart pub add build_runner --dev`
+
+### [052] Hive - local storage - type register
+message data model refactor to make it hive DAO
+</br>`flutter packages pub run build_runner build`
+</br> this command generates adapter file .g.dart
