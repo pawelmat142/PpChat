@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
 import 'package:flutter_chat_app/models/user/pp_user_roles.dart';
 
@@ -27,6 +28,14 @@ class PpUser {
       );
   }
 
+  static PpUser fromDB(DocumentSnapshot<Object?> doc) {
+    try {
+      return PpUser.fromMap(doc.data() as Map<String, dynamic>);
+    } catch (error) {
+      throw Exception(['FIREBASE OBJECT CAST TO MAP ERROR - USER']);
+    }
+  }
+
   static PpUser create({required String nickname}) => PpUser(
       nickname: nickname,
       role: PpUserRoles.USER,
@@ -42,7 +51,6 @@ class PpUser {
           && ppUserMap[PpUserFields.logged] is bool
       ) {return;} else {
           throw Exception(["PpUser MAP ERROR"]);
-      //  TODO: obsłużyć popup?
       }
   }
 

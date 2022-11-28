@@ -4,10 +4,11 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/firebase_options.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
+import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
-import 'package:flutter_chat_app/screens/test_screen.dart';
+import 'package:flutter_chat_app/screens/notifications_screen.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -32,9 +33,10 @@ class MyApp extends StatelessWidget {
       routes: {
         BlankScreen.id: (context) => const BlankScreen(),
         HomeScreen.id: (context) => const HomeScreen(),
+        ContactsScreen.id: (context) => ContactsScreen(),
+        NotificationsScreen.id: (context) => NotificationsScreen(),
         LoginFormScreen.id: (context) => LoginFormScreen(),
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
-        TestScreen.id: (context) => TestScreen(),
       },
     );
   }

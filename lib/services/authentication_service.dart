@@ -1,44 +1,52 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
+import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
+import 'package:flutter_chat_app/services/contacts_service.dart';
 
 class AuthenticationService {
   final _fireAuth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
   final _userService = getIt.get<PpUserService>();
+  final _contactsService = getIt.get<ContactsService>();
+  final _notificationService = getIt.get<PpNotificationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
 
   get context => NavigationService.context;
 
-  bool _firstUserListen = true;
-  bool _registerInProgress = false;
+  bool _isFirstUserListen = true;
+  bool _isRegisterInProgress = false;
+  bool _isDeletingAccount = false;
 
   AuthenticationService() {
     _fireAuth.idTokenChanges().listen((user) async {
       if (user == null) {
         _logoutResult();
-      } else if (_firstUserListen) {
+      } else if (_isFirstUserListen) {
         _loginResult();
       }
-      _firstUserListen = false;
+      _isFirstUserListen = false;
     });
   }
 
   void register({required String nickname, required String password}) async {
     try {
       _spinner.start();
-      _registerInProgress = true;
+      _isRegisterInProgress = true;
       await _fireAuth.createUserWithEmailAndPassword(email: _toEmail(nickname), password: password);
       await _userService.createNewUser(nickname: nickname);
       await _fireAuth.signOut();
-      _registerInProgress = false;
+      _isRegisterInProgress = false;
       _spinner.stop();
 
       _popup.show('Registration successful!',
@@ -48,21 +56,22 @@ class AuthenticationService {
       );
     }
     catch (error) {
-      _registerInProgress = false;
+      _isRegisterInProgress = false;
       _spinner.stop();
       if (error.toString().contains('email-already-in-use')) {
-        _popup.show('Login already in use!', error: true);
+        _popup.show('Nickname already in use!', error: true);
         return;
       }
       _errorPopup();
     }
   }
 
+  //when user login by form
   void login({required String nickname, required String password}) async {
     try {
       _spinner.start();
       await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
-      await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
+      await _loginServices();
       _spinner.stop();
       await Navigator.pushNamed(context, HomeScreen.id);
     }
@@ -80,7 +89,7 @@ class AuthenticationService {
   void logout() async {
     try {
       _spinner.start();
-      await _userService.logout();
+      await _logoutServices();
       await _fireAuth.signOut();
     }
     catch (error) {
@@ -88,33 +97,71 @@ class AuthenticationService {
     }
   }
 
-  void deleteAccount() async {
+  onDeleteAccount() {
+    _popup.show('Are you shure?',
+      text: 'All your data will be lost!',
+      error: true,
+      buttons: [PopupButton('Delete', error: true, onPressed: () {
+        Navigator.pop(NavigationService.context);
+        _deleteAccount();
+      })]
+    );
+  }
+
+  void _deleteAccount() async {
     try {
+      _isDeletingAccount = true;
       _spinner.start();
+      //TODO: try to make those four above as one batch
+      await _contactsService.deleteAllContacts();
       await _userService.deleteUserDocument();
+      await _notificationService.deleteAllNotifications();
+      await _addDeletedAccountLog();
+      await _logoutServices();
       await _fireAuth.signOut();
       _spinner.stop();
     }
     catch (error) {
-      _errorPopup();
+      print(error);
+      _popup.sww(text: '_deleteAccount');
     }
   }
 
+  _addDeletedAccountLog() async {
+      await _firestore.collection(Collections.DELETED_ACCOUNTS)
+          .doc(_userService.nickname)
+          .set({'uid': _fireAuth.currentUser!.uid, 'nickname': _userService.nickname});
+  }
 
+  //when user is already logged and start app
   void _loginResult() async {
-    if (_firstUserListen) await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
-    if (!_registerInProgress) {
+    if (_isFirstUserListen) _loginServices();
+    if (!_isRegisterInProgress) {
       _spinner.stop();
       await Navigator.pushNamed(context, HomeScreen.id);
     }
   }
 
   void _logoutResult() async {
-    if (!_firstUserListen && !_registerInProgress) {
+    if (!_isFirstUserListen && !_isRegisterInProgress && !_isDeletingAccount) {
+      await _logoutServices();
       _spinner.stop();
       await _popup.show('You are logged out!');
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
+    _isDeletingAccount = false;
+  }
+
+  _loginServices() async {
+    await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
+    _contactsService.login();
+    _notificationService.login();
+  }
+
+  _logoutServices() async {
+    _contactsService.logout();
+    _notificationService.logout();
+    await _userService.logout();
   }
 
   void _errorPopup() {

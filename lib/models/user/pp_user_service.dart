@@ -65,7 +65,9 @@ class PpUserService {
 
 
   _updateLogged(bool logged) async {
-    await _document.update({PpUserFields.logged : logged});
+    if (_nickname != null) {
+      await _document.update({PpUserFields.logged : logged});
+    }
   }
 
   get _privateDocumentData => {
