@@ -11,4 +11,8 @@ class NavigationService {
   static popToHome() {
     Navigator.popUntil(context, ModalRoute.withName(HomeScreen.id));
   }
+
+  static popToBlank() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
 }

@@ -36,8 +36,12 @@ class PpNotificationService {
   final _controller = StreamController.broadcast();
   get stream => _controller.stream;
 
+  //TODO: BUG: exception if invitation acceptance and messages from one user what is not contact yet
+  // make login future
+
   login() {
     bool first = true;
+    _userService.authValidate(where: 'notification service');
     _firestoreListener = _myNotificationsCollectionRef.snapshots().listen((querySnapshot) {
       final notifications = querySnapshot.docs.map((doc) => PpNotification.fromMap(doc.data())).toList();
       if (!first) _notificationFlush(notifications);
@@ -47,15 +51,18 @@ class PpNotificationService {
       _contactsService.resolveContactDeletedNotificationsForReceiver(_current);
       first = false;
     }, onError:(error) {
+      print(error);
       _current = [];
       _controller.sink.add([]);
     });
+    print('notifications service initialized');
   }
 
   logout() {
     _firestoreListener!.cancel();
     _current = [];
     _controller.sink.add([]);
+    print('notification service logged out');
   }
 
   isInvitationReceived(String nickname) {

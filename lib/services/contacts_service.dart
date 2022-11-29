@@ -10,6 +10,7 @@ import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
+import 'package:flutter_chat_app/services/contacts_event.dart';
 
 class ContactsService {
 
@@ -37,15 +38,30 @@ class ContactsService {
 
   Function? setStateToContactsScreen;
 
+  StreamController<ContactsEvent>? _contactsEventStreamCtrl;
+  Stream<ContactsEvent> get contactsEventStream => _contactsEventStreamCtrl!.stream;
+
+  bool _initialized = false;
+  bool get initialized => _initialized;
+
   login() async {
+    _initialized = false;
     _userSubscriptions = [];
+    _userService.authValidate(where: 'contacts service');
     await _getCurrentContactNicknamesFromDB();
     for (var nickname in _currentContactNicknames) {
       _addContactUserSubscription(nickname);
     }
+    _contactsEventStreamCtrl = StreamController();
+    _initialized = true;
+    print('contacts service initialized');
   }
 
   logout() async {
+    _initialized = false;
+    if (_contactsEventStreamCtrl != null) {
+      await _contactsEventStreamCtrl!.close();
+    }
     for (var subscription in _userSubscriptions) {
       await subscription.cancel();
     }
@@ -53,6 +69,7 @@ class ContactsService {
     _currentContactNicknames = [];
     _currentContactUsers = [];
     _setStateToContactsScreen();
+    print('contacts service loogged out');
   }
 
   getUserByNickname(String nickname) {
@@ -76,7 +93,13 @@ class ContactsService {
         }
         _setStateToContactsScreen();
       }
+    }, onError: (error) {
+      print('contact user listener error:');
+      print(error);
     }));
+    if (_initialized) {
+      addConversationEvent(nickname);
+    }
   }
 
   DocumentReference _getContactUserDocRef(String nickname) {
@@ -231,5 +254,16 @@ class ContactsService {
     }
     await _contactNicknamesDocRef.set({contactsFieldName: newList});
     _currentContactNicknames = newList;
+  }
+
+  addConversationEvent(String contactNickname) {
+    print('adding conversation: $contactNickname');
+    final event = ContactsEvent.addContact(contactNickname);
+    _contactsEventStreamCtrl!.sink.add(event);
+  }
+
+  removeConversationEvent(String contactNickname) {
+    final event = ContactsEvent.removeContact(contactNickname);
+    _contactsEventStreamCtrl!.sink.add(event);
   }
 }

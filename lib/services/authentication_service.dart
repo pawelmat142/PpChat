@@ -33,6 +33,7 @@ class AuthenticationService {
   AuthenticationService() {
     _fireAuth.idTokenChanges().listen((user) async {
       if (user == null) {
+        print('fire auth listener - logout');
         _logoutResult();
       } else if (_isFirstUserListen) {
         _loginResult();
@@ -78,6 +79,8 @@ class AuthenticationService {
       await Navigator.pushNamed(context, HomeScreen.id);
     }
     catch (error) {
+      print('login by form error: ');
+      print(error);
       if (_fireAuth.currentUser != null) await _fireAuth.signOut();
       _spinner.stop();
       await _popup.show('Wrong credentials!',
@@ -163,14 +166,11 @@ class AuthenticationService {
   }
 
   _logoutServices() async {
-    try {
-      await _conversationsService.logout();
-      _contactsService.logout();
-      _notificationService.logout();
-      await _userService.logout();
-    } catch (error) {
-      print(error);
-    }
+    print('logout services');
+    await _conversationsService.logout();
+    await _contactsService.logout();
+    _notificationService.logout();
+    await _userService.logout();
   }
 
   void _errorPopup() {

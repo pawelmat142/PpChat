@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
@@ -19,15 +20,25 @@ class PpUserService {
 
 
   login({required String nickname}) async {
+    authValidate(where: 'userService');
     _nickname = nickname;
     await _updateLogged(true);
   }
 
   logout() async {
-    await _updateLogged(false);
+    if (_fireAuth.currentUser != null) {
+      await _updateLogged(false);
+    }
     _nickname = null;
+    print('user service loogged out');
   }
 
+  authValidate({String? where}) {
+    if (_fireAuth.currentUser == null) {
+      NavigationService.popToBlank();
+      throw Exception('auth guard: $where');
+    }
+  }
 
   DocumentReference<Map<String, dynamic>> get _document => _collection.doc(nickname);
   DocumentReference<Map<String, dynamic>> get _privateDocument => _document.collection(Collections.PRIVATE).doc(nickname);

@@ -231,3 +231,7 @@ when login for each contact conversation box is opened/created
 ### [054] Message receiving
 listen for coming messages - Messages collection
 </br>received message is deleted straight away and add to Hive
+
+### [055] contactsEventListener + refactor
+open hive conversation when add new contact
+</br> login / logout services debug + refactor

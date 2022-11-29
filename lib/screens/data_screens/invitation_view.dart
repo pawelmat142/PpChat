@@ -38,7 +38,8 @@ class InvitationView extends NotificationView {
             });
           } catch (error) {
             spinner.stop();
-            popup.show('acceptInvitationForReceiver');
+            print(error);
+            popup.sww(text: 'acceptInvitationForReceiver');
           }
         }
       ),
