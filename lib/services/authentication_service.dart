@@ -12,6 +12,7 @@ import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/services/conversation_service.dart';
 
 class AuthenticationService {
   final _fireAuth = FirebaseAuth.instance;
@@ -19,6 +20,7 @@ class AuthenticationService {
   final _userService = getIt.get<PpUserService>();
   final _contactsService = getIt.get<ContactsService>();
   final _notificationService = getIt.get<PpNotificationService>();
+  final _conversationsService = getIt.get<ConversationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
 
@@ -93,6 +95,7 @@ class AuthenticationService {
       await _fireAuth.signOut();
     }
     catch (error) {
+      print(error);
       _errorPopup();
     }
   }
@@ -154,14 +157,20 @@ class AuthenticationService {
 
   _loginServices() async {
     await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
-    _contactsService.login();
+    await _contactsService.login();
     _notificationService.login();
+    await _conversationsService.login();
   }
 
   _logoutServices() async {
-    _contactsService.logout();
-    _notificationService.logout();
-    await _userService.logout();
+    try {
+      await _conversationsService.logout();
+      _contactsService.logout();
+      _notificationService.logout();
+      await _userService.logout();
+    } catch (error) {
+      print(error);
+    }
   }
 
   void _errorPopup() {

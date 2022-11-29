@@ -222,3 +222,8 @@ conversation service register
 message data model refactor to make it hive DAO
 </br>`flutter packages pub run build_runner build`
 </br> this command generates adapter file .g.dart
+
+### [053] Hive - local storage - usage
+when login for each contact conversation box is opened/created
+</br> example adding to box = send message
+</br> conversation view build with valueListenableBuilder

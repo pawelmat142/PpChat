@@ -1,17 +1,17 @@
-import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/message_bubble.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
+import 'package:hive_flutter/adapters.dart';
 
 class ConversationView extends StatefulWidget {
-  ConversationView({required this.receiver ,super.key});
-  final String receiver;
+  ConversationView({required this.receiverNickname ,super.key});
+  final String receiverNickname;
 
   final _conversationService = getIt.get<ConversationService>();
   final _userService = getIt.get<PpUserService>();
@@ -20,7 +20,7 @@ class ConversationView extends StatefulWidget {
   static navigate(String receiver) {
     Navigator.push(
       NavigationService.context,
-      MaterialPageRoute(builder: (context) => ConversationView(receiver: receiver)),
+      MaterialPageRoute(builder: (context) => ConversationView(receiverNickname: receiver)),
     );
   }
 
@@ -30,13 +30,12 @@ class ConversationView extends StatefulWidget {
 
 class _ConversationViewState extends State<ConversationView> {
 
-  StreamSubscription? _firestoreListener;
-
-  List<PpMessage> msgs = [];
-  List<MessageBubble> bubbles = [];
-
   final _messageInputController = TextEditingController();
   String get message => _messageInputController.value.text;
+
+  // String get _hiveConversationKey => widget._conversationService.getHiveConversationKey(widget.receiver);
+
+  Box<PpMessage>? box;
 
   _onSend() async {
     if (message.isEmpty) return;
@@ -44,23 +43,10 @@ class _ConversationViewState extends State<ConversationView> {
     final msg = PpMessage.create(
         message: message,
         sender: widget._userService.nickname,
-        receiver: widget.receiver
+        receiver: widget.receiverNickname
     );
     await widget._conversationService.onSendMessage(msg);
     _messageInputController.clear();
-    msgs.add(msg);
-    _resetBubbles();
-  }
-
-  _newMessageReceived(PpMessage message) {
-    msgs.add(message);
-    _resetBubbles();
-  }
-
-  _resetBubbles() {
-    setState(() {
-      bubbles = msgs.map((m) => MessageBubble(message: m.message, my: _isMyMsg(m))).toList();
-    });
   }
 
   _isMyMsg(PpMessage message) {
@@ -69,45 +55,43 @@ class _ConversationViewState extends State<ConversationView> {
 
   @override
   void initState() {
+    box = widget._conversationService.getConversationBox(widget.receiverNickname);
     super.initState();
-    print('init');
-    _firestoreListener = widget._conversationService.messagesCollectionRef.snapshots().listen((event) {
-      for (var change in event.docChanges) {
-        print('event.docChanges.length: ${event.docChanges.length}');
-        switch (change.type) {
-          case DocumentChangeType.added:
-            _newMessageReceived(PpMessage.fromDB(change.doc));
-            break;
-        }
-      }
-
-    });
-  }
-
-  @override
-  void dispose() {
-    print('dispose');
-    _firestoreListener!.cancel();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
 
-      appBar: AppBar(title: Text('${widget.receiver} - chat')),
+      appBar: AppBar(title: Text('${widget.receiverNickname} - chat')),
 
       body: SafeArea(
-        child: Column(
-            children: [
+        child: Column(children: [
 
-              Expanded(child: ListView(
-                reverse: true,
-                padding: const EdgeInsets.only(left: 6, right: 6, bottom: 10),
-                children: bubbles.reversed.toList(),
+              //MESSAGES AREA
+
+              Expanded(child: ValueListenableBuilder<Box<PpMessage>>(
+                valueListenable: box!.listenable(),
+                builder: (context, box, _) {
+
+                  final bubbles = box.values
+                      .map((m) => MessageBubble(message: m.message, my: _isMyMsg(m))
+                  ).toList().reversed.toList();
+
+                  return ListView(reverse: true,
+                    padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                    children: bubbles,
+                  );
+                },
               )),
 
+              PpButton(onPressed: (){
+                widget._conversationService.deleting();
+              }),
+
+
               //MESSAGE TEXT INPUT
+
               Container(
                 decoration: const BoxDecoration(border: Border(top: BorderSide(color: PRIMARY_COLOR_DARKER, width: 2.0))),
                 child: Row(
@@ -132,12 +116,12 @@ class _ConversationViewState extends State<ConversationView> {
                         fontSize: 18.0,
                       )),
                     ),
+
                   ],
                 ),
               ),
 
-            ],
-        ),
+        ]),
       ),
 
     );
