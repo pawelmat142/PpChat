@@ -43,7 +43,7 @@ class PpNotificationService {
     _firestoreListener = _myNotificationsCollectionRef.snapshots().listen((querySnapshot) async {
       final notifications = querySnapshot.docs.map((doc) => PpNotification.fromMap(doc.data())).toList();
       if (notifications.isEmpty) {
-        completer.complete();
+        if (!completer.isCompleted) completer.complete();
       } else {
         if (!first) _notificationFlush(notifications);
         _current = notifications;
@@ -51,13 +51,13 @@ class PpNotificationService {
         await _contactsService.resolveInvitationAcceptancesForSender(_current);
         await _contactsService.resolveContactDeletedNotificationsForReceiver(_current);
         first = false;
-        completer.complete();
+        if (!completer.isCompleted) completer.complete();
       }
     }, onError:(error) {
       print(error);
       _current = [];
       _controller.sink.add([]);
-      completer.complete();
+      if (!completer.isCompleted) completer.complete();
     });
     print('notifications service initialized');
     return completer.future;

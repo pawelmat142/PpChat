@@ -34,9 +34,11 @@ class _ConversationViewState extends State<ConversationView> {
 
   Box<PpMessage>? box;
 
+  bool _ready = true;
+
   _onSend() async {
     if (message.isEmpty) return;
-    // TODO: show spinning / loading / block button, textfield
+    setState((){_ready = false;});
     final msg = PpMessage.create(
         message: message,
         sender: widget._userService.nickname,
@@ -44,6 +46,7 @@ class _ConversationViewState extends State<ConversationView> {
     );
     await widget._conversationService.onSendMessage(msg);
     _messageInputController.clear();
+    setState((){_ready = true;});
   }
 
   _isMyMsg(PpMessage message) {
@@ -101,14 +104,8 @@ class _ConversationViewState extends State<ConversationView> {
                         style: const TextStyle(color: Colors.black54),
                       ),
                     ),
-                    TextButton(
-                      onPressed: _onSend,
-                      child: const Text('Send', style: TextStyle(
-                        color: PRIMARY_COLOR_DARKER,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                      )),
-                    ),
+
+                    _getSendButton(),
 
                   ],
                 ),
@@ -117,6 +114,19 @@ class _ConversationViewState extends State<ConversationView> {
         ]),
       ),
 
+    );
+  }
+
+  _getSendButton() {
+    return IconButton(
+        iconSize: 40,
+        onPressed: () {
+          if (_ready) _onSend();
+        },
+        icon: Icon(
+            _ready ? Icons.send_rounded : Icons.autorenew_rounded,
+            color: _ready ? PRIMARY_COLOR : Colors.grey
+        )
     );
   }
 

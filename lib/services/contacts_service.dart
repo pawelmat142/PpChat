@@ -44,8 +44,6 @@ class ContactsService {
   bool _initialized = false;
   bool get initialized => _initialized;
 
-  //TODO: BUG: prevent multiple same contacts
-
   login() async {
     _initialized = false;
     _userSubscriptions = [];
@@ -147,8 +145,10 @@ class ContactsService {
 
    // add to contacts
     final newList = _currentContactNicknames.map((contact) => contact).toList();
-    newList.add(notification.sender);
-    batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
+    if (!newList.contains(notification.sender)) {
+      newList.add(notification.sender);
+      batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
+    }
 
     await batch.commit();
     _currentContactNicknames = newList;
@@ -251,8 +251,10 @@ class ContactsService {
   _addContacts(List<String> nicknames) async {
     var newList = _currentContactNicknames.map((n) => n).toList();
     for (var nickname in nicknames) {
-      newList.add(nickname);
-      _addContactUserSubscription(nickname);
+      if (!newList.contains(nickname)) {
+        newList.add(nickname);
+        _addContactUserSubscription(nickname);
+      }
     }
     await _contactNicknamesDocRef.set({contactsFieldName: newList});
     _currentContactNicknames = newList;

@@ -237,3 +237,5 @@ open hive conversation when add new contact
 </br> login / logout services debug + refactor
 
 ### [056] todo bug fixed
+
+### [057] todos

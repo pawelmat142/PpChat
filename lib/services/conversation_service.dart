@@ -112,6 +112,7 @@ class ConversationService {
   _addMessageToHive(PpMessage message) async {
     final imSender = message.sender == _userService.nickname;
     if (!_contactsService.currentContactNicknames.contains(message.sender) && !imSender) {
+      //TODO: delete those messages?
       throw Exception('sender not in contacts and im not sender');
     }
     final box = _conversationsBoxes[imSender ? message.receiver : message.sender];
