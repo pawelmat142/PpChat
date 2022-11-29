@@ -102,7 +102,6 @@ class ConversationService {
   _addConversation(String contactNickname) async {
     final box = await Hive.openBox<PpMessage>(_getHiveConversationKey(contactNickname));
     _conversationsBoxes[contactNickname] = box;
-    print('ready add conversation: $contactNickname');
   }
 
   _removeConversation(String contactNickname) async {

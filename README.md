@@ -235,3 +235,5 @@ listen for coming messages - Messages collection
 ### [055] contactsEventListener + refactor
 open hive conversation when add new contact
 </br> login / logout services debug + refactor
+
+### [056] todo bug fixed

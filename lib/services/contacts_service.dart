@@ -44,6 +44,8 @@ class ContactsService {
   bool _initialized = false;
   bool get initialized => _initialized;
 
+  //TODO: BUG: prevent multiple same contacts
+
   login() async {
     _initialized = false;
     _userSubscriptions = [];
