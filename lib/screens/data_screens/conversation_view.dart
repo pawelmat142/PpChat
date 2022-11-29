@@ -10,17 +10,17 @@ import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class ConversationView extends StatefulWidget {
-  ConversationView({required this.receiverNickname ,super.key});
-  final String receiverNickname;
+  ConversationView({required this.contactNickname ,super.key});
+  final String contactNickname;
 
   final _conversationService = getIt.get<ConversationService>();
   final _userService = getIt.get<PpUserService>();
 
 
-  static navigate(String receiver) {
+  static navigate(String contactNickname) {
     Navigator.push(
       NavigationService.context,
-      MaterialPageRoute(builder: (context) => ConversationView(receiverNickname: receiver)),
+      MaterialPageRoute(builder: (context) => ConversationView(contactNickname: contactNickname)),
     );
   }
 
@@ -33,8 +33,6 @@ class _ConversationViewState extends State<ConversationView> {
   final _messageInputController = TextEditingController();
   String get message => _messageInputController.value.text;
 
-  // String get _hiveConversationKey => widget._conversationService.getHiveConversationKey(widget.receiver);
-
   Box<PpMessage>? box;
 
   _onSend() async {
@@ -43,7 +41,7 @@ class _ConversationViewState extends State<ConversationView> {
     final msg = PpMessage.create(
         message: message,
         sender: widget._userService.nickname,
-        receiver: widget.receiverNickname
+        receiver: widget.contactNickname
     );
     await widget._conversationService.onSendMessage(msg);
     _messageInputController.clear();
@@ -55,7 +53,7 @@ class _ConversationViewState extends State<ConversationView> {
 
   @override
   void initState() {
-    box = widget._conversationService.getConversationBox(widget.receiverNickname);
+    box = widget._conversationService.getConversationBox(widget.contactNickname);
     super.initState();
   }
 
@@ -63,7 +61,7 @@ class _ConversationViewState extends State<ConversationView> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      appBar: AppBar(title: Text('${widget.receiverNickname} - chat')),
+      appBar: AppBar(title: Text('${widget.contactNickname} - chat')),
 
       body: SafeArea(
         child: Column(children: [
@@ -84,10 +82,6 @@ class _ConversationViewState extends State<ConversationView> {
                   );
                 },
               )),
-
-              PpButton(onPressed: (){
-                widget._conversationService.deleting();
-              }),
 
 
               //MESSAGE TEXT INPUT

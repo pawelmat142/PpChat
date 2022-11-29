@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
@@ -20,57 +21,73 @@ class ConversationService {
       .collection(Collections.User).doc(_userService.nickname)
       .collection(Collections.Messages);
 
-  CollectionReference getReceiverCollectionRef(String receiver) => _firestore
+  CollectionReference getContactMessagesRef(String receiver) => _firestore
       .collection(Collections.User).doc(receiver)
       .collection(Collections.Messages);
 
-
+  StreamSubscription? listener;
   // < nickname, hiveBox>
   Map<String, Box<PpMessage>> _conversationsBoxes = {};
 
-  //TODO add contact = add conversation box
-
   login() async {
-    for (var receiverNickname in _contactsService.currentContactNicknames) {
-      final box = await Hive.openBox<PpMessage>(_getHiveConversationKey(receiverNickname));
-      _conversationsBoxes[receiverNickname] = box;
+    //open hive conversation boxes
+    for (var contactNickname in _contactsService.currentContactNicknames) {
+      final box = await Hive.openBox<PpMessage>(_getHiveConversationKey(contactNickname));
+      _conversationsBoxes[contactNickname] = box;
     }
+
+    // listen for coming messages - add to hive and delete from firestore
+    listener = messagesCollectionRef.snapshots().listen((event) async {
+      for (var change in event.docChanges) {
+        try {
+          await _addMessageToHive(PpMessage.fromDB(change.doc));
+          await change.doc.reference.delete();
+        } catch (error) {
+          _popup.sww(text: 'receiving message error');
+        }
+      }
+    });
   }
 
   logout() async {
-    await Hive.close();
     for (var key in _conversationsBoxes.keys) {
       _conversationsBoxes.remove(key);
     }
-    print('logged out');
+    await Hive.close();
+    _conversationsBoxes = {};
+    listener!.cancel();
   }
 
-  Box<PpMessage> getConversationBox(String receiverNickname) {
-    if (_conversationsBoxes[receiverNickname] == null) _noBoxException();
-    return _conversationsBoxes[receiverNickname]!;
+  Box<PpMessage> getConversationBox(String contactNickname) {
+    if (_conversationsBoxes[contactNickname] == null) _noBoxException();
+    return _conversationsBoxes[contactNickname]!;
   }
 
   onSendMessage(PpMessage message) async {
     try {
       await _addMessageToHive(message);
-      await _sendMessageToReceiver(message);
+      await _sendMessageToContact(message);
     } catch (error) {
       _popup.sww();
     }
   }
 
   _addMessageToHive(PpMessage message) async {
-    final box = _conversationsBoxes[message.receiver];
+    final imSender = message.sender == _userService.nickname;
+    if (!_contactsService.currentContactNicknames.contains(message.sender) && !imSender) {
+      throw Exception('sender not in contacts and im not sender');
+    }
+    final box = _conversationsBoxes[imSender ? message.receiver : message.sender];
     box != null ? await box.add(message) : _noBoxException();
   }
 
-  _sendMessageToReceiver(PpMessage message) async {
-    await getReceiverCollectionRef(message.receiver).add(message.asMap);
+  _sendMessageToContact(PpMessage message) async {
+    await getContactMessagesRef(message.receiver).add(message.asMap);
   }
 
 
-  _getHiveConversationKey(String receiverNickname) {
-    return 'conversation_${_userService.nickname}_$receiverNickname}';
+  _getHiveConversationKey(String contactNickname) {
+    return 'conversation_${_userService.nickname}_$contactNickname}';
   }
 
   _noBoxException() {
@@ -84,8 +101,9 @@ class ConversationService {
     print('deleted');
   }
 
-  deleting() async {
-    Hive.deleteFromDisk();
+  deleteHiveData() async {
+    //TODO: delete when delete account
+    await Hive.deleteFromDisk();
   }
 
 

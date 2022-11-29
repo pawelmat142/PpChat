@@ -227,3 +227,7 @@ message data model refactor to make it hive DAO
 when login for each contact conversation box is opened/created
 </br> example adding to box = send message
 </br> conversation view build with valueListenableBuilder
+
+### [054] Message receiving
+listen for coming messages - Messages collection
+</br>received message is deleted straight away and add to Hive
