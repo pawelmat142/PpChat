@@ -49,6 +49,9 @@ class ConversationService {
         case ContactsEventTypes.delete:
           _deleteConversationEvent(event.contactNickname);
           break;
+        case ContactsEventTypes.deleteAccount:
+          _deleteAccountEvent();
+          break;
       }
     }, onError: (error) {
       print('in _contactsEventListener error:');
@@ -112,6 +115,11 @@ class ConversationService {
     _conversationsBoxes.remove(contactNickname);
   }
 
+  _deleteAccountEvent() async {
+    //TODO: BUG: delete account bug
+    await Hive.deleteFromDisk();
+  }
+
   _addMessageToHive(PpMessage message) async {
     final imSender = message.sender == _userService.nickname;
     if (!_contactsService.currentContactNicknames.contains(message.sender) && !imSender) {
@@ -139,6 +147,8 @@ class ConversationService {
     final box = getConversationBox(contactNickname);
     await box.clear();
     await _deleteUnreadSentMessagesIfExists(contactNickname);
+  //  TODO: send notification about clear conversation
+  //  TODO: resolve notification on the other side
   }
 
   _deleteUnreadSentMessagesIfExists(String contactNickname) async {
@@ -154,19 +164,5 @@ class ConversationService {
       await batch.commit();
     }
   }
-
-  deleteBox(String contactNickname) async {
-    //TODO: delete when delete contact
-    //TODO: when delete conversation send also notifications about it and implement resolve it
-    _conversationsBoxes.remove(contactNickname);
-    await Hive.box(_getHiveConversationKey(contactNickname)).deleteFromDisk();
-  }
-
-  deleteHiveData() async {
-    //TODO: delete when delete account
-    //TODO: when delete account send accountDeleted notifications to contacts
-    await Hive.deleteFromDisk();
-  }
-
 
 }

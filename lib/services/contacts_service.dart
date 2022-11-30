@@ -284,4 +284,9 @@ class ContactsService {
     final event = ContactsEvent.deleteContact(contactNickname);
     _contactsEventStreamCtrl!.sink.add(event);
   }
+
+  deleteAccountEvent() {
+    final event = ContactsEvent.deleteAccount();
+    _contactsEventStreamCtrl!.sink.add(event);
+  }
 }

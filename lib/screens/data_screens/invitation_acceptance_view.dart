@@ -40,9 +40,9 @@ class InvitationAcceptanceView extends NotificationView {
           ConversationView.navigate(notification.receiver);
       }),
 
-      PpButton(text: 'Delete', color: Colors.red, onPressed: () async {
+      PpButton(text: 'remove notification', color: Colors.red, onPressed: () async {
         try {
-          await notificationService.deleteSingleNotification(nickname: notification.receiver);
+          await notificationService.deleteSingleNotificationBySenderNickname(notification.sender);
           Navigator.pop(NavigationService.context);
           PpFlushbar.notificationDeleted();
         } catch (error) {

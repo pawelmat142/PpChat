@@ -243,3 +243,7 @@ open hive conversation when add new contact
 ### [058] Popup menu and clear conversation feature
 
 ### [059] delete contact = delete conversation = contactsEvent
+
+### [060] todos
+notification remove bug
+</br> delete account event should delete all hive data

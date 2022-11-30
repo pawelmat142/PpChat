@@ -7,10 +7,12 @@ class InvitationSelfNotificationView extends NotificationView {
   InvitationSelfNotificationView(super.notification, {super.key});
 
   //TODO: something is wrong here - lets have a look
-  //TODO: wrong nickname
   //TODO: delete notification needs refresh view
   @override
   get title => 'YOUR INVITATION';
+
+  @override
+  String get nickname => notification.receiver;
 
   @override
   get content => 'You sent an invitation!';
@@ -22,12 +24,11 @@ class InvitationSelfNotificationView extends NotificationView {
         await super.notificationService.deleteInvitation(super.notification);
       }),
 
-      PpButton(text: 'remove notification', onPressed: () async {
+      PpButton(text: 'remove notification', color: Colors.red, onPressed: () async {
         Navigator.pop(NavigationService.context);
-        await super.notificationService.deleteSingleNotification(nickname: super.notification.receiver);
+        await super.notificationService.deleteSingleNotificationBySenderNickname(super.notification.sender);
       })
     ];
   }
-
 
 }

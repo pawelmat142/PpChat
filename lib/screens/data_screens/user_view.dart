@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
-import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/data_screens/conversation_view.dart';
@@ -14,7 +13,6 @@ class UserView extends DataView {
 
   static navigate(PpUser user) async {
     final contactsService = getIt.get<ContactsService>();
-    final popup = getIt.get<Popup>();
 
     await Navigator.push(
         NavigationService.context,

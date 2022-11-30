@@ -33,6 +33,7 @@ class PpNotificationService {
 
   //STREAM
   StreamSubscription? _firestoreListener;
+  //add to sink = refresh notifications screen view
   final _controller = StreamController.broadcast();
   get stream => _controller.stream;
 
@@ -69,6 +70,8 @@ class PpNotificationService {
     _controller.sink.add([]);
     print('notification service logged out');
   }
+
+  //TODO: send invitation navigate to notifications
 
   isInvitationReceived(String nickname) {
     for (var notification in _current) {
@@ -116,17 +119,29 @@ class PpNotificationService {
         .update({PpNotificationFields.isRead: true});
   }
 
-  deleteSingleNotification({PpNotification? notification, String? nickname}) async {
-    if (nickname != null) {
-      await _myNotificationsCollectionRef.doc(nickname).delete();
-    } else if (notification != null) {
-      await _myNotificationsCollectionRef.doc(notification.receiver).delete();
+  deleteSingleNotificationBySenderNickname(String senderNickname) async {
+    final index = _current.indexWhere((n) => n.sender == senderNickname);
+    if (index != -1) {
+      final notification = _current[index];
+      await _deleteSingleNotification(notification);
+      _removeFromCurrentByIndex(index);
     } else {
-      throw Exception(['need one argument!']);
+      throw Exception('no such notification!');
     }
   }
 
+  _deleteSingleNotification(PpNotification notification) async {
+    await _myNotificationsCollectionRef.doc(notification.sender).delete();
+  }
+
+  _removeFromCurrentByIndex(int index) {
+    _current.removeAt(index);
+    _controller.sink.add(_current);
+  }
+
   deleteInvitation(PpNotification notification) async {
+    final index = _current.indexWhere((n) => n.sender == notification.sender);
+    if (index == -1) return;
     await _popup.show('Are you sure?', buttons: [
       PopupButton('Yes', onPressed: () async {
           Navigator.pop(NavigationService.context);
@@ -135,6 +150,7 @@ class PpNotificationService {
           batch.delete(_myNotificationsCollectionRef.doc(_imSender(notification) ? notification.receiver : notification.sender));
           batch.delete(_getAnotherUserNotificationDocumentRef(notification, isSender: _imSender(notification)));
           await batch.commit();
+          _removeFromCurrentByIndex(index);
           _spinner.stop();
           PpFlushbar.invitationDeleted(delay: 100);
         })

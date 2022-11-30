@@ -104,7 +104,7 @@ class AuthenticationService {
   }
 
   onDeleteAccount() {
-    _popup.show('Are you shure?',
+    _popup.show('Are you sure?',
       text: 'All your data will be lost!',
       error: true,
       buttons: [PopupButton('Delete', error: true, onPressed: () {
