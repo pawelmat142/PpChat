@@ -251,3 +251,5 @@ notification remove bug
 ### [061] Sending conversationClearNotification
 
 ### [062] Receiving conversationClearNotification
+
+### [063] conversationClearNotification = event shown on conversation view

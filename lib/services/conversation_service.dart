@@ -131,7 +131,7 @@ class ConversationService {
   _addMessageToHive(PpMessage message) async {
     final imSender = message.sender == _userService.nickname;
     if (!_contactsService.currentContactNicknames.contains(message.sender) && !imSender) {
-      //TODO: delete those messages?
+      //to do: delete those messages?
       throw Exception('sender not in contacts and im not sender');
     }
     final box = _conversationsBoxes[imSender ? message.receiver : message.sender];
@@ -152,20 +152,14 @@ class ConversationService {
   }
 
   clearConversation(String contactNickname) async {
-    print('clearConversation');
     await _clearConversation(contactNickname);
     await _deleteUnreadSentMessagesIfExists(contactNickname);
     await _sendConversationClearNotification(contactNickname);
-  //  TODO: resolve deletedAccountnotification = clear conversation
-
-  //  TODO: notification tile wrong nickname for self notification
   }
 
   _clearConversation(String contactNickname) async {
-    print('_clearConversation');
     final box = getConversationBox(contactNickname);
     await box.clear();
-    print('after _clearConversation');
   }
 
   _deleteUnreadSentMessagesIfExists(String contactNickname) async {
@@ -189,19 +183,19 @@ class ConversationService {
   }
 
   resolveConversationClearForReceiver(List<String> nicknames) async {
-    print('resolveConversationClearForReceiver');
     if (initialized) {
-      print('initialized');
       for (var contactNickname in nicknames) {
         _clearConversation(contactNickname);
-        print('clearing: $contactNickname');
+        _clearConversationEvent();
       }
       nicknamesToConversationClear = [];
     } else {
       nicknamesToConversationClear = nicknames;
-      print('not initialized - nicknamesToConversationClear: ');
-      print(nicknamesToConversationClear);
     }
   }
+
+  final StreamController<void> _clearConversationEventController = StreamController.broadcast();
+  get clearConversationEventStream => _clearConversationEventController.stream;
+  _clearConversationEvent() => _clearConversationEventController.sink.add(null);
 
 }

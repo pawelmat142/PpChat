@@ -198,6 +198,8 @@ class ContactsService {
 
   resolveContactDeletedNotificationsForReceiver(List<PpNotification> notifications) async {
     //TODO: test if work correctly
+    //TODO: test account deleting
+    //TODO: test if conversation deleting / clear works properly
     try {
       final deletedContactNicknames = PpNotification.filterContactDeletedNotifications(notifications).map((n) => n.sender).toList();
       if (deletedContactNicknames.isNotEmpty) {

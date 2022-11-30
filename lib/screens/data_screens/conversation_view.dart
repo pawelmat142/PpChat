@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/message_bubble.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
@@ -38,6 +40,8 @@ class _ConversationViewState extends State<ConversationView> {
   final _messageInputController = TextEditingController();
   String get message => _messageInputController.value.text;
 
+  StreamSubscription? _clearConversationEventSubscription;
+
   Box<PpMessage>? _messagesBox;
 
   bool _ready = true;
@@ -59,10 +63,23 @@ class _ConversationViewState extends State<ConversationView> {
     return message.sender == widget._userService.nickname;
   }
 
+  bool _isConversationClearedByContact = false;
+
+
   @override
   void initState() {
     _messagesBox = widget._conversationService.getConversationBox(widget.contactNickname);
     super.initState();
+    _clearConversationEventSubscription = widget._conversationService
+        .clearConversationEventStream.listen((e) => setState(() => _isConversationClearedByContact = true));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (_clearConversationEventSubscription != null) {
+      _clearConversationEventSubscription!.cancel();
+    }
   }
 
   @override
@@ -82,6 +99,10 @@ class _ConversationViewState extends State<ConversationView> {
               Expanded(child: ValueListenableBuilder<Box<PpMessage>>(
                 valueListenable: _messagesBox!.listenable(),
                 builder: (context, box, _) {
+
+                  if (_isConversationClearedByContact) {
+                    return _chatClearedWidget();
+                  }
 
                   return ListView(reverse: true,
                     padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -172,5 +193,8 @@ class _ConversationViewState extends State<ConversationView> {
     })]);
   }
 
-//  TODO: when receive clear conversation show it on the screen
+  _chatClearedWidget() {
+    _isConversationClearedByContact = false;
+    return Center(child: Text('Chat cleared by ${widget.contactNickname}', style: const TextStyle(fontSize: 18)));
+  }
 }
