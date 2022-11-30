@@ -247,3 +247,5 @@ open hive conversation when add new contact
 ### [060] todos
 notification remove bug
 </br> delete account event should delete all hive data
+
+### [061] Sending conversationClearNotification

@@ -156,19 +156,6 @@ class ContactsService {
     _addContactUserSubscription(notification.sender);
   }
 
-  resolveInvitationAcceptancesForSender(List<PpNotification> notifications) async {
-    try {
-      final invitationAcceptances = PpNotification.filterInvitationAcceptances(notifications);
-      if (invitationAcceptances.isNotEmpty) {
-        final newNicknames = invitationAcceptances.map((notification) => notification.receiver).toList();
-        await _addContacts(newNicknames);
-        PpFlushbar.invitationAcceptanceForSender(notifications: invitationAcceptances, delay: 200);
-      }
-    } catch (error) {
-      _popup.sww(text: 'resolveInvitationAcceptancesForSender');
-    }
-  }
-
   onDeleteContact(String nickname) async {
     await Future.delayed(const Duration(milliseconds: 100));
     await _popup.show('Are you sure?',
@@ -231,6 +218,19 @@ class ContactsService {
       }
     } catch (error) {
       _popup.sww(text: 'resolveContactDeletedNotificationsForReceiver');
+    }
+  }
+
+  resolveInvitationAcceptancesForSender(List<PpNotification> notifications) async {
+    try {
+      final invitationAcceptances = PpNotification.filterInvitationAcceptances(notifications);
+      if (invitationAcceptances.isNotEmpty) {
+        final newNicknames = invitationAcceptances.map((notification) => notification.receiver).toList();
+        await _addContacts(newNicknames);
+        PpFlushbar.invitationAcceptanceForSender(notifications: invitationAcceptances, delay: 200);
+      }
+    } catch (error) {
+      _popup.sww(text: 'resolveInvitationAcceptancesForSender');
     }
   }
 

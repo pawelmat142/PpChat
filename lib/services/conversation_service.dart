@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/contacts_event.dart';
@@ -15,6 +16,7 @@ class ConversationService {
   final _firestore = FirebaseFirestore.instance;
   final _userService = getIt.get<PpUserService>();
   final _contactsService = getIt.get<ContactsService>();
+  final _notificationService = getIt.get<PpNotificationService>();
   final _popup = getIt.get<Popup>();
 
 
@@ -147,8 +149,11 @@ class ConversationService {
     final box = getConversationBox(contactNickname);
     await box.clear();
     await _deleteUnreadSentMessagesIfExists(contactNickname);
-  //  TODO: send notification about clear conversation
+    await _notificationService.sendConversationClearNotification(contactNickname);
   //  TODO: resolve notification on the other side
+  //  TODO: resolve deletedAccountnotification = clear conversation
+
+  //  TODO: notification tile wrong nickname for self notification
   }
 
   _deleteUnreadSentMessagesIfExists(String contactNickname) async {
