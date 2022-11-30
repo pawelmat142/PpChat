@@ -23,6 +23,7 @@ class PpUserService {
     authValidate(where: 'userService');
     _nickname = nickname;
     await _updateLogged(true);
+    print('user service initialized');
   }
 
   logout() async {

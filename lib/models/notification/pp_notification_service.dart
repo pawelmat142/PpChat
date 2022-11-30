@@ -13,11 +13,13 @@ import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/services/conversation_service.dart';
 
 class PpNotificationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _userService = getIt.get<PpUserService>();
   final _contactsService = getIt.get<ContactsService>();
+  final _conversationService = getIt.get<ConversationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
 
@@ -56,6 +58,7 @@ class PpNotificationService {
         _controller.sink.add(notifications);
         await _contactsService.resolveInvitationAcceptancesForSender(_current);
         await _contactsService.resolveContactDeletedNotificationsForReceiver(_current);
+        await _resolveConversationClearForReceiver();
         first = false;
         if (!completer.isCompleted) completer.complete();
       }
@@ -199,6 +202,23 @@ class PpNotificationService {
   sendConversationClearNotification(String contactNickname) async {
     final notification = PpNotification.createConversationClear(sender: _userService.nickname, receiver: contactNickname);
     await _getAnotherUserNotificationDocumentRef(notification, imSender: true).set(notification.asMap);
+  }
+
+  _resolveConversationClearForReceiver() async {
+    final notificationsToResolve = PpNotification.filterConversationClearNotifications(_current);
+    if (notificationsToResolve.isNotEmpty) {
+      await _deleteNotifications(notificationsToResolve);
+      final nicknames = notificationsToResolve.map((n) => n.sender).toList();
+      await _conversationService.resolveConversationClearForReceiver(nicknames);
+    }
+  }
+
+  _deleteNotifications(List<PpNotification> list) async {
+    final batch = _firestore.batch();
+    for (var notification in list) {
+      batch.delete(_myNotificationsCollectionRef.doc(notification.sender));
+    }
+    await batch.commit();
   }
 
 }

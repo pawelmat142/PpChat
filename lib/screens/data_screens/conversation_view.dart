@@ -172,4 +172,5 @@ class _ConversationViewState extends State<ConversationView> {
     })]);
   }
 
+//  TODO: when receive clear conversation show it on the screen
 }

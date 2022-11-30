@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
-import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/contacts_event.dart';
@@ -16,7 +16,6 @@ class ConversationService {
   final _firestore = FirebaseFirestore.instance;
   final _userService = getIt.get<PpUserService>();
   final _contactsService = getIt.get<ContactsService>();
-  final _notificationService = getIt.get<PpNotificationService>();
   final _popup = getIt.get<Popup>();
 
 
@@ -34,6 +33,10 @@ class ConversationService {
   // < nickname, hiveBox>
   Map<String, Box<PpMessage>> _conversationsBoxes = {};
 
+  //filled by notification service when login
+  List<String> nicknamesToConversationClear = [];
+
+  bool initialized = false;
 
   login() async {
     // open hive conversation boxes
@@ -72,6 +75,8 @@ class ConversationService {
       print('in _messagesListener error:');
       print(error);
     });
+    initialized = true;
+    await resolveConversationClearForReceiver(nicknamesToConversationClear);
     print('conversation service initialized');
   }
 
@@ -79,6 +84,7 @@ class ConversationService {
 
 
   logout() async {
+    initialized = false;
     await _contactsEventListener!.cancel();
     for (var box in _conversationsBoxes.values) {
       await box.close();
@@ -146,14 +152,20 @@ class ConversationService {
   }
 
   clearConversation(String contactNickname) async {
-    final box = getConversationBox(contactNickname);
-    await box.clear();
+    print('clearConversation');
+    await _clearConversation(contactNickname);
     await _deleteUnreadSentMessagesIfExists(contactNickname);
-    await _notificationService.sendConversationClearNotification(contactNickname);
-  //  TODO: resolve notification on the other side
+    await _sendConversationClearNotification(contactNickname);
   //  TODO: resolve deletedAccountnotification = clear conversation
 
   //  TODO: notification tile wrong nickname for self notification
+  }
+
+  _clearConversation(String contactNickname) async {
+    print('_clearConversation');
+    final box = getConversationBox(contactNickname);
+    await box.clear();
+    print('after _clearConversation');
   }
 
   _deleteUnreadSentMessagesIfExists(String contactNickname) async {
@@ -167,6 +179,28 @@ class ConversationService {
         batch.delete(doc.reference);
       }
       await batch.commit();
+    }
+  }
+
+  _sendConversationClearNotification(String contactNickname) async {
+    final notification = PpNotification.createConversationClear(sender: _userService.nickname, receiver: contactNickname);
+    await _firestore.collection(Collections.User).doc(notification.receiver)
+        .collection(Collections.NOTIFICATIONS).doc(notification.sender).set(notification.asMap);
+  }
+
+  resolveConversationClearForReceiver(List<String> nicknames) async {
+    print('resolveConversationClearForReceiver');
+    if (initialized) {
+      print('initialized');
+      for (var contactNickname in nicknames) {
+        _clearConversation(contactNickname);
+        print('clearing: $contactNickname');
+      }
+      nicknamesToConversationClear = [];
+    } else {
+      nicknamesToConversationClear = nicknames;
+      print('not initialized - nicknamesToConversationClear: ');
+      print(nicknamesToConversationClear);
     }
   }
 

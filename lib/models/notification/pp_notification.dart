@@ -91,4 +91,8 @@ class PpNotification {
   static List<PpNotification> filterContactDeletedNotifications(List<PpNotification> input) {
     return input.where((notification) => notification.type == PpNotificationTypes.contactDeletedNotification).toList();
   }
+
+  static List<PpNotification> filterConversationClearNotifications(List<PpNotification> input) {
+    return input.where((notification) => notification.type == PpNotificationTypes.conversationClearNotification).toList();
+  }
 }
