@@ -241,3 +241,5 @@ open hive conversation when add new contact
 ### [057] todos
 
 ### [058] Popup menu and clear conversation feature
+
+### [059] delete contact = delete conversation = contactsEvent

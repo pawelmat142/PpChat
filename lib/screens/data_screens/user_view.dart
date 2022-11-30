@@ -30,12 +30,8 @@ class UserView extends DataView {
               ConversationView.navigate(user.nickname);
             }),
 
-            PpButton(text: 'delete', color: Colors.red, onPressed: () {
-              popup.show('Are you shure?', buttons: [PopupButton('Delete', onPressed: () async {
-                await contactsService.deleteContactForSender(user.nickname);
-                Navigator.pop(NavigationService.context);
-              })]);
-
+            PpButton(text: 'delete', color: Colors.red, onPressed: () async {
+              await contactsService.onDeleteContact(user.nickname);
             })
           ]
         )))

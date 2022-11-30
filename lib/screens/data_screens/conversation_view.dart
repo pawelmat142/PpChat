@@ -3,7 +3,9 @@ import 'package:flutter_chat_app/components/message_bubble.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/services/contacts_service.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
@@ -14,8 +16,10 @@ class ConversationView extends StatefulWidget {
   final String contactNickname;
 
   final _conversationService = getIt.get<ConversationService>();
+  final _contactService = getIt.get<ContactsService>();
   final _userService = getIt.get<PpUserService>();
   final _spinner = getIt.get<PpSpinner>();
+  final _popup = getIt.get<Popup>();
 
 
   static navigate(String contactNickname) {
@@ -145,8 +149,8 @@ class _ConversationViewState extends State<ConversationView> {
             child: const Text('Clear conversation'),
           ),
 
-          PopupMenuItem(onTap: () {},
-            child: const Text('two'),
+          PopupMenuItem(onTap: () => widget._contactService.onDeleteContact(widget.contactNickname),
+            child: const Text('Delete contact'),
           ),
 
           PopupMenuItem(onTap: () {},
@@ -158,9 +162,14 @@ class _ConversationViewState extends State<ConversationView> {
   );
 
   _onClearConversation() async {
-    widget._spinner.start();
-    await widget._conversationService.clearConversation(widget.contactNickname);
-    widget._spinner.stop();
+    await Future.delayed(const Duration(milliseconds: 100));
+    widget._popup.show('Are you sure?',
+        text: 'Messages data will be lost also on the other side!',
+        buttons: [PopupButton('Clear', onPressed: () async {
+          widget._spinner.start();
+          await widget._conversationService.clearConversation(widget.contactNickname);
+          widget._spinner.stop();
+    })]);
   }
 
 }

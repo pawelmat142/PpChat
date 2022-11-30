@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
@@ -168,7 +169,19 @@ class ContactsService {
     }
   }
 
-  deleteContactForSender(String nickname) async {
+  onDeleteContact(String nickname) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    await _popup.show('Are you sure?',
+        text: 'All data will be lost also on the other side!',
+        error: true,
+        buttons: [PopupButton('Delete', error: true, onPressed: () async {
+          await _deleteContact(nickname);
+          NavigationService.pop();
+          PpFlushbar.contactDeletedNotificationForSender(nickname: nickname, delay: 200);
+        })]);
+  }
+
+  _deleteContact(String nickname) async {
     try {
       _spinner.start();
       final batch = _firestore.batch();
@@ -182,9 +195,9 @@ class ContactsService {
       batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
 
       await batch.commit();
+      deleteConversationEvent(nickname);
       await _removeCurrentContactByNickname(nickname);
       _spinner.stop();
-      PpFlushbar.contactDeletedNotificationForSender(nickname: nickname, delay: 200);
     } catch (error) {
       _spinner.stop();
       _popup.sww(text: 'deleteContactForSender');
@@ -212,6 +225,7 @@ class ContactsService {
         await batch.commit();
 
         for (var nickname in deletedContactNicknames) {
+          deleteConversationEvent(nickname);
           await _removeCurrentContactByNickname(nickname);
         }
       }
@@ -227,6 +241,7 @@ class ContactsService {
       for (var nickname in _currentContactNicknames) {
         var receiverNotification = PpNotification.createContactDeleted(sender: _userService.nickname, receiver: nickname);
         batch.set(_getNotificationReceiverDocRef(nickname), receiverNotification.asMap);
+        deleteConversationEvent(nickname);
       }
       batch.delete(_contactNicknamesDocRef);
 
@@ -261,13 +276,12 @@ class ContactsService {
   }
 
   addConversationEvent(String contactNickname) {
-    print('adding conversation: $contactNickname');
     final event = ContactsEvent.addContact(contactNickname);
     _contactsEventStreamCtrl!.sink.add(event);
   }
 
-  removeConversationEvent(String contactNickname) {
-    final event = ContactsEvent.removeContact(contactNickname);
+  deleteConversationEvent(String contactNickname) {
+    final event = ContactsEvent.deleteContact(contactNickname);
     _contactsEventStreamCtrl!.sink.add(event);
   }
 }

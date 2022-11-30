@@ -37,17 +37,17 @@ class ConversationService {
     // open hive conversation boxes
     _userService.authValidate(where: 'conversation service');
     for (var contactNickname in _contactsService.currentContactNicknames) {
-      await _addConversation(contactNickname);
+      await _addConversationEvent(contactNickname);
     }
 
     // listen for contacts list modification
     _contactsEventListener = _contactsService.contactsEventStream.listen((event) {
       switch (event.type) {
         case ContactsEventTypes.add:
-          _addConversation(event.contactNickname);
+          _addConversationEvent(event.contactNickname);
           break;
-        case ContactsEventTypes.remove:
-          _removeConversation(event.contactNickname);
+        case ContactsEventTypes.delete:
+          _deleteConversationEvent(event.contactNickname);
           break;
       }
     }, onError: (error) {
@@ -77,7 +77,6 @@ class ConversationService {
     await _contactsEventListener!.cancel();
     for (var box in _conversationsBoxes.values) {
       await box.close();
-      print('box closed');
     }
     await Hive.close();
     _conversationsBoxes = {};
@@ -99,13 +98,17 @@ class ConversationService {
     }
   }
 
-  _addConversation(String contactNickname) async {
+  _addConversationEvent(String contactNickname) async {
+    //triggered by contacts service
     final box = await Hive.openBox<PpMessage>(_getHiveConversationKey(contactNickname));
     _conversationsBoxes[contactNickname] = box;
   }
 
-  _removeConversation(String contactNickname) async {
-    await Hive.box(_getHiveConversationKey(contactNickname)).deleteFromDisk();
+  _deleteConversationEvent(String contactNickname) async {
+    //triggered by contacts service
+    await _deleteUnreadSentMessagesIfExists(contactNickname);
+    final box = getConversationBox(contactNickname);
+    await box.deleteFromDisk();
     _conversationsBoxes.remove(contactNickname);
   }
 
@@ -143,19 +146,20 @@ class ConversationService {
     final querySnapshot = await getContactMessagesRef(contactNickname)
         .where(PpMessageFields.sender, isEqualTo: _userService.nickname)
         .get();
-    final batch = _firestore.batch();
-    for (var doc in querySnapshot.docs) {
-      batch.delete(doc.reference);
+    if (querySnapshot.docs.isNotEmpty) {
+      final batch = _firestore.batch();
+      for (var doc in querySnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
     }
-    await batch.commit();
   }
 
   deleteBox(String contactNickname) async {
-    //TODO: delete when delete conversation
+    //TODO: delete when delete contact
     //TODO: when delete conversation send also notifications about it and implement resolve it
     _conversationsBoxes.remove(contactNickname);
     await Hive.box(_getHiveConversationKey(contactNickname)).deleteFromDisk();
-    print('deleted');
   }
 
   deleteHiveData() async {

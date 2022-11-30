@@ -1,6 +1,6 @@
 class ContactsEventTypes {
   static const String add = 'add';
-  static const String remove = 'remove';
+  static const String delete = 'delete';
 }
 
 class ContactsEvent {
@@ -15,7 +15,7 @@ class ContactsEvent {
     return ContactsEvent(contactNickname: contactNickname, type: ContactsEventTypes.add);
   }
 
-  static ContactsEvent removeContact(String contactNickname) {
-    return ContactsEvent(contactNickname: contactNickname, type: ContactsEventTypes.remove);
+  static ContactsEvent deleteContact(String contactNickname) {
+    return ContactsEvent(contactNickname: contactNickname, type: ContactsEventTypes.delete);
   }
 }
