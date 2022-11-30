@@ -253,3 +253,5 @@ notification remove bug
 ### [062] Receiving conversationClearNotification
 
 ### [063] conversationClearNotification = event shown on conversation view
+
+### [064] first message shown in conversation

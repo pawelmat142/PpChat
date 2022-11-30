@@ -49,7 +49,7 @@ class ConversationService {
     _contactsEventListener = _contactsService.contactsEventStream.listen((event) {
       switch (event.type) {
         case ContactsEventTypes.add:
-          _addConversationEvent(event.contactNickname);
+          _addConversationEvent(event.contactNickname, firstMessage: event.firstMessage);
           break;
         case ContactsEventTypes.delete:
           _deleteConversationEvent(event.contactNickname);
@@ -80,8 +80,6 @@ class ConversationService {
     print('conversation service initialized');
   }
 
-  //TODO: add first message to conversation!
-
 
   logout() async {
     initialized = false;
@@ -109,10 +107,15 @@ class ConversationService {
     }
   }
 
-  _addConversationEvent(String contactNickname) async {
+  _addConversationEvent(String contactNickname, {String? firstMessage}) async {
     //triggered by contacts service
     final box = await Hive.openBox<PpMessage>(_getHiveConversationKey(contactNickname));
     _conversationsBoxes[contactNickname] = box;
+
+    if (firstMessage != null) {
+      final message = PpMessage.create(message: firstMessage, sender: contactNickname, receiver: _userService.nickname);
+      _addMessageToHiveDelayed(message, 500);
+    }
   }
 
   _deleteConversationEvent(String contactNickname) async {
@@ -126,6 +129,11 @@ class ConversationService {
   _deleteAccountEvent() async {
     //TODO: BUG: delete account bug
     await Hive.deleteFromDisk();
+  }
+
+  _addMessageToHiveDelayed(PpMessage message, int delay) async {
+    await Future.delayed(Duration(milliseconds: delay));
+    _addMessageToHive(message);
   }
 
   _addMessageToHive(PpMessage message) async {

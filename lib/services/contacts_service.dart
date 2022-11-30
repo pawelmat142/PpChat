@@ -83,7 +83,7 @@ class ContactsService {
     }
   }
 
-  _addContactUserSubscription(String nickname) {
+  _addContactUserSubscription(String nickname, {String? firstMessage}) {
     _userSubscriptions.add(_getContactUserDocRef(nickname).snapshots().listen((event) {
       if (event.exists) {
         final user = PpUser.fromDB(event);
@@ -99,7 +99,7 @@ class ContactsService {
       print(error);
     }));
     if (_initialized) {
-      addConversationEvent(nickname);
+      addConversationEvent(nickname, firstMessage);
     }
   }
 
@@ -153,7 +153,7 @@ class ContactsService {
 
     await batch.commit();
     _currentContactNicknames = newList;
-    _addContactUserSubscription(notification.sender);
+    _addContactUserSubscription(notification.sender, firstMessage: notification.text);
   }
 
   onDeleteContact(String nickname) async {
@@ -228,8 +228,7 @@ class ContactsService {
     try {
       final invitationAcceptances = PpNotification.filterInvitationAcceptances(notifications);
       if (invitationAcceptances.isNotEmpty) {
-        final newNicknames = invitationAcceptances.map((notification) => notification.receiver).toList();
-        await _addContacts(newNicknames);
+        await _addContacts(invitationAcceptances);
         PpFlushbar.invitationAcceptanceForSender(notifications: invitationAcceptances, delay: 200);
       }
     } catch (error) {
@@ -266,20 +265,21 @@ class ContactsService {
     _setStateToContactsScreen();
   }
 
-  _addContacts(List<String> nicknames) async {
+  _addContacts(List<PpNotification> invitationAcceptances) async {
     var newList = _currentContactNicknames.map((n) => n).toList();
-    for (var nickname in nicknames) {
-      if (!newList.contains(nickname)) {
-        newList.add(nickname);
-        _addContactUserSubscription(nickname);
+    for (var acceptance in invitationAcceptances) {
+      final contactNickname = acceptance.receiver;
+      if (!newList.contains(contactNickname)) {
+        newList.add(contactNickname);
+        _addContactUserSubscription(contactNickname, firstMessage: acceptance.text);
       }
     }
     await _contactNicknamesDocRef.set({contactsFieldName: newList});
     _currentContactNicknames = newList;
   }
 
-  addConversationEvent(String contactNickname) {
-    final event = ContactsEvent.addContact(contactNickname);
+  addConversationEvent(String contactNickname, String? firstMessage) {
+    final event = ContactsEvent.addContact(contactNickname, firstMessage);
     _contactsEventStreamCtrl!.sink.add(event);
   }
 
