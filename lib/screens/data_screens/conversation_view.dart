@@ -3,6 +3,7 @@ import 'package:flutter_chat_app/components/message_bubble.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
@@ -14,6 +15,7 @@ class ConversationView extends StatefulWidget {
 
   final _conversationService = getIt.get<ConversationService>();
   final _userService = getIt.get<PpUserService>();
+  final _spinner = getIt.get<PpSpinner>();
 
 
   static navigate(String contactNickname) {
@@ -32,7 +34,7 @@ class _ConversationViewState extends State<ConversationView> {
   final _messageInputController = TextEditingController();
   String get message => _messageInputController.value.text;
 
-  Box<PpMessage>? box;
+  Box<PpMessage>? _messagesBox;
 
   bool _ready = true;
 
@@ -55,7 +57,7 @@ class _ConversationViewState extends State<ConversationView> {
 
   @override
   void initState() {
-    box = widget._conversationService.getConversationBox(widget.contactNickname);
+    _messagesBox = widget._conversationService.getConversationBox(widget.contactNickname);
     super.initState();
   }
 
@@ -63,7 +65,10 @@ class _ConversationViewState extends State<ConversationView> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      appBar: AppBar(title: Text('${widget.contactNickname} - chat')),
+      appBar: AppBar(
+          title: Text('${widget.contactNickname} - chat'),
+          actions: [_getPopupMenu()],
+      ),
 
       body: SafeArea(
         child: Column(children: [
@@ -71,18 +76,19 @@ class _ConversationViewState extends State<ConversationView> {
               //MESSAGES AREA
 
               Expanded(child: ValueListenableBuilder<Box<PpMessage>>(
-                valueListenable: box!.listenable(),
+                valueListenable: _messagesBox!.listenable(),
                 builder: (context, box, _) {
-
-                  final bubbles = box.values
-                      .map((m) => MessageBubble(message: m.message, my: _isMyMsg(m))
-                  ).toList().reversed.toList();
 
                   return ListView(reverse: true,
                     padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                    children: bubbles,
+                    children: box.values.map((m) {
+
+                      return MessageBubble(message: m.message, my: _isMyMsg(m));
+
+                    }).toList().reversed.toList(),
                   );
                 },
+
               )),
 
 
@@ -128,6 +134,33 @@ class _ConversationViewState extends State<ConversationView> {
             color: _ready ? PRIMARY_COLOR : Colors.grey
         )
     );
+  }
+
+  _getPopupMenu() => PopupMenuButton(
+      iconSize: 30,
+      itemBuilder: (BuildContext context) {
+        return [
+
+          PopupMenuItem(onTap: _onClearConversation,
+            child: const Text('Clear conversation'),
+          ),
+
+          PopupMenuItem(onTap: () {},
+            child: const Text('two'),
+          ),
+
+          PopupMenuItem(onTap: () {},
+            child: const Text('three'),
+          ),
+
+        ];
+    }
+  );
+
+  _onClearConversation() async {
+    widget._spinner.start();
+    await widget._conversationService.clearConversation(widget.contactNickname);
+    widget._spinner.stop();
   }
 
 }

@@ -239,3 +239,5 @@ open hive conversation when add new contact
 ### [056] todo bug fixed
 
 ### [057] todos
+
+### [058] Popup menu and clear conversation feature

@@ -7,6 +7,8 @@ class InvitationSelfNotificationView extends NotificationView {
   InvitationSelfNotificationView(super.notification, {super.key});
 
   //TODO: something is wrong here - lets have a look
+  //TODO: wrong nickname
+  //TODO: delete notification needs refresh view
   @override
   get title => 'YOUR INVITATION';
 

@@ -132,11 +132,29 @@ class ConversationService {
     throw Exception(['no such conversation box']);
   }
 
-  deleteBox(String receiverNickname) async {
+  clearConversation(String contactNickname) async {
+    final box = getConversationBox(contactNickname);
+    await box.clear();
+    await _deleteUnreadSentMessagesIfExists(contactNickname);
+  }
+
+  _deleteUnreadSentMessagesIfExists(String contactNickname) async {
+    //TODO: security rule to delete doc in contact messages collection
+    final querySnapshot = await getContactMessagesRef(contactNickname)
+        .where(PpMessageFields.sender, isEqualTo: _userService.nickname)
+        .get();
+    final batch = _firestore.batch();
+    for (var doc in querySnapshot.docs) {
+      batch.delete(doc.reference);
+    }
+    await batch.commit();
+  }
+
+  deleteBox(String contactNickname) async {
     //TODO: delete when delete conversation
     //TODO: when delete conversation send also notifications about it and implement resolve it
-    _conversationsBoxes.remove(receiverNickname);
-    await Hive.box(_getHiveConversationKey(receiverNickname)).deleteFromDisk();
+    _conversationsBoxes.remove(contactNickname);
+    await Hive.box(_getHiveConversationKey(contactNickname)).deleteFromDisk();
     print('deleted');
   }
 
