@@ -31,7 +31,7 @@ class ConversationService {
   StreamSubscription? _contactsEventListener;
 
   // < nickname, hiveBox>
-  Map<String, Box<PpMessage>> _conversationsBoxes = {};
+  Map<String, Box<PpMessage>> conversationsBoxes = {};
 
   //filled by notification service when login
   List<String> nicknamesToConversationClear = [];
@@ -84,18 +84,18 @@ class ConversationService {
   logout() async {
     initialized = false;
     await _contactsEventListener!.cancel();
-    for (var box in _conversationsBoxes.values) {
+    for (var box in conversationsBoxes.values) {
       await box.close();
     }
     await Hive.close();
-    _conversationsBoxes = {};
+    conversationsBoxes = {};
     _messagesListener!.cancel();
     print('conversation service loogged out');
   }
 
   Box<PpMessage> getConversationBox(String contactNickname) {
-    if (_conversationsBoxes[contactNickname] == null) _noBoxException();
-    return _conversationsBoxes[contactNickname]!;
+    if (conversationsBoxes[contactNickname] == null) _noBoxException();
+    return conversationsBoxes[contactNickname]!;
   }
 
   onSendMessage(PpMessage message) async {
@@ -110,7 +110,7 @@ class ConversationService {
   _addConversationEvent(String contactNickname, {String? firstMessage}) async {
     //triggered by contacts service
     final box = await Hive.openBox<PpMessage>(_getHiveConversationKey(contactNickname));
-    _conversationsBoxes[contactNickname] = box;
+    conversationsBoxes[contactNickname] = box;
 
     if (firstMessage != null) {
       final message = PpMessage.create(message: firstMessage, sender: contactNickname, receiver: _userService.nickname);
@@ -123,7 +123,7 @@ class ConversationService {
     await deleteUnreadSentMessagesIfExists(contactNickname);
     final box = getConversationBox(contactNickname);
     await box.deleteFromDisk();
-    _conversationsBoxes.remove(contactNickname);
+    conversationsBoxes.remove(contactNickname);
   }
 
   _deleteAccountEvent() async {
@@ -142,7 +142,7 @@ class ConversationService {
       //to do: delete those messages?
       throw Exception('sender not in contacts and im not sender');
     }
-    final box = _conversationsBoxes[imSender ? message.receiver : message.sender];
+    final box = conversationsBoxes[imSender ? message.receiver : message.sender];
     box != null ? await box.add(message) : _noBoxException();
   }
 

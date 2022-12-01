@@ -266,3 +266,7 @@ LogProcess class prepared
 ### [066] Prepared firestore batch for delete account
 
 ### [067] Count batch writes
+
+### [068] Batch overload solved
+
+### [069] Delete Hive data when delete account
