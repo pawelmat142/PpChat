@@ -27,12 +27,14 @@ class PpUserService {
   }
 
   logout() async {
-    if (_fireAuth.currentUser != null) {
-      await _updateLogged(false);
-    }
-    _nickname = null;
-    print('user service logged out');
+    await _updateLogged(false);
+    clearData();
   }
+
+  clearData() {
+    _nickname = null;
+  }
+
 
   authValidate({String? where}) {
     if (_fireAuth.currentUser == null) {
@@ -77,7 +79,7 @@ class PpUserService {
 
 
   _updateLogged(bool logged) async {
-    if (_nickname != null) {
+    if (_nickname != null && _nickname!.isNotEmpty && _fireAuth.currentUser != null) {
       await _document.update({PpUserFields.logged : logged});
     }
   }

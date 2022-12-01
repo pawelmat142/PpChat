@@ -70,7 +70,6 @@ class ContactsService {
     _currentContactNicknames = [];
     _currentContactUsers = [];
     _setStateToContactsScreen();
-    print('contacts service loogged out');
   }
 
   getUserByNickname(String nickname) {

@@ -94,8 +94,8 @@ class AuthenticationService {
   void logout() async {
     try {
       _spinner.start();
-      await _logoutServices();
-      await _fireAuth.signOut();
+      await logoutServices();
+      await signOut();
     }
     catch (error) {
       print(error);
@@ -103,6 +103,11 @@ class AuthenticationService {
     }
   }
 
+  signOut() async {
+      await _fireAuth.signOut();
+  }
+
+  //TODO: remove
   onDeleteAccount() {
     _popup.show('Are you sure?',
       text: 'All your data will be lost!',
@@ -123,7 +128,7 @@ class AuthenticationService {
       await _userService.deleteUserDocument();
       await _notificationService.deleteAllNotifications();
       await _addDeletedAccountLog();
-      await _logoutServices();
+      await logoutServices();
       await _fireAuth.signOut();
       _spinner.stop();
     }
@@ -150,7 +155,7 @@ class AuthenticationService {
 
   void _logoutResult() async {
     if (!_isFirstUserListen && !_isRegisterInProgress && !_isDeletingAccount) {
-      await _logoutServices();
+      await logoutServices();
       _spinner.stop();
       await _popup.show('You are logged out!');
       Navigator.of(context).popUntil((route) => route.isFirst);
@@ -165,7 +170,7 @@ class AuthenticationService {
     await _conversationsService.login();
   }
 
-  _logoutServices() async {
+  logoutServices() async {
     print('logout services');
     await _conversationsService.logout();
     await _contactsService.logout();

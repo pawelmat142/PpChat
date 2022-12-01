@@ -256,7 +256,7 @@ notification remove bug
 
 ### [064] first message shown in conversation
 
-## feature/error_hanlding
+## feature/error_handling
 
 ### [065] First step
 LogProcess class prepared
@@ -270,3 +270,5 @@ LogProcess class prepared
 ### [068] Batch overload solved
 
 ### [069] Delete Hive data when delete account
+
+### [070] DeleteAccountProcess - reset services

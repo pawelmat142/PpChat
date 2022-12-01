@@ -7,6 +7,7 @@ import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
+import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -61,29 +62,30 @@ import 'package:hive_flutter/adapters.dart';
 
 
 
-class DeleteAccountEvent extends LogProcess {
+class DeleteAccountProcess extends LogProcess {
 
   final _userService = getIt.get<PpUserService>();
   final _contactsService = getIt.get<ContactsService>();
   final _conversationService = getIt.get<ConversationService>();
   final _notificationService = getIt.get<PpNotificationService>();
+  final _authenticationService = getIt.get<AuthenticationService>();
 
   final _fireAuth = FirebaseAuth.instance;
 
   List<String> _contactsNicknames = [];
   String _nickname = '';
   String _uid = '';
+  get nickname => _nickname.isNotEmpty ? _nickname : null;
 
 
   WriteBatch? firestoreDeleteAccountBatch;
   int batchValue = 0;
 
-  DeleteAccountEvent() {
+  DeleteAccountProcess() {
     firestoreDeleteAccountBatch = firestore.batch();
-    startProcess();
+    process();
     firestore.batch();
   }
-
 
   @override
   firstLog() {
@@ -134,10 +136,12 @@ class DeleteAccountEvent extends LogProcess {
   }
 
 
-  startProcess() async {
+  process() async {
+    super.setProcess('DeleteAccountProcess');
     try {
 
       _nickname = _userService.nickname;
+      super.setContext(_nickname);
       log('[nickname: $_nickname]');
 
       if (_fireAuth.currentUser != null) {
@@ -160,20 +164,18 @@ class DeleteAccountEvent extends LogProcess {
 
       await _resetServices();
 
-      save();
+      await save();
+
+      super.popup.show('Delete account successful!');
 
     } catch (error) {
-      print(error);
-      print(error.runtimeType);
-      logs.add(error.toString());
-      logs.add('error type: ${error.runtimeType.toString()}');
-      save();
+      errorHandler(error);
     }
   }
 
   _addDeletedAccountLog() async {
     await firestore.collection(Collections.DELETED_ACCOUNTS)
-        .doc(_userService.nickname)
+        .doc(_nickname)
         .set({'uid': _uid, 'nickname': _nickname});
   }
 
@@ -289,10 +291,24 @@ class DeleteAccountEvent extends LogProcess {
   }
 
 
-
-
   _resetServices() async {
+    log('[START] Reset services.');
+    await _conversationService.clearData();
+    log('ConversationService clean!');
 
+    await _contactsService.logout();
+    log('ContactsService clean!');
+
+    _notificationService.logout();
+    log('PpNotificationService clean!');
+
+    _userService.clearData();
+    log('PpUserService clean!');
+
+    await _authenticationService.signOut();
+    log('fireAuth signed out!');
+
+    log('[STOP] Reset services.');
   }
 
 

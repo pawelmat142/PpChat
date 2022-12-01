@@ -82,15 +82,23 @@ class ConversationService {
 
 
   logout() async {
-    initialized = false;
-    await _contactsEventListener!.cancel();
     for (var box in conversationsBoxes.values) {
       await box.close();
     }
     await Hive.close();
-    conversationsBoxes = {};
-    _messagesListener!.cancel();
+    clearData();
     print('conversation service loogged out');
+  }
+
+  clearData() async {
+    if (_contactsEventListener != null) {
+      await _contactsEventListener!.cancel();
+    }
+    if (_messagesListener != null) {
+      await _messagesListener!.cancel();
+    }
+    conversationsBoxes = {};
+    initialized = false;
   }
 
   Box<PpMessage> getConversationBox(String contactNickname) {

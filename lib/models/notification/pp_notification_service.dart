@@ -76,7 +76,6 @@ class PpNotificationService {
     _firestoreListener!.cancel();
     _current = [];
     _controller.sink.add([]);
-    print('notification service logged out');
   }
 
   isInvitationReceived(String nickname) {

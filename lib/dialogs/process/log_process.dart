@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
+import 'package:flutter_chat_app/dialogs/popup.dart';
 
 class LogProcess {
 
@@ -9,10 +11,22 @@ class LogProcess {
   }
 
   final firestore = FirebaseFirestore.instance;
+  final popup = getIt.get<Popup>();
 
   List<String> logs = [];
 
   bool saveMode = true;
+
+  String? _context;
+  String? _processType;
+
+  setContext(String value) {
+    _context = value;
+  }
+
+  setProcess(String value) {
+    _processType = value;
+  }
 
   firstLog() {
     log('first log - LogProcess');
@@ -27,7 +41,25 @@ class LogProcess {
 
   save() async {
     if (saveMode) {
-      await firestore.collection(Collections.logs).add({'logs': logs});
+      Map<String, dynamic> doc = {'logs': logs};
+      if (_context != null) {
+        doc['context'] = _context;
+      }
+      if (_processType != null) {
+        doc['process type'] = _processType;
+      }
+      await firestore.collection(Collections.logs).add(doc);
     }
+  }
+
+  errorHandler(error) {
+    if (kDebugMode) {
+      print(error);
+      print(error.runtimeType);
+    }
+    logs.add(error.toString());
+    logs.add('error type: ${error.runtimeType.toString()}');
+    save();
+    popup.show('Deleting account process', text: error.toString());
   }
 }
