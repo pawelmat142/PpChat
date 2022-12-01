@@ -2,22 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/contacts_tile/contact_avatar.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
+import 'package:flutter_chat_app/screens/data_screens/conversation_view.dart';
 import 'package:flutter_chat_app/screens/data_screens/user_view.dart';
 
 class ContactTile extends StatelessWidget {
   final PpUser user;
-  const ContactTile(this.user, {
-    Key? key,
-  }) : super(key: key);
+  const ContactTile(this.user, {super.key});
 
-  _navigate() {
+  _navigateToContactView() {
     UserView.navigate(user);
+  }
+
+  _navigateToConversation() {
+    ConversationView.navigate(user.nickname);
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => _navigate(),
+      onTap: _navigateToConversation,
       child: Column(
           children: [
             Padding(
@@ -29,7 +32,8 @@ class ContactTile extends StatelessWidget {
 
                   Row(
                     children: [
-                      const ContactAvatar(),
+                      InkWell(onTap: _navigateToContactView, child: const ContactAvatar()),
+
                       Content(nickname: user.nickname, text: user.role),
                     ],
                   ),

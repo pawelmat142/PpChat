@@ -13,13 +13,20 @@ import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/services/conversation_service.dart';
 
 class PpNotificationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _userService = getIt.get<PpUserService>();
   final _contactsService = getIt.get<ContactsService>();
+  final _conversationService = getIt.get<ConversationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
+
+  final typesNotToDeleteOnOtherSideWhenDeleteAll = [
+    PpNotificationTypes.conversationClearNotification,
+    PpNotificationTypes.contactDeletedNotification
+  ];
 
   CollectionReference<Map<String, dynamic>> get _myNotificationsCollectionRef {
     return _firestore.collection(Collections.User)
@@ -33,29 +40,43 @@ class PpNotificationService {
 
   //STREAM
   StreamSubscription? _firestoreListener;
+  //add to sink = refresh notifications screen view
   final _controller = StreamController.broadcast();
   get stream => _controller.stream;
 
-  login() {
+  Future<void> login() {
+    var completer = Completer();
     bool first = true;
-    _firestoreListener = _myNotificationsCollectionRef.snapshots().listen((querySnapshot) {
+    _userService.authValidate(where: 'notification service');
+    _firestoreListener = _myNotificationsCollectionRef.snapshots().listen((querySnapshot) async {
       final notifications = querySnapshot.docs.map((doc) => PpNotification.fromMap(doc.data())).toList();
-      if (!first) _notificationFlush(notifications);
-      _current = notifications;
-      _controller.sink.add(notifications);
-      _contactsService.resolveInvitationAcceptancesForSender(_current);
-      _contactsService.resolveContactDeletedNotificationsForReceiver(_current);
-      first = false;
+      if (notifications.isEmpty) {
+        if (!completer.isCompleted) completer.complete();
+      } else {
+        if (!first) _notificationFlush(notifications);
+        _current = notifications;
+        _controller.sink.add(notifications);
+        await _contactsService.resolveInvitationAcceptancesForSender(_current);
+        await _contactsService.resolveContactDeletedNotificationsForReceiver(_current);
+        await _resolveConversationClearForReceiver();
+        first = false;
+        if (!completer.isCompleted) completer.complete();
+      }
     }, onError:(error) {
+      print(error);
       _current = [];
       _controller.sink.add([]);
+      if (!completer.isCompleted) completer.complete();
     });
+    print('notifications service initialized');
+    return completer.future;
   }
 
   logout() {
     _firestoreListener!.cancel();
     _current = [];
     _controller.sink.add([]);
+    print('notification service logged out');
   }
 
   isInvitationReceived(String nickname) {
@@ -104,36 +125,50 @@ class PpNotificationService {
         .update({PpNotificationFields.isRead: true});
   }
 
-  deleteSingleNotification({PpNotification? notification, String? nickname}) async {
-    if (nickname != null) {
-      await _myNotificationsCollectionRef.doc(nickname).delete();
-    } else if (notification != null) {
-      await _myNotificationsCollectionRef.doc(notification.receiver).delete();
+  deleteSingleNotificationBySenderNickname(String senderNickname) async {
+    final index = _current.indexWhere((n) => n.sender == senderNickname);
+    if (index != -1) {
+      final notification = _current[index];
+      await _deleteSingleNotification(notification);
+      _removeFromCurrentByIndex(index);
     } else {
-      throw Exception(['need one argument!']);
+      throw Exception('no such notification!');
     }
   }
 
+  _deleteSingleNotification(PpNotification notification) async {
+    final otherSideNickname = notification.sender == _userService.nickname ? notification.receiver : notification.sender;
+    await _myNotificationsCollectionRef.doc(otherSideNickname).delete();
+  }
+
+  _removeFromCurrentByIndex(int index) {
+    _current.removeAt(index);
+    _controller.sink.add(_current);
+  }
+
   deleteInvitation(PpNotification notification) async {
+    final index = _current.indexWhere((n) => n.sender == notification.sender);
+    if (index == -1) return;
     await _popup.show('Are you sure?', buttons: [
       PopupButton('Yes', onPressed: () async {
           Navigator.pop(NavigationService.context);
           _spinner.start();
           final batch = _firestore.batch();
           batch.delete(_myNotificationsCollectionRef.doc(_imSender(notification) ? notification.receiver : notification.sender));
-          batch.delete(_getAnotherUserNotificationDocumentRef(notification, isSender: _imSender(notification)));
+          batch.delete(_getAnotherUserNotificationDocumentRef(notification, imSender: _imSender(notification)));
           await batch.commit();
+          _removeFromCurrentByIndex(index);
           _spinner.stop();
           PpFlushbar.invitationDeleted(delay: 100);
         })
     ]);
   }
 
-  DocumentReference _getAnotherUserNotificationDocumentRef(PpNotification notification, {bool isSender = false})  {
+  DocumentReference _getAnotherUserNotificationDocumentRef(PpNotification notification, {bool imSender = false})  {
     return _firestore.collection(Collections.User)
-        .doc(isSender ? notification.receiver : notification.sender)
+        .doc(imSender ? notification.receiver : notification.sender)
         .collection(Collections.NOTIFICATIONS)
-        .doc(isSender ? notification.sender : notification.receiver);
+        .doc(imSender ? notification.sender : notification.receiver);
   }
 
   deleteAllNotifications() async {
@@ -141,8 +176,8 @@ class PpNotificationService {
       final batch = _firestore.batch();
       for (var notification in _current) {
         batch.delete(_myNotificationsCollectionRef.doc(_imSender(notification) ? notification.receiver : notification.sender));
-        if (notification.type != PpNotificationTypes.contactDeletedNotification) {
-          batch.delete(_getAnotherUserNotificationDocumentRef(notification, isSender: _imSender(notification)));
+        if (!typesNotToDeleteOnOtherSideWhenDeleteAll.contains(notification.type)) {
+          batch.delete(_getAnotherUserNotificationDocumentRef(notification, imSender: _imSender(notification)));
         }
       }
       await batch.commit();
@@ -162,6 +197,28 @@ class PpNotificationService {
           _spinner.stop();
           PpFlushbar.notificationsDeleted();
         })]);
+  }
+
+  sendConversationClearNotification(String contactNickname) async {
+    final notification = PpNotification.createConversationClear(sender: _userService.nickname, receiver: contactNickname);
+    await _getAnotherUserNotificationDocumentRef(notification, imSender: true).set(notification.asMap);
+  }
+
+  _resolveConversationClearForReceiver() async {
+    final notificationsToResolve = PpNotification.filterConversationClearNotifications(_current);
+    if (notificationsToResolve.isNotEmpty) {
+      await _deleteNotifications(notificationsToResolve);
+      final nicknames = notificationsToResolve.map((n) => n.sender).toList();
+      await _conversationService.resolveConversationClearForReceiver(nicknames);
+    }
+  }
+
+  _deleteNotifications(List<PpNotification> list) async {
+    final batch = _firestore.batch();
+    for (var notification in list) {
+      batch.delete(_myNotificationsCollectionRef.doc(notification.sender));
+    }
+    await batch.commit();
   }
 
 }

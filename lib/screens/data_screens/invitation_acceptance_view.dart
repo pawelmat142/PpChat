@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
+import 'package:flutter_chat_app/screens/data_screens/conversation_view.dart';
 import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
 import 'package:flutter_chat_app/screens/data_screens/user_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
@@ -22,7 +23,7 @@ class InvitationAcceptanceView extends NotificationView {
   get buttons {
     return [
 
-      PpButton(text: 'SHOW', onPressed: () {
+      PpButton(text: 'show user', onPressed: () async {
         try {
           NavigationService.popToHome();
           final user = super.contactsService.getUserByNickname(notification.receiver);
@@ -33,13 +34,15 @@ class InvitationAcceptanceView extends NotificationView {
         }
       }),
 
-      PpButton(text: 'Write message', onPressed: () {
-        //TODO: navigate to message
+      PpButton(text: 'Write message', onPressed: () async {
+          NavigationService.popToHome();
+          Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
+          ConversationView.navigate(notification.receiver);
       }),
 
-      PpButton(text: 'Delete', color: Colors.red, onPressed: () async {
+      PpButton(text: 'remove notification', color: Colors.red, onPressed: () async {
         try {
-          await notificationService.deleteSingleNotification(nickname: notification.receiver);
+          await notificationService.deleteSingleNotificationBySenderNickname(notification.sender);
           Navigator.pop(NavigationService.context);
           PpFlushbar.notificationDeleted();
         } catch (error) {

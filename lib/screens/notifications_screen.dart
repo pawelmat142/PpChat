@@ -70,7 +70,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
             Padding(
               padding: BASIC_HORIZONTAL_PADDING,
-              child: PpButton(text: 'DELETE ALL', color: Colors.red, onPressed: () {
+              child: PpButton(text: 'remove all', color: Colors.red, onPressed: () {
                 widget.notificationService.deleteAllNotificationsPopup();
               }),
             )

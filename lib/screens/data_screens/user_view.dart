@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
-import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
+import 'package:flutter_chat_app/screens/contacts_screen.dart';
+import 'package:flutter_chat_app/screens/data_screens/conversation_view.dart';
 import 'package:flutter_chat_app/screens/data_screens/data_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
@@ -12,7 +13,6 @@ class UserView extends DataView {
 
   static navigate(PpUser user) async {
     final contactsService = getIt.get<ContactsService>();
-    final popup = getIt.get<Popup>();
 
     await Navigator.push(
         NavigationService.context,
@@ -23,15 +23,13 @@ class UserView extends DataView {
           buttons: [
 
             PpButton(text: 'message', onPressed: () {
-            //  TODO: navigate to message
+              NavigationService.popToHome();
+              Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
+              ConversationView.navigate(user.nickname);
             }),
 
-            PpButton(text: 'delete', color: Colors.red, onPressed: () {
-              popup.show('Are you shure?', buttons: [PopupButton('Delete', onPressed: () async {
-                await contactsService.deleteContactForSender(user.nickname);
-                Navigator.pop(NavigationService.context);
-              })]);
-
+            PpButton(text: 'delete', color: Colors.red, onPressed: () async {
+              await contactsService.onDeleteContact(user.nickname);
             })
           ]
         )))

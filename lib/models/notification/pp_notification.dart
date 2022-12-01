@@ -68,6 +68,14 @@ class PpNotification {
       text: PpNotificationTypes.contactDeletedNotification
   );
 
+  static PpNotification createConversationClear({required String sender, required String receiver}) => PpNotification(
+      sender: sender,
+      receiver: receiver,
+      type: PpNotificationTypes.conversationClearNotification,
+      isRead: true,
+      text: PpNotificationTypes.conversationClearNotification,
+  );
+
   static List<PpNotification> filterUnread(List<PpNotification> input) {
     return input.where((notification) => !notification.isRead).toList();
   }
@@ -82,5 +90,9 @@ class PpNotification {
 
   static List<PpNotification> filterContactDeletedNotifications(List<PpNotification> input) {
     return input.where((notification) => notification.type == PpNotificationTypes.contactDeletedNotification).toList();
+  }
+
+  static List<PpNotification> filterConversationClearNotifications(List<PpNotification> input) {
+    return input.where((notification) => notification.type == PpNotificationTypes.conversationClearNotification).toList();
   }
 }

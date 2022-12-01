@@ -201,3 +201,57 @@ new notification type - contactDeletedNotification - has no view
 ### [047] small todos cleanup
 
 ### [048] Invitation first message
+
+## feature/conversation
+
+### [049] conversation view
+prepared as view navigated from contacts screen by tap on contact tile
+
+### [050] Message data model
+conversation service register
+</br>conversation view with listener
+</br>basic security rules
+
+### [051] Hive - local storage - setup
+`flutter pub add hive`
+</br>`flutter remove add hive_flutter`
+</br>`flutter pub add hive_generator --dev`
+</br>`dart pub add build_runner --dev`
+
+### [052] Hive - local storage - type register
+message data model refactor to make it hive DAO
+</br>`flutter packages pub run build_runner build`
+</br> this command generates adapter file .g.dart
+
+### [053] Hive - local storage - usage
+when login for each contact conversation box is opened/created
+</br> example adding to box = send message
+</br> conversation view build with valueListenableBuilder
+
+### [054] Message receiving
+listen for coming messages - Messages collection
+</br>received message is deleted straight away and add to Hive
+
+### [055] contactsEventListener + refactor
+open hive conversation when add new contact
+</br> login / logout services debug + refactor
+
+### [056] todo bug fixed
+
+### [057] todos
+
+### [058] Popup menu and clear conversation feature
+
+### [059] delete contact = delete conversation = contactsEvent
+
+### [060] todos
+notification remove bug
+</br> delete account event should delete all hive data
+
+### [061] Sending conversationClearNotification
+
+### [062] Receiving conversationClearNotification
+
+### [063] conversationClearNotification = event shown on conversation view
+
+### [064] first message shown in conversation

@@ -8,7 +8,18 @@ class NavigationService {
     return navigatorKey.currentContext;
   }
 
+  static pop({int? delay}) async {
+    if (delay != null) {
+      await Future.delayed(Duration(milliseconds: delay));
+    }
+    Navigator.pop(context);
+  }
+
   static popToHome() {
     Navigator.popUntil(context, ModalRoute.withName(HomeScreen.id));
+  }
+
+  static popToBlank() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }

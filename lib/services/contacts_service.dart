@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
+import 'package:flutter_chat_app/services/contacts_event.dart';
 
 class ContactsService {
 
@@ -37,15 +39,30 @@ class ContactsService {
 
   Function? setStateToContactsScreen;
 
+  StreamController<ContactsEvent>? _contactsEventStreamCtrl;
+  Stream<ContactsEvent> get contactsEventStream => _contactsEventStreamCtrl!.stream;
+
+  bool _initialized = false;
+  bool get initialized => _initialized;
+
   login() async {
+    _initialized = false;
     _userSubscriptions = [];
+    _userService.authValidate(where: 'contacts service');
     await _getCurrentContactNicknamesFromDB();
     for (var nickname in _currentContactNicknames) {
       _addContactUserSubscription(nickname);
     }
+    _contactsEventStreamCtrl = StreamController();
+    _initialized = true;
+    print('contacts service initialized');
   }
 
   logout() async {
+    _initialized = false;
+    if (_contactsEventStreamCtrl != null) {
+      await _contactsEventStreamCtrl!.close();
+    }
     for (var subscription in _userSubscriptions) {
       await subscription.cancel();
     }
@@ -53,6 +70,7 @@ class ContactsService {
     _currentContactNicknames = [];
     _currentContactUsers = [];
     _setStateToContactsScreen();
+    print('contacts service loogged out');
   }
 
   getUserByNickname(String nickname) {
@@ -65,7 +83,7 @@ class ContactsService {
     }
   }
 
-  _addContactUserSubscription(String nickname) {
+  _addContactUserSubscription(String nickname, {String? firstMessage}) {
     _userSubscriptions.add(_getContactUserDocRef(nickname).snapshots().listen((event) {
       if (event.exists) {
         final user = PpUser.fromDB(event);
@@ -76,7 +94,13 @@ class ContactsService {
         }
         _setStateToContactsScreen();
       }
+    }, onError: (error) {
+      print('contact user listener error:');
+      print(error);
     }));
+    if (_initialized) {
+      addConversationEvent(nickname, firstMessage);
+    }
   }
 
   DocumentReference _getContactUserDocRef(String nickname) {
@@ -122,28 +146,29 @@ class ContactsService {
 
    // add to contacts
     final newList = _currentContactNicknames.map((contact) => contact).toList();
-    newList.add(notification.sender);
-    batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
+    if (!newList.contains(notification.sender)) {
+      newList.add(notification.sender);
+      batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
+    }
 
     await batch.commit();
     _currentContactNicknames = newList;
-    _addContactUserSubscription(notification.sender);
+    _addContactUserSubscription(notification.sender, firstMessage: notification.text);
   }
 
-  resolveInvitationAcceptancesForSender(List<PpNotification> notifications) async {
-    try {
-      final invitationAcceptances = PpNotification.filterInvitationAcceptances(notifications);
-      if (invitationAcceptances.isNotEmpty) {
-        final newNicknames = invitationAcceptances.map((notification) => notification.receiver).toList();
-        await _addContacts(newNicknames);
-        PpFlushbar.invitationAcceptanceForSender(notifications: invitationAcceptances, delay: 200);
-      }
-    } catch (error) {
-      _popup.sww(text: 'resolveInvitationAcceptancesForSender');
-    }
+  onDeleteContact(String nickname) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    await _popup.show('Are you sure?',
+        text: 'All data will be lost also on the other side!',
+        error: true,
+        buttons: [PopupButton('Delete', error: true, onPressed: () async {
+          await _deleteContact(nickname);
+          NavigationService.pop();
+          PpFlushbar.contactDeletedNotificationForSender(nickname: nickname, delay: 200);
+        })]);
   }
 
-  deleteContactForSender(String nickname) async {
+  _deleteContact(String nickname) async {
     try {
       _spinner.start();
       final batch = _firestore.batch();
@@ -157,9 +182,9 @@ class ContactsService {
       batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
 
       await batch.commit();
+      deleteConversationEvent(nickname);
       await _removeCurrentContactByNickname(nickname);
       _spinner.stop();
-      PpFlushbar.contactDeletedNotificationForSender(nickname: nickname, delay: 200);
     } catch (error) {
       _spinner.stop();
       _popup.sww(text: 'deleteContactForSender');
@@ -172,6 +197,9 @@ class ContactsService {
   }
 
   resolveContactDeletedNotificationsForReceiver(List<PpNotification> notifications) async {
+    //TODO: test if work correctly
+    //TODO: test account deleting
+    //TODO: test if conversation deleting / clear works properly
     try {
       final deletedContactNicknames = PpNotification.filterContactDeletedNotifications(notifications).map((n) => n.sender).toList();
       if (deletedContactNicknames.isNotEmpty) {
@@ -187,11 +215,24 @@ class ContactsService {
         await batch.commit();
 
         for (var nickname in deletedContactNicknames) {
+          deleteConversationEvent(nickname);
           await _removeCurrentContactByNickname(nickname);
         }
       }
     } catch (error) {
       _popup.sww(text: 'resolveContactDeletedNotificationsForReceiver');
+    }
+  }
+
+  resolveInvitationAcceptancesForSender(List<PpNotification> notifications) async {
+    try {
+      final invitationAcceptances = PpNotification.filterInvitationAcceptances(notifications);
+      if (invitationAcceptances.isNotEmpty) {
+        await _addContacts(invitationAcceptances);
+        PpFlushbar.invitationAcceptanceForSender(notifications: invitationAcceptances, delay: 200);
+      }
+    } catch (error) {
+      _popup.sww(text: 'resolveInvitationAcceptancesForSender');
     }
   }
 
@@ -202,6 +243,7 @@ class ContactsService {
       for (var nickname in _currentContactNicknames) {
         var receiverNotification = PpNotification.createContactDeleted(sender: _userService.nickname, receiver: nickname);
         batch.set(_getNotificationReceiverDocRef(nickname), receiverNotification.asMap);
+        deleteConversationEvent(nickname);
       }
       batch.delete(_contactNicknamesDocRef);
 
@@ -223,13 +265,31 @@ class ContactsService {
     _setStateToContactsScreen();
   }
 
-  _addContacts(List<String> nicknames) async {
+  _addContacts(List<PpNotification> invitationAcceptances) async {
     var newList = _currentContactNicknames.map((n) => n).toList();
-    for (var nickname in nicknames) {
-      newList.add(nickname);
-      _addContactUserSubscription(nickname);
+    for (var acceptance in invitationAcceptances) {
+      final contactNickname = acceptance.receiver;
+      if (!newList.contains(contactNickname)) {
+        newList.add(contactNickname);
+        _addContactUserSubscription(contactNickname, firstMessage: acceptance.text);
+      }
     }
     await _contactNicknamesDocRef.set({contactsFieldName: newList});
     _currentContactNicknames = newList;
+  }
+
+  addConversationEvent(String contactNickname, String? firstMessage) {
+    final event = ContactsEvent.addContact(contactNickname, firstMessage);
+    _contactsEventStreamCtrl!.sink.add(event);
+  }
+
+  deleteConversationEvent(String contactNickname) {
+    final event = ContactsEvent.deleteContact(contactNickname);
+    _contactsEventStreamCtrl!.sink.add(event);
+  }
+
+  deleteAccountEvent() {
+    final event = ContactsEvent.deleteAccount();
+    _contactsEventStreamCtrl!.sink.add(event);
   }
 }

@@ -7,7 +7,7 @@ import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
 
 class NotificationTile extends StatelessWidget {
   final PpNotification notification;
-  const NotificationTile(this.notification, {super.key});
+  NotificationTile(this.notification, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +79,13 @@ class NotificationTile extends StatelessWidget {
     );
   }
 
+  final reverse = [
+    PpNotificationTypes.invitationAcceptance,
+    PpNotificationTypes.invitationSelfNotification
+  ];
+
   getNickname() {
-    return notification.type == PpNotificationTypes.invitationAcceptance
+    return reverse.contains(notification.type)
         ? notification.receiver
         : notification.sender;
   }
