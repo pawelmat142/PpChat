@@ -255,3 +255,10 @@ notification remove bug
 ### [063] conversationClearNotification = event shown on conversation view
 
 ### [064] first message shown in conversation
+
+## feature/error_hanlding
+
+### [065] First step
+LogProcess class prepared
+</br> DeleteAccount as extension of LogProcess
+</br> new collection `log` with security rule

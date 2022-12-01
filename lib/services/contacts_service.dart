@@ -175,7 +175,7 @@ class ContactsService {
 
       //contact remove notification for sender
       final receiverNotification = PpNotification.createContactDeleted(sender: _userService.nickname, receiver: nickname);
-      batch.set(_getNotificationReceiverDocRef(nickname), receiverNotification.asMap);
+      batch.set(getNotificationReceiverDocRef(nickname), receiverNotification.asMap);
 
       //remove from contacts
       var newList = _currentContactNicknames.where((n) => n != nickname).toList();
@@ -191,7 +191,7 @@ class ContactsService {
     }
   }
 
-  _getNotificationReceiverDocRef(String nickname) {
+  getNotificationReceiverDocRef(String nickname) {
     return _firestore.collection(Collections.User).doc(nickname)
         .collection(Collections.NOTIFICATIONS).doc(_userService.nickname);
   }
@@ -242,7 +242,7 @@ class ContactsService {
 
       for (var nickname in _currentContactNicknames) {
         var receiverNotification = PpNotification.createContactDeleted(sender: _userService.nickname, receiver: nickname);
-        batch.set(_getNotificationReceiverDocRef(nickname), receiverNotification.asMap);
+        batch.set(getNotificationReceiverDocRef(nickname), receiverNotification.asMap);
         deleteConversationEvent(nickname);
       }
       batch.delete(_contactNicknamesDocRef);

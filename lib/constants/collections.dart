@@ -8,4 +8,6 @@ abstract class Collections {
   static const String Messages = 'Messages';
 
   static const String DELETED_ACCOUNTS = 'DELETED_ACCOUNTS';
+
+  static const String logs = 'logs';
 }
