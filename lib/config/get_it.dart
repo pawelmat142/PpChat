@@ -6,6 +6,7 @@ import 'package:flutter_chat_app/models/notification/pp_notification_service.dar
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;
@@ -25,6 +26,8 @@ Future<void> initGetIt() async {
   getIt.registerLazySingleton(() => ContactsService());
 
   getIt.registerLazySingleton(() => ConversationService());
+
+  getIt.registerLazySingleton(() => LogService());
 
   getIt.registerSingleton(AuthenticationService());
 }

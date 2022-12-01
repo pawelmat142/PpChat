@@ -28,6 +28,10 @@ class LogProcess {
     _processType = value;
   }
 
+  setSaveMode(bool mode) {
+    saveMode = mode;
+  }
+
   firstLog() {
     log('first log - LogProcess');
   }
@@ -41,7 +45,7 @@ class LogProcess {
 
   save() async {
     if (saveMode) {
-      Map<String, dynamic> doc = {'logs': logs};
+      Map<String, dynamic> doc = {'atimestamp': DateTime.now(), 'logs': logs};
       if (_context != null) {
         doc['context'] = _context;
       }
@@ -57,9 +61,9 @@ class LogProcess {
       print(error);
       print(error.runtimeType);
     }
-    logs.add(error.toString());
+    logs.add('[ERROR] - $error');
     logs.add('error type: ${error.runtimeType.toString()}');
     save();
-    popup.show('Deleting account process', text: error.toString());
+    popup.sww(text: error.toString());
   }
 }

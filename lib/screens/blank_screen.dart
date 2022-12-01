@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
-import 'package:flutter_chat_app/dialogs/process/delete_account_process.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';

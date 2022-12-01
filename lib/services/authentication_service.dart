@@ -13,6 +13,7 @@ import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
+import 'package:flutter_chat_app/services/log_service.dart';
 
 class AuthenticationService {
   final _fireAuth = FirebaseAuth.instance;
@@ -23,6 +24,10 @@ class AuthenticationService {
   final _conversationsService = getIt.get<ConversationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
+  final logService = getIt.get<LogService>();
+  log(String txt) => logService.log(txt);
+  logError(String txt) => logService.error(txt);
+
 
   get context => NavigationService.context;
 
@@ -72,15 +77,16 @@ class AuthenticationService {
   //when user login by form
   void login({required String nickname, required String password}) async {
     try {
+      log('[START] Login by form process');
       _spinner.start();
       await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
       await _loginServices();
+      log('[STOP] Login by form process');
       _spinner.stop();
       await Navigator.pushNamed(context, HomeScreen.id);
     }
     catch (error) {
-      print('login by form error: ');
-      print(error);
+      logService.errorHandler(error);
       if (_fireAuth.currentUser != null) await _fireAuth.signOut();
       _spinner.stop();
       await _popup.show('Wrong credentials!',
@@ -165,9 +171,13 @@ class AuthenticationService {
 
   _loginServices() async {
     await _userService.login(nickname: _toNickname(_fireAuth.currentUser!.email!));
+    log('UserService login finished. Nickname: ${_userService.nickname}');
     await _contactsService.login();
+    log('ContactsService login finished');
     await _notificationService.login();
+    log('NotificationService login finished');
     await _conversationsService.login();
+    log('ConversationService login finished');
   }
 
   logoutServices() async {

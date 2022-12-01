@@ -272,3 +272,7 @@ LogProcess class prepared
 ### [069] Delete Hive data when delete account
 
 ### [070] DeleteAccountProcess - reset services
+
+### [071] LogService
+Global LogProcess
+example on login process
