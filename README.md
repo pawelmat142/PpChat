@@ -264,3 +264,5 @@ LogProcess class prepared
 </br> new collection `log` with security rule
 
 ### [066] Prepared firestore batch for delete account
+
+### [067] Count batch writes
