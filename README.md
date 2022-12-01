@@ -276,3 +276,5 @@ LogProcess class prepared
 ### [071] LogService
 Global LogProcess
 example on login process
+
+### [072] Finish branch

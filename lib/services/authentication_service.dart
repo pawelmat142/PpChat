@@ -38,7 +38,7 @@ class AuthenticationService {
   AuthenticationService() {
     _fireAuth.idTokenChanges().listen((user) async {
       if (user == null) {
-        print('fire auth listener - logout');
+        log('[FireAuth] - logout');
         _logoutResult();
       } else if (_isFirstUserListen) {
         _loginResult();
@@ -104,7 +104,7 @@ class AuthenticationService {
       await signOut();
     }
     catch (error) {
-      print(error);
+      logService.errorHandler(error);
       _errorPopup();
     }
   }
@@ -139,7 +139,7 @@ class AuthenticationService {
       _spinner.stop();
     }
     catch (error) {
-      print(error);
+      logService.errorHandler(error);
       _popup.sww(text: '_deleteAccount');
     }
   }
@@ -178,14 +178,18 @@ class AuthenticationService {
     log('NotificationService login finished');
     await _conversationsService.login();
     log('ConversationService login finished');
+
+    logService.setContext(_userService.nickname);
   }
 
   logoutServices() async {
-    print('logout services');
+    log('[START] logout services');
     await _conversationsService.logout();
     await _contactsService.logout();
     _notificationService.logout();
     await _userService.logout();
+    log('[STOP] logout services');
+    logService.setContext('log outed');
   }
 
   void _errorPopup() {
