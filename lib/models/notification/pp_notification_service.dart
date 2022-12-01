@@ -28,7 +28,7 @@ class PpNotificationService {
     PpNotificationTypes.contactDeletedNotification
   ];
 
-  CollectionReference<Map<String, dynamic>> get _myNotificationsCollectionRef {
+  CollectionReference<Map<String, dynamic>> get myNotificationsCollectionRef {
     return _firestore.collection(Collections.User)
         .doc(_userService.nickname)
         .collection(Collections.NOTIFICATIONS);
@@ -48,7 +48,7 @@ class PpNotificationService {
     var completer = Completer();
     bool first = true;
     _userService.authValidate(where: 'notification service');
-    _firestoreListener = _myNotificationsCollectionRef.snapshots().listen((querySnapshot) async {
+    _firestoreListener = myNotificationsCollectionRef.snapshots().listen((querySnapshot) async {
       final notifications = querySnapshot.docs.map((doc) => PpNotification.fromMap(doc.data())).toList();
       if (notifications.isEmpty) {
         if (!completer.isCompleted) completer.complete();
@@ -120,7 +120,7 @@ class PpNotificationService {
   }
 
   markNotificationAsRead(PpNotification notification) {
-    _myNotificationsCollectionRef
+    myNotificationsCollectionRef
         .doc(_imSender(notification) ? notification.receiver : notification.sender)
         .update({PpNotificationFields.isRead: true});
   }
@@ -138,7 +138,7 @@ class PpNotificationService {
 
   _deleteSingleNotification(PpNotification notification) async {
     final otherSideNickname = notification.sender == _userService.nickname ? notification.receiver : notification.sender;
-    await _myNotificationsCollectionRef.doc(otherSideNickname).delete();
+    await myNotificationsCollectionRef.doc(otherSideNickname).delete();
   }
 
   _removeFromCurrentByIndex(int index) {
@@ -154,7 +154,7 @@ class PpNotificationService {
           Navigator.pop(NavigationService.context);
           _spinner.start();
           final batch = _firestore.batch();
-          batch.delete(_myNotificationsCollectionRef.doc(_imSender(notification) ? notification.receiver : notification.sender));
+          batch.delete(myNotificationsCollectionRef.doc(_imSender(notification) ? notification.receiver : notification.sender));
           batch.delete(_getAnotherUserNotificationDocumentRef(notification, imSender: _imSender(notification)));
           await batch.commit();
           _removeFromCurrentByIndex(index);
@@ -175,7 +175,8 @@ class PpNotificationService {
     try {
       final batch = _firestore.batch();
       for (var notification in _current) {
-        batch.delete(_myNotificationsCollectionRef.doc(_imSender(notification) ? notification.receiver : notification.sender));
+        batch.delete(myNotificationsCollectionRef.doc(_imSender(notification) ? notification.receiver : notification.sender));
+        //probably not needed bcs any notification received if im sender will be overwritten by deletedAccountNotification
         if (!typesNotToDeleteOnOtherSideWhenDeleteAll.contains(notification.type)) {
           batch.delete(_getAnotherUserNotificationDocumentRef(notification, imSender: _imSender(notification)));
         }
@@ -216,7 +217,7 @@ class PpNotificationService {
   _deleteNotifications(List<PpNotification> list) async {
     final batch = _firestore.batch();
     for (var notification in list) {
-      batch.delete(_myNotificationsCollectionRef.doc(notification.sender));
+      batch.delete(myNotificationsCollectionRef.doc(notification.sender));
     }
     await batch.commit();
   }

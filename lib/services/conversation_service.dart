@@ -120,7 +120,7 @@ class ConversationService {
 
   _deleteConversationEvent(String contactNickname) async {
     //triggered by contacts service
-    await _deleteUnreadSentMessagesIfExists(contactNickname);
+    await deleteUnreadSentMessagesIfExists(contactNickname);
     final box = getConversationBox(contactNickname);
     await box.deleteFromDisk();
     _conversationsBoxes.remove(contactNickname);
@@ -161,7 +161,7 @@ class ConversationService {
 
   clearConversation(String contactNickname) async {
     await _clearConversation(contactNickname);
-    await _deleteUnreadSentMessagesIfExists(contactNickname);
+    await deleteUnreadSentMessagesIfExists(contactNickname);
     await _sendConversationClearNotification(contactNickname);
   }
 
@@ -170,7 +170,7 @@ class ConversationService {
     await box.clear();
   }
 
-  _deleteUnreadSentMessagesIfExists(String contactNickname) async {
+  deleteUnreadSentMessagesIfExists(String contactNickname) async {
     //TODO: security rule to delete doc in contact messages collection
     final querySnapshot = await getContactMessagesRef(contactNickname)
         .where(PpMessageFields.sender, isEqualTo: _userService.nickname)

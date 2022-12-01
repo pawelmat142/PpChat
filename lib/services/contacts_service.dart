@@ -22,7 +22,7 @@ class ContactsService {
   final _spinner = getIt.get<PpSpinner>();
   final _popup = getIt.get<Popup>();
 
-  DocumentReference<Map<String, dynamic>> get _contactNicknamesDocRef {
+  DocumentReference<Map<String, dynamic>> get contactNicknamesDocRef {
     return _firestore.collection(Collections.User)
         .doc(_userService.nickname)
         .collection(Collections.CONTACTS)
@@ -108,7 +108,7 @@ class ContactsService {
   }
 
   _getCurrentContactNicknamesFromDB() async {
-    final response = await _contactNicknamesDocRef.get();
+    final response = await contactNicknamesDocRef.get();
     _currentContactNicknames = [];
     if (response.exists) {
       final document = response.data();
@@ -148,7 +148,7 @@ class ContactsService {
     final newList = _currentContactNicknames.map((contact) => contact).toList();
     if (!newList.contains(notification.sender)) {
       newList.add(notification.sender);
-      batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
+      batch.set(contactNicknamesDocRef, {contactsFieldName: newList});
     }
 
     await batch.commit();
@@ -179,7 +179,7 @@ class ContactsService {
 
       //remove from contacts
       var newList = _currentContactNicknames.where((n) => n != nickname).toList();
-      batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
+      batch.set(contactNicknamesDocRef, {contactsFieldName: newList});
 
       await batch.commit();
       deleteConversationEvent(nickname);
@@ -206,7 +206,7 @@ class ContactsService {
         final batch = _firestore.batch();
 
         final newList = _currentContactNicknames.where((u) => !deletedContactNicknames.contains(u)).toList();
-        batch.set(_contactNicknamesDocRef, {contactsFieldName: newList});
+        batch.set(contactNicknamesDocRef, {contactsFieldName: newList});
 
         for (var nickname in deletedContactNicknames) {
           batch.delete(_firestore.collection(Collections.User).doc(_userService.nickname)
@@ -245,7 +245,7 @@ class ContactsService {
         batch.set(getNotificationReceiverDocRef(nickname), receiverNotification.asMap);
         deleteConversationEvent(nickname);
       }
-      batch.delete(_contactNicknamesDocRef);
+      batch.delete(contactNicknamesDocRef);
 
       await batch.commit();
       await logout();
@@ -274,7 +274,7 @@ class ContactsService {
         _addContactUserSubscription(contactNickname, firstMessage: acceptance.text);
       }
     }
-    await _contactNicknamesDocRef.set({contactsFieldName: newList});
+    await contactNicknamesDocRef.set({contactsFieldName: newList});
     _currentContactNicknames = newList;
   }
 

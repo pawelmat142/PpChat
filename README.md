@@ -262,3 +262,5 @@ notification remove bug
 LogProcess class prepared
 </br> DeleteAccount as extension of LogProcess
 </br> new collection `log` with security rule
+
+### [066] Prepared firestore batch for delete account

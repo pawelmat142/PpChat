@@ -22,8 +22,7 @@ class LogProcess {
     if (kDebugMode) {
       print(log);
     }
-    logs.add(DateTime.now().toString());
-    logs.add(log);
+    logs.add('[${DateTime.now().toString()}] - $log');
   }
 
   save() async {

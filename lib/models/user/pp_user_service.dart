@@ -31,7 +31,7 @@ class PpUserService {
       await _updateLogged(false);
     }
     _nickname = null;
-    print('user service loogged out');
+    print('user service logged out');
   }
 
   authValidate({String? where}) {
