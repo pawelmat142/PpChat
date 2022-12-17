@@ -59,10 +59,8 @@ class DeleteAccountProcess extends LogProcess {
 
   final _fireAuth = FirebaseAuth.instance;
 
-  List<String> _contactsNicknames = [];
-  String _nickname = '';
+  List<String> _contactUids = [];
   String _uid = '';
-  get nickname => _nickname.isNotEmpty ? _nickname : null;
 
   late List<PpUser> _contacts;
 
@@ -124,10 +122,8 @@ class DeleteAccountProcess extends LogProcess {
     super.setProcess('DeleteAccountProcess');
     try {
 
-      _nickname = _state.nickname;
-      if (_nickname == '') throw Exception('No nickname!');
-      super.setContext(_nickname);
-      log('[nickname: $_nickname]');
+      super.setContext(_state.me.nickname);
+      log('[nickname: $_state.me.nickname]');
 
       if (_fireAuth.currentUser != null) {
         _uid = _fireAuth.currentUser!.uid;
@@ -135,8 +131,8 @@ class DeleteAccountProcess extends LogProcess {
         _uid = 'NO FIRE AUTH UID!!';
       }
 
-      _contactsNicknames = _state.contactNicknames.get;
-      log('${_contactsNicknames.length} contact nicknames found');
+      _contactUids = _state.contactUids.get;
+      log('${_contactUids.length} contact nicknames found');
 
       await _addDeletedAccountLogBatch();
 
@@ -146,7 +142,7 @@ class DeleteAccountProcess extends LogProcess {
 
       await _batchCommit();
       //after this no access to firestore data anymore
-      //only stored here remains like nickname, uid, contactNicknames
+      //only stored here remains like nickname, uid, contactUids
 
       await _resetServices();
 
@@ -161,9 +157,9 @@ class DeleteAccountProcess extends LogProcess {
 
   _addDeletedAccountLogBatch() {
     final documentReference = firestore
-        .collection(Collections.DELETED_ACCOUNTS).doc(_nickname);
+        .collection(Collections.DELETED_ACCOUNTS).doc(_state.me.nickname);
 
-    final data = {'uid': _uid, 'nickname': _nickname};
+    final data = {'uid': _uid, 'nickname': _state.me.nickname};
 
     _batchSet(documentReference: documentReference, data: data);
   }
@@ -202,7 +198,7 @@ class DeleteAccountProcess extends LogProcess {
       await _batchSet(
           documentReference: _contactsService.contactNotificationDocRef(contactUid: contact.uid),
           data: PpNotification.createContactDeleted(
-              sender: _nickname,
+              sender: _state.me.nickname,
               receiver: contact.nickname,
               documentId: States.getUid
           ).asMap);
@@ -225,7 +221,7 @@ class DeleteAccountProcess extends LogProcess {
     for (var contact in _contacts) {
       final contactMessagesCollectionQuerySnapshot = await _conversationService
           .contactMessagesCollectionRef(contactUid: contact.uid)
-          .where(PpMessageFields.sender, isEqualTo: _nickname).get();
+          .where(PpMessageFields.sender, isEqualTo: _state.me.nickname).get();
       log('${contactMessagesCollectionQuerySnapshot.docs.length} unread messages to delete found for ${contact.nickname}.');
 
       for (var doc in contactMessagesCollectionQuerySnapshot.docs) {
@@ -248,7 +244,7 @@ class DeleteAccountProcess extends LogProcess {
 
   _prepareBatchDeleteContacts() async {
     log('[START] Prepare batch - delete contacts [CONTACTS]');
-    await _batchDelete(_state.contactNicknames.documentRef);
+    await _batchDelete(_state.contactUids.documentRef);
     log('[STOP] Prepare batch - delete contacts [CONTACTS]');
   }
 

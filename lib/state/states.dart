@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
-import 'package:flutter_chat_app/state/contact_nicknames.dart';
+import 'package:flutter_chat_app/state/contact_uids.dart';
 import 'package:flutter_chat_app/state/contacts.dart';
 import 'package:flutter_chat_app/dialogs/process/login_process.dart';
 import 'package:flutter_chat_app/state/conversations.dart';
@@ -25,9 +25,7 @@ class States {
   /// User object representing signed in user - stored in firestore
   final me = Me();
 
-  final contactNicknames = ContactNicknames();
-
-  String get nickname => me.nickname;
+  final contactUids = ContactUids();
 
   /// User objects representing contacts - stored in firestore
   final contacts = Contacts();

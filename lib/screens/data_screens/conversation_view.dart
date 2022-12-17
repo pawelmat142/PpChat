@@ -32,8 +32,8 @@ class ConversationView extends StatelessWidget {
 
   Conversations get conversations => _conversationService.conversations;
 
-  Conversation conversation(contactNickname) => _conversationService
-      .conversations.getByNickname(contactNickname)!;
+  Conversation conversation(contactUid) => _conversationService
+      .conversations.getByUid(contactUid)!;
 
 
   _isMyMsg(PpMessage message) => message.sender == _userService.nickname;
@@ -56,7 +56,7 @@ class ConversationView extends StatelessWidget {
           //MESSAGES AREA
 
             Expanded(child: ValueListenableBuilder<Box<PpMessage>>(
-              valueListenable: conversation(contactUser.nickname).box.listenable(),
+              valueListenable: conversation(contactUser.uid).box.listenable(),
               builder: (context, box, _) {
 
                 // if (_isConversationClearedByContact) {

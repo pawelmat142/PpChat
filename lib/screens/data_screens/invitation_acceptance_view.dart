@@ -28,7 +28,7 @@ class InvitationAcceptanceView extends NotificationView {
 
       PpButton(text: 'show user', onPressed: () async {
         NavigationService.popToHome();
-        final user = super.contactsService.getBy(nickname: notification.sender);
+        final user = super.contactsService.getByNickname(nickname: notification.sender);
         Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
         UserView.navigate(user);
       }),

@@ -20,7 +20,6 @@ class FindContact {
   final _invitationService = getIt.get<InvitationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
-  final _states = getIt.get<States>();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String nickname = '';

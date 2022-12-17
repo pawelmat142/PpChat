@@ -303,3 +303,5 @@ conversation, contact view, accept invitation
 
 ### [080] ContactNicknames refactor 3
 delete contact, send message update
+
+### [081] ContactNicknames refactored to ContactUids

@@ -80,7 +80,9 @@ class PpUserService {
 
 
   _updateLogged(bool logged) async {
-    await documentRef.update({PpUserFields.logged : logged});
+    if (States.getUid != '') {
+      await documentRef.update({PpUserFields.logged : logged});
+    }
     // if ((nickname != null || me.nickname.isNotEmpty) && _fireAuth.currentUser != null) {
     //   await documentRef.update({PpUserFields.logged : logged});
     // }

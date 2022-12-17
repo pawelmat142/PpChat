@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
+import 'package:flutter_chat_app/state/contact_uids.dart';
 import 'package:flutter_chat_app/state/interfaces/firestore_collection_state.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
@@ -10,20 +11,16 @@ class Contacts extends FirestoreCollectionState<PpUser> {
 
   static get getUid => States.getUid;
 
-  String? _nickname;
-  setNickname(String nickname) => _nickname = nickname;
-  String get nickname => _nickname != null ? _nickname! : throw Exception('no nickname - use setNickname first!');
-
-  List<String> _contactNicknames = [];
-  setContactNicknames(List<String> list) => _contactNicknames = list;
-  List<String> get contactNicknames => _contactNicknames;
+  List<String> _contactUids = [];
+  setContactUids(List<String> list) => _contactUids = list;
+  List<String> get contactUids => _contactUids;
 
 
   @override
   get collectionRef => firestore.collection(Collections.PpUser);
 
   @override
-  get collectionQuery => collectionRef.where(PpUserFields.uid, whereIn: contactNicknames);
+  get collectionQuery => collectionRef.where(PpUserFields.uid, whereIn: contactUids);
 
 
   @override
@@ -38,8 +35,8 @@ class Contacts extends FirestoreCollectionState<PpUser> {
 
   @override
   void deleteOneEvent(PpUser item, {bool? skipFirestore = false}) {
-    contactNicknames.removeAt(contactNicknames.indexWhere((n) => n == item.nickname));
-    updateContactNicknames();
+    contactUids.removeAt(contactUids.indexWhere((n) => n == item.nickname));
+    updateContactUids();
   }
 
   @override
@@ -60,16 +57,15 @@ class Contacts extends FirestoreCollectionState<PpUser> {
 
   @override
   Future<void> startFirestoreObserver() {
-    if (contactNicknames.isEmpty) return Future((){});
+    if (contactUids.isEmpty) return Future((){});
     return super.startFirestoreObserver();
   }
 
   List<String> get nicknames => state.map((user) => user.nickname).toList();
+  List<String> get uids => state.map((user) => user.uid).toList();
 
-  static const String contactsFieldName = 'contacts';
-
-  DocumentReference<Map<String, dynamic>> get contactNicknamesDocRef => collectionRef.doc(nickname)
-    .collection(Collections.CONTACTS).doc(nickname);
+  DocumentReference<Map<String, dynamic>> get contactUidsDocumentRef => collectionRef.doc(States.getUid)
+    .collection(Collections.CONTACTS).doc(States.getUid);
 
 
   @override
@@ -81,8 +77,8 @@ class Contacts extends FirestoreCollectionState<PpUser> {
     return state.firstWhere((c) => c.nickname == nickname);
   }
 
-  updateContactNicknames() async {
+  updateContactUids() async {
     //triggers resetFirestoreObserver
-    await contactNicknamesDocRef.set({contactsFieldName: contactNicknames.toSet().toList()});
+    await contactUidsDocumentRef.set({ContactUids.contactUidsFieldName: contactUids.toSet().toList()});
   }
 }

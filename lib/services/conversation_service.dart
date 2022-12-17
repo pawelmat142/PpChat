@@ -73,7 +73,6 @@ class ConversationService {
   }
 
 
-
   _stopMessagesObserver() {
     if (_messagesObserver != null) {
       _messagesObserver!.cancel();
@@ -85,9 +84,9 @@ class ConversationService {
     if (messages.isEmpty) return;
     logService.log('[MSG] Received ${messages.length} messages.');
     for (var message in messages) {
-      final contactNickname = message.sender;
-      await conversations.openOrCreate(contactNickname: contactNickname);
-      conversations.getByNickname(contactNickname)?.addMessage(message);
+      final contactUser = _contactsService.getByNickname(nickname: message.sender);
+      await conversations.openOrCreate(contactUid: contactUser.uid);
+      conversations.getByUid(contactUser.uid)?.addMessage(message);
     }
     if (initialized) PpFlushbar.comingMessages(messages: messages);
   }
@@ -104,12 +103,12 @@ class ConversationService {
 
 
   navigateToConversationView(PpUser contactUser) async {
-    await conversations.openOrCreate(contactNickname: contactUser.nickname);
+    await conversations.openOrCreate(contactUid: contactUser.uid);
     ConversationView.navigate(contactUser);
   }
 
-  getContactUserByNickname(String contactNickname) {
-    return _contactsService.getBy(nickname: contactNickname);
+  PpUser getContactUserByNickname(String contactNickname) {
+    return _contactsService.getByNickname(nickname: contactNickname);
   }
 
 
@@ -120,7 +119,7 @@ class ConversationService {
         receiver: contactUser.nickname
     );
     await contactMessagesCollectionRef(contactUid: contactUser.uid).add(msg.asMap);
-    conversations.getByNickname(contactUser.nickname)?.addMessage(msg);
+    conversations.getByUid(contactUser.uid)?.addMessage(msg);
   }
 
 
@@ -143,14 +142,13 @@ class ConversationService {
           sender: _userService.nickname,
           receiver: contactUser.nickname
       );
-      //todo: refactor method to pass PpUser object instead of nickname
       final docRef = _contactsService.contactNotificationDocRef(contactUid: contactUser.uid);
       batch.set(docRef, notification.asMap);
 
       logService.log('[MSG] ${querySnapshot.docs.length} unread messages deleted in contact receive box');
 
       await batch.commit();
-      final conversation = conversations.getByNickname(contactUser.nickname);
+      final conversation = conversations.getByUid(contactUser.uid);
       if (conversation != null) conversation.clearBox();
     } catch (error) {
       logService.error(error.toString());
@@ -161,7 +159,8 @@ class ConversationService {
   resolveConversationClearNotifications(Set<PpNotification> notifications) {
     if (initialized && notifications.isNotEmpty) {
       for (var n in notifications) {
-        final conversation = conversations.getByNickname(n.sender);
+        final contactUser = getContactUserByNickname(n.sender);
+        final conversation = conversations.getByUid(contactUser.uid);
         if (conversation != null) conversation.clearBox();
       }
     }

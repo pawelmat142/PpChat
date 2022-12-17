@@ -25,8 +25,8 @@ class InvitationService {
 
   resolveInvitationAcceptances(Set<PpNotification> notifications) async {
     if (notifications.isNotEmpty) {
-      final newContactNicknames = notifications.map((n) => n.documentId).toList();
-      _state.contactNicknames.addsEvent(newContactNicknames);
+      final newContactUids = notifications.map((n) => n.documentId).toList();
+      _state.contactUids.addsEvent(newContactUids);
     }
   }
 
@@ -35,10 +35,10 @@ class InvitationService {
     //todo: if on contact / conversation view - navigate to home/contacts and show popup
     if (notifications.isNotEmpty) {
       final nicknamesToDelete = notifications.map((n) => n.sender).toList();
-      final newState = _state.contactNicknames.get
+      final newState = _state.contactUids.get
           .where((n) => !nicknamesToDelete.contains(n))
           .toList();
-      _state.contactNicknames.setNewState(newState);
+      _state.contactUids.setNewState(newState);
     }
   }
 

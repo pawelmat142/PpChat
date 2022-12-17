@@ -10,18 +10,18 @@ service cloud.firestore {
 
     function getContactsUids(contactUid) { return
     	get(/databases/$(database)/documents/PpUser/$(contactUid)/CONTACTS/$(contactUid))
-        .data.contacts;
+        .data.contactUids;
     }
 
   	match /PpUser/{UID} {
 
-      function isOwner() { return UID == request.auth.uid; }
+    	function isOwner() { return UID == request.auth.uid; }
 
       function isSender() {	return request.resource.data.documentId == request.auth.uid; }
 
       function isContact(contactUid) { return request.auth.uid in getContactsUids(contactUid); }
 
-      allow create: if request.auth.uid == request.resource.data.uid;
+			allow create: if request.auth.uid == request.resource.data.uid;
       allow read: if logged();
       allow delete, update: if isOwner();
 

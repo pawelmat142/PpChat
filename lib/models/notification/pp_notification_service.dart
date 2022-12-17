@@ -65,8 +65,6 @@ class PpNotificationService {
     logService.errorHandler(error, label: '_notificationsListener');
   }
 
-  bool imSender(PpNotification notification) => notification.sender == _state.nickname;
-
   markNotificationAsRead(PpNotification notification) async {
     notification.isRead = true;
     notifications.updateOneEvent(notification);

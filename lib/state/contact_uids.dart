@@ -3,9 +3,9 @@ import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/state/interfaces/firestore_document_state.dart';
 import 'package:flutter_chat_app/state/states.dart';
 
-class ContactNicknames extends FirestoreDocumentState<String> {
+class ContactUids extends FirestoreDocumentState<String> {
 
-  static const String contactsFieldName = 'contacts';
+  static const String contactUidsFieldName = 'contactUids';
 
   static get getUid => States.getUid;
 
@@ -17,13 +17,13 @@ class ContactNicknames extends FirestoreDocumentState<String> {
   DocumentReference<Map<String, dynamic>> get documentRef => collectionRef.doc(getUid);
 
   @override
-  Map<String, dynamic> get stateAsMap => {contactsFieldName: state};
+  Map<String, dynamic> get stateAsMap => {contactUidsFieldName: state};
 
   @override
   List<String> stateFromSnapshot(DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
     final data = documentSnapshot.data();
     if (data == null) return [];
-    final result = data[contactsFieldName];
+    final result = data[contactUidsFieldName];
     if (result == null) return [];
     return (result as List).map((item) => item as String).toList();
   }
