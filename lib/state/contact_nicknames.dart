@@ -1,22 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/state/interfaces/firestore_document_state.dart';
+import 'package:flutter_chat_app/state/states.dart';
 
 class ContactNicknames extends FirestoreDocumentState<String> {
 
   static const String contactsFieldName = 'contacts';
 
-
-  String? _nickname;
-  setNickname(String nickname) => _nickname = nickname;
-  String get nickname => _nickname != null ? _nickname! : throw Exception('no nickname - use setNickname first!');
+  static get getUid => States.getUid;
 
   @override
   CollectionReference<Map<String, dynamic>> get collectionRef => firestore
-      .collection(Collections.PpUser).doc(nickname).collection(Collections.CONTACTS);
+      .collection(Collections.PpUser).doc(getUid).collection(Collections.CONTACTS);
 
   @override
-  DocumentReference<Map<String, dynamic>> get documentRef => collectionRef.doc(nickname);
+  DocumentReference<Map<String, dynamic>> get documentRef => collectionRef.doc(getUid);
 
   @override
   Map<String, dynamic> get stateAsMap => {contactsFieldName: state};
@@ -33,7 +31,6 @@ class ContactNicknames extends FirestoreDocumentState<String> {
   @override
   clear() async {
     await super.clear();
-    _nickname = null;
   }
 
   @override

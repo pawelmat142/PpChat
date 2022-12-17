@@ -71,6 +71,9 @@ class LogProcess {
   }
 
   handlePreparedLog(String text) {
+    if (kDebugMode) {
+      print(text);
+    }
     logs.add(text);
     save();
     popup.sww(text: text);

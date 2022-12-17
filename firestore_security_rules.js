@@ -8,35 +8,44 @@ service cloud.firestore {
 
   	function logged() { return request.auth != null; }
 
-  	match /PpUser/{nickname} {
+  	match /PpUser/{UID} {
+
+    	function isOwner() {
+      	return UID == request.auth.uid;
+      }
+
+      function isContact() {
+      // TODO: update
+      	return true;
+      }
+
+      function isSender() {
+      	// TODO: update
+        return true;
+      }
 
       function owner() {
       	return get(/databases/$(database)/documents/PpUser/$(nickname)/PRIVATE/$(nickname)).data.uid == request.auth.uid;
       }
 
-      allow create: if logged();
-      allow read, write: if logged();
-      // TODO: ifisincontacts rule
-      allow update, delete: if owner();
+			allow create: if request.auth.uid == request.resource.data.uid;
+      allow read: if logged();
+      allow delete, update: if isOwner();
 
-      match /PRIVATE/{nickname} {
-      	allow create: if request.resource.data.uid == request.auth.uid;
-        allow delete: if resource.data.uid == request.auth.uid;
-        allow write: if request.resource.data.uid == request.auth.uid;
+      match /CONTACTS/{UID} {
+        allow write, read: if isOwner();
       }
 
-      match /NOTIFICATIONS/{nickname} {
+      match /NOTIFICATIONS/{docId} {
+      	allow read, write: if isOwner();
+        allow create, delete: if isSender();
       // TODO: some more rules to lock notifications only for sender/receiver
-      	allow read, write: if logged();
-      }
-
-      match /CONTACTS/{nickname} {
-        allow write, read: if owner();
       }
 
       match /Messages/{msgDocId} {
+      	allow read, write: if isOwner();
+        allow create, delete: if isSender();
        //TODO: make some rules to lock messages only for receiver and allow send for senders
-        allow write, read: if logged();
       }
     }
 

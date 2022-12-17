@@ -46,7 +46,7 @@ class AuthenticationService {
     });
   }
 
-  String get getUid => _userService.getUid;
+  String get getUid => States.getUid;
 
   void register({required String nickname, required String password}) async {
     try {

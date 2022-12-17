@@ -34,9 +34,6 @@ class ContactsService {
   login() async {
     initialized = false;
 
-    contactNicknames.setNickname(_state.nickname);
-    contacts.setNickname(_state.nickname);
-
     //get initial contactNicknames
     await contactNicknames.startFirestoreObserver();
     contacts.setContactNicknames(contactNicknames.get);

@@ -33,11 +33,9 @@ class PpNotificationService {
 
 
   Future<void> login() async {
-    notifications.setNickname(_state.nickname);
     await notifications.startFirestoreObserver();
     final process = ResolveNotificationsProcess(notifications.get);
     await process.process();
-    // await _resolveNotifications(notifications.get);
     startNotificationsListener();
   }
 
@@ -53,7 +51,7 @@ class PpNotificationService {
     _notificationsListener ??= notifications.stream.listen((event) async {
       final process = ResolveNotificationsProcess(event);
       await process.process();
-    });
+    }, onError: listenerErrorHandler);
   }
 
   stopNotificationsListener() async {
@@ -61,6 +59,10 @@ class PpNotificationService {
       _notificationsListener!.cancel();
       _notificationsListener = null;
     }
+  }
+
+  listenerErrorHandler(error) {
+    logService.errorHandler(error, label: '_notificationsListener');
   }
 
   bool imSender(PpNotification notification) => notification.sender == _state.nickname;

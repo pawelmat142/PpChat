@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
-import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
@@ -11,21 +8,7 @@ import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
 import 'package:flutter_chat_app/state/me.dart';
 
 class PpUserService {
-  final FirebaseAuth _fireAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  String get getUid => _fireAuth.currentUser == null
-      ? _handleNoCurrentUser()
-      : _fireAuth.currentUser!.uid;
-
-  _handleNoCurrentUser() {
-    //todo: handle no current user / clear state data
-    NavigationService.popToBlank();
-    if (kDebugMode) {
-     print('NO CURRENT USER!');
-    }
-  }
-
 
   final _state = getIt.get<States>();
 
@@ -34,8 +17,8 @@ class PpUserService {
 
 
   CollectionReference<Map<String, dynamic>> get _collection => _firestore.collection(Collections.PpUser);
-  DocumentReference<Map<String, dynamic>> get documentRef => _collection.doc(getUid);
-  DocumentReference<Map<String, dynamic>> get _privateDocumentRef => documentRef.collection(Collections.PRIVATE).doc(getUid);
+  DocumentReference<Map<String, dynamic>> get documentRef => _collection.doc(States.getUid);
+  DocumentReference<Map<String, dynamic>> get _privateDocumentRef => documentRef.collection(Collections.PRIVATE).doc(States.getUid);
 
   bool initialized = false;
 
@@ -69,9 +52,9 @@ class PpUserService {
 
   Future<void> createNewUser({required String nickname}) async {
     final signature = _collection.doc().id;
-    final newUser = PpUser.create(nickname: nickname, uid: getUid, signature: signature);
+    final newUser = PpUser.create(nickname: nickname, uid: States.getUid, signature: signature);
     await documentRef.set(newUser.asMap);
-    await _privateDocumentRef.set(_privateDocumentData);
+    // await _privateDocumentRef.set(_privateDocumentData);
   }
 
 
@@ -90,10 +73,4 @@ class PpUserService {
     // }
   }
 
-  get _privateDocumentData => {
-    'uid': _fireAuth.currentUser != null
-        ? _fireAuth.currentUser!.uid
-        : throw Exception('NO USER LOGGED IN'),
-    'created': DateTime.now(),
-  };
 }

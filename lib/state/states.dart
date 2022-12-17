@@ -1,3 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/state/contact_nicknames.dart';
 import 'package:flutter_chat_app/state/contacts.dart';
 import 'package:flutter_chat_app/dialogs/process/login_process.dart';
@@ -6,6 +9,18 @@ import 'package:flutter_chat_app/state/me.dart';
 import 'package:flutter_chat_app/state/notifications.dart';
 
 class States {
+
+  static String get getUid => FirebaseAuth.instance.currentUser == null
+      ? _handleNoCurrentUser()
+      : FirebaseAuth.instance.currentUser!.uid;
+
+  static _handleNoCurrentUser() {
+    //todo: handle no current user / clear state data
+    NavigationService.popToBlank();
+    if (kDebugMode) {
+      print('NO CURRENT USER!');
+    }
+  }
 
   final contactNicknames = ContactNicknames();
 

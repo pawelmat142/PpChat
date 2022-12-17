@@ -4,9 +4,11 @@ import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/state/interfaces/firestore_collection_state.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
+import 'package:flutter_chat_app/state/states.dart';
 
 class Contacts extends FirestoreCollectionState<PpUser> {
 
+  static get getUid => States.getUid;
 
   String? _nickname;
   setNickname(String nickname) => _nickname = nickname;
@@ -21,7 +23,7 @@ class Contacts extends FirestoreCollectionState<PpUser> {
   get collectionRef => firestore.collection(Collections.PpUser);
 
   @override
-  get collectionQuery => collectionRef.where(PpUserFields.nickname, whereIn: contactNicknames);
+  get collectionQuery => collectionRef.where(PpUserFields.uid, whereIn: contactNicknames);
 
 
   @override

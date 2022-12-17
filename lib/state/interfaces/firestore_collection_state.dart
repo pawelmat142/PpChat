@@ -100,7 +100,7 @@ abstract class FirestoreCollectionState<T> extends DataStateObject<T> {
   }
 
   errorHandler(error, stackTrace, String method) {
-    final log = '[${error.runtimeType}] [${T.toString()}] [$method] $error';
+    final log = '[ERROR] [$method] [${error.runtimeType}] [${T.toString()}] $error';
     logService.handlePreparedLog(log);
   }
 
