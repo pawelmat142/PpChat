@@ -24,11 +24,4 @@ class LogService extends LogProcess {
     }
   }
 
-  @override
-  errorHandler(error) {
-    if (kDebugMode) {
-      super.errorHandler(error);
-    }
-  }
-
 }

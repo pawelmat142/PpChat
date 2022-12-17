@@ -278,3 +278,7 @@ Global LogProcess
 example on login process
 
 ### [072] Finish branch
+
+## feature/data_state_object
+
+### [073] DataStageObject preparations

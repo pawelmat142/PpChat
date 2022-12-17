@@ -3,8 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
+import 'package:flutter_chat_app/dialogs/spinner.dart';
 
 class LogProcess {
+
+  final _spinner = getIt.get<PpSpinner>();
 
   LogProcess() {
     firstLog();
@@ -17,8 +20,8 @@ class LogProcess {
 
   bool saveMode = true;
 
-  String? _context;
-  String? _processType;
+  String _context = 'unset';
+  String _processType = 'unset';
 
   setContext(String value) {
     _context = value;
@@ -33,37 +36,43 @@ class LogProcess {
   }
 
   firstLog() {
-    log('first log - LogProcess');
+    log('first log');
   }
 
   log(String log) {
     if (kDebugMode) {
       print(log);
     }
-    logs.add('[${DateTime.now().toString()}] - $log');
+    logs.add('[${DateTime.now().toString()}] [$_processType] $log');
   }
 
   save() async {
     if (saveMode) {
-      Map<String, dynamic> doc = {'atimestamp': DateTime.now(), 'logs': logs};
-      if (_context != null) {
-        doc['context'] = _context;
-      }
-      if (_processType != null) {
-        doc['process type'] = _processType;
-      }
-      await firestore.collection(Collections.logs).add(doc);
+      Map<String, dynamic> document = {'aTimestamp': DateTime.now(), 'logs': logs};
+      document['context'] = _context;
+      document['process type'] = _processType;
+      await firestore.collection(Collections.logs).add(document);
     }
   }
 
-  errorHandler(error) {
+  errorHandler(error, {String? label}) {
+    _spinner.stop();
     if (kDebugMode) {
       print(error);
       print(error.runtimeType);
     }
-    logs.add('[ERROR] - $error');
-    logs.add('error type: ${error.runtimeType.toString()}');
+    if (label == null) {
+      logs.add('[ERROR] [${error.runtimeType.toString()}] $error');
+    } else {
+      logs.add('[ERROR] [$label] [${error.runtimeType.toString()}] $error');
+    }
     save();
     popup.sww(text: error.toString());
+  }
+
+  handlePreparedLog(String text) {
+    logs.add(text);
+    save();
+    popup.sww(text: text);
   }
 }

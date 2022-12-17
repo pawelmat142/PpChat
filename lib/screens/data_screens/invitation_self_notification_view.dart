@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
+import 'package:flutter_chat_app/dialogs/popup.dart';
+import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
+import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 
 class InvitationSelfNotificationView extends NotificationView {
   InvitationSelfNotificationView(super.notification, {super.key});
 
-  //TODO: something is wrong here - lets have a look
+  final invitationService = getIt.get<InvitationService>();
+
   @override
   get title => 'YOUR INVITATION';
 
@@ -19,13 +24,20 @@ class InvitationSelfNotificationView extends NotificationView {
   @override
   get buttons {
     return [
-      PpButton(text: 'cancel invitation', onPressed: () async {
-        await super.notificationService.deleteInvitation(super.notification);
+
+      PpButton(text: 'cancel invitation', onPressed: () {
+        popup.show('Shure?', error: true,
+            buttons: [PopupButton('Yes', onPressed: () {
+            invitationService.onCancelSentInvitation(super.notification);
+            NavigationService.pop(delay: 100);
+        })]);
       }),
 
-      PpButton(text: 'remove notification', color: Colors.red, onPressed: () async {
+
+      PpButton(text: 'remove notification', color: Colors.red, onPressed: () {
         Navigator.pop(NavigationService.context);
-        await super.notificationService.deleteSingleNotificationBySenderNickname(super.notification.sender);
+        notificationService.onRemoveNotification(notification);
+        PpFlushbar.notificationDeleted();
       })
     ];
   }

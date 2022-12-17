@@ -1,294 +1,127 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
-import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/state/contact_nicknames.dart';
+import 'package:flutter_chat_app/state/contacts.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
-import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart';
-import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
-import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/models/user/pp_user_service.dart';
-import 'package:flutter_chat_app/services/contacts_event.dart';
+import 'package:flutter_chat_app/screens/contacts_screen.dart';
+import 'package:flutter_chat_app/services/log_service.dart';
+import 'package:flutter_chat_app/state/states.dart';
 
 class ContactsService {
 
   static const String contactsFieldName = 'contacts';
 
   final _firestore = FirebaseFirestore.instance;
-  final _userService = getIt.get<PpUserService>();
-  final _spinner = getIt.get<PpSpinner>();
   final _popup = getIt.get<Popup>();
+  final _state = getIt.get<States>();
+  final logService = getIt.get<LogService>();
 
-  DocumentReference<Map<String, dynamic>> get contactNicknamesDocRef {
-    return _firestore.collection(Collections.User)
-        .doc(_userService.nickname)
-        .collection(Collections.CONTACTS)
-        .doc(_userService.nickname);
-  }
 
-  //CURRENT VALUE
-  List<String> _currentContactNicknames = [];
-  List<String> get currentContactNicknames => _currentContactNicknames;
-  List<PpUser> _currentContactUsers = [];
-  List<PpUser> get currentContactUsers => _currentContactUsers;
+  Contacts get contacts => _state.contacts;
+  ContactNicknames get contactNicknames => _state.contactNicknames;
 
-  List<StreamSubscription> _userSubscriptions = [];
 
-  Function? setStateToContactsScreen;
+  StreamSubscription? _contactNicknamesListener;
 
-  StreamController<ContactsEvent>? _contactsEventStreamCtrl;
-  Stream<ContactsEvent> get contactsEventStream => _contactsEventStreamCtrl!.stream;
-
-  bool _initialized = false;
-  bool get initialized => _initialized;
+  bool initialized = false;
 
   login() async {
-    _initialized = false;
-    _userSubscriptions = [];
-    _userService.authValidate(where: 'contacts service');
-    await _getCurrentContactNicknamesFromDB();
-    for (var nickname in _currentContactNicknames) {
-      _addContactUserSubscription(nickname);
-    }
-    _contactsEventStreamCtrl = StreamController();
-    _initialized = true;
-    print('contacts service initialized');
+    initialized = false;
+
+    contactNicknames.setNickname(_state.nickname);
+    contacts.setNickname(_state.nickname);
+
+    //get initial contactNicknames
+    await contactNicknames.startFirestoreObserver();
+    contacts.setContactNicknames(contactNicknames.get);
+
+    //get initial contact PpUser objects
+    await contacts.startFirestoreObserver();
+
+    _startContactNicknamesListener();
+
+    initialized = true;
   }
 
   logout() async {
-    _initialized = false;
-    if (_contactsEventStreamCtrl != null) {
-      await _contactsEventStreamCtrl!.close();
-    }
-    for (var subscription in _userSubscriptions) {
-      await subscription.cancel();
-    }
-    _userSubscriptions = [];
-    _currentContactNicknames = [];
-    _currentContactUsers = [];
-    _setStateToContactsScreen();
+    await _stopContactNicknamesListener();
+    await contacts.clear();
+    await contactNicknames.clear();
+    initialized = false;
   }
 
-  getUserByNickname(String nickname) {
-    return _currentContactUsers.firstWhere((u) => u.nickname == nickname);
-  }
-
-  _setStateToContactsScreen() {
-    if (setStateToContactsScreen != null) {
-      setStateToContactsScreen!();
-    }
-  }
-
-  _addContactUserSubscription(String nickname, {String? firstMessage}) {
-    _userSubscriptions.add(_getContactUserDocRef(nickname).snapshots().listen((event) {
-      if (event.exists) {
-        final user = PpUser.fromDB(event);
-        if (_currentContactUserExists(user.nickname)) {
-          _updateSingleCurrentContactUser(user);
+  _startContactNicknamesListener() {
+    final completer = Completer();
+    _contactNicknamesListener ??= _state.contactNicknames.stream.listen((contactNicknames) async {
+        logService.log('[ContactNicknames] state listener, lenght: ${contactNicknames.length}');
+        if (contactNicknames.isNotEmpty) {
+          contacts.setContactNicknames(contactNicknames);
+          await contacts.resetFirestoreObserver();
         } else {
-          _currentContactUsers.add(user);
+          contacts.setContactNicknames([]);
+          await contacts.stopFirestoreObserver();
+          contacts.setEvent([]);
         }
-        _setStateToContactsScreen();
-      }
-    }, onError: (error) {
-      print('contact user listener error:');
-      print(error);
-    }));
-    if (_initialized) {
-      addConversationEvent(nickname, firstMessage);
+        if (!completer.isCompleted) completer.complete();
+      });
+    return completer.future;
+  }
+
+  _stopContactNicknamesListener() async {
+    if (_contactNicknamesListener != null) {
+      await _contactNicknamesListener!.cancel();
+      _contactNicknamesListener = null;
     }
   }
 
-  DocumentReference _getContactUserDocRef(String nickname) {
-    return _firestore.collection(Collections.User).doc(nickname);
-  }
 
-  _getCurrentContactNicknamesFromDB() async {
-    final response = await contactNicknamesDocRef.get();
-    _currentContactNicknames = [];
-    if (response.exists) {
-      final document = response.data();
-      if (document != null && document.isNotEmpty) {
-        final documentValue = document[contactsFieldName];
-        documentValue.forEach((nickname) => _currentContactNicknames.add(nickname));
-      }
-    }
-  }
-
-  bool _currentContactUserExists(String nickname) {
-    return _currentContactUsers.indexWhere((tile) => tile.nickname == nickname) != -1;
-  }
-
-  void _updateSingleCurrentContactUser(PpUser user) {
-    final index = _currentContactUsers.indexWhere((tile) => tile.nickname == user.nickname);
-    _currentContactUsers[index] = user;
-  }
-
-  acceptInvitationForReceiver(PpNotification notification, {bool pop = true}) async {
-    final batch = _firestore.batch();
-
-    //delete invitation
-    final myReceiverInvitationRef = _firestore.collection(Collections.User).doc(_userService.nickname)
-        .collection(Collections.NOTIFICATIONS).doc(notification.sender);
-    batch.delete(myReceiverInvitationRef);
-
-  // update sender invitationSelfNotification to invitation acceptance
-    final senderInvitationRef = _firestore.collection(Collections.User).doc(notification.sender)
-        .collection(Collections.NOTIFICATIONS).doc(notification.receiver);
-    batch.update(senderInvitationRef, {
-      PpNotificationFields.type: PpNotificationTypes.invitationAcceptance,
-      PpNotificationFields.isRead: false
-    });
-
-   // add to contacts
-    final newList = _currentContactNicknames.map((contact) => contact).toList();
-    if (!newList.contains(notification.sender)) {
-      newList.add(notification.sender);
-      batch.set(contactNicknamesDocRef, {contactsFieldName: newList});
-    }
-
-    await batch.commit();
-    _currentContactNicknames = newList;
-    _addContactUserSubscription(notification.sender, firstMessage: notification.text);
-  }
-
-  onDeleteContact(String nickname) async {
+  onDeleteContact(String contactNickname) async {
     await Future.delayed(const Duration(milliseconds: 100));
-    await _popup.show('Are you sure?',
+    await _popup.show('Are you sure?', error: true,
         text: 'All data will be lost also on the other side!',
-        error: true,
         buttons: [PopupButton('Delete', error: true, onPressed: () async {
-          await _deleteContact(nickname);
-          NavigationService.pop();
-          PpFlushbar.contactDeletedNotificationForSender(nickname: nickname, delay: 200);
+          NavigationService.popToHome();
+          Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
+          await _deleteContact(contactNickname);
+          PpFlushbar.contactDeletedNotificationForSender(nickname: contactNickname, delay: 200);
         })]);
   }
 
-  _deleteContact(String nickname) async {
+  _deleteContact(String contactNickname) async {
     try {
-      _spinner.start();
+      final conversation = _state.conversations.getByNickname(contactNickname);
+      if (conversation != null) await _state.conversations.killBoxAndDelete(conversation);
+      await _sendContactDeletedNotifications([contactNickname]);
+      _state.contactNicknames.deleteOneEvent(contactNickname);
+    } catch (error) {
+      logService.error(error.toString());
+    }
+  }
+
+  _sendContactDeletedNotifications(List<String> nicknames) async {
+    if (nicknames.isNotEmpty) {
       final batch = _firestore.batch();
-
-      //contact remove notification for sender
-      final receiverNotification = PpNotification.createContactDeleted(sender: _userService.nickname, receiver: nickname);
-      batch.set(getNotificationReceiverDocRef(nickname), receiverNotification.asMap);
-
-      //remove from contacts
-      var newList = _currentContactNicknames.where((n) => n != nickname).toList();
-      batch.set(contactNicknamesDocRef, {contactsFieldName: newList});
-
+      for (var contactNickname in nicknames) {
+        final notification = PpNotification.createContactDeleted(sender: _state.nickname, receiver: contactNickname);
+        final docRef = contactNotificationDocRef(contactNickname: contactNickname);
+        batch.set(docRef, notification.asMap);
+      }
       await batch.commit();
-      deleteConversationEvent(nickname);
-      await _removeCurrentContactByNickname(nickname);
-      _spinner.stop();
-    } catch (error) {
-      _spinner.stop();
-      _popup.sww(text: 'deleteContactForSender');
     }
   }
 
-  getNotificationReceiverDocRef(String nickname) {
-    return _firestore.collection(Collections.User).doc(nickname)
-        .collection(Collections.NOTIFICATIONS).doc(_userService.nickname);
-  }
+  contactNotificationDocRef({required String contactNickname}) => _firestore
+      .collection(Collections.User).doc(contactNickname)
+      .collection(Collections.NOTIFICATIONS).doc(_state.nickname);
 
-  resolveContactDeletedNotificationsForReceiver(List<PpNotification> notifications) async {
-    //TODO: test if work correctly
-    //TODO: test account deleting
-    //TODO: test if conversation deleting / clear works properly
-    try {
-      final deletedContactNicknames = PpNotification.filterContactDeletedNotifications(notifications).map((n) => n.sender).toList();
-      if (deletedContactNicknames.isNotEmpty) {
-        final batch = _firestore.batch();
+  getBy({required String nickname}) => contacts.getBy(nickname);
 
-        final newList = _currentContactNicknames.where((u) => !deletedContactNicknames.contains(u)).toList();
-        batch.set(contactNicknamesDocRef, {contactsFieldName: newList});
+  contactExists(String contactNickname) => contactNicknames.contains(contactNickname);
 
-        for (var nickname in deletedContactNicknames) {
-          batch.delete(_firestore.collection(Collections.User).doc(_userService.nickname)
-              .collection(Collections.NOTIFICATIONS).doc(nickname));
-        }
-        await batch.commit();
-
-        for (var nickname in deletedContactNicknames) {
-          deleteConversationEvent(nickname);
-          await _removeCurrentContactByNickname(nickname);
-        }
-      }
-    } catch (error) {
-      _popup.sww(text: 'resolveContactDeletedNotificationsForReceiver');
-    }
-  }
-
-  resolveInvitationAcceptancesForSender(List<PpNotification> notifications) async {
-    try {
-      final invitationAcceptances = PpNotification.filterInvitationAcceptances(notifications);
-      if (invitationAcceptances.isNotEmpty) {
-        await _addContacts(invitationAcceptances);
-        PpFlushbar.invitationAcceptanceForSender(notifications: invitationAcceptances, delay: 200);
-      }
-    } catch (error) {
-      _popup.sww(text: 'resolveInvitationAcceptancesForSender');
-    }
-  }
-
-  deleteAllContacts() async {
-    try {
-      final batch = _firestore.batch();
-
-      for (var nickname in _currentContactNicknames) {
-        var receiverNotification = PpNotification.createContactDeleted(sender: _userService.nickname, receiver: nickname);
-        batch.set(getNotificationReceiverDocRef(nickname), receiverNotification.asMap);
-        deleteConversationEvent(nickname);
-      }
-      batch.delete(contactNicknamesDocRef);
-
-      await batch.commit();
-      await logout();
-
-    } catch (error) {
-      _popup.sww(text: 'delete all  contacts error');
-    }
-
-  }
-
-  _removeCurrentContactByNickname(String nickname) async {
-    final index = _currentContactNicknames.indexWhere((n) => n == nickname);
-    _currentContactNicknames.removeAt(index);
-    _currentContactUsers.removeAt(index);
-    await _userSubscriptions[index].cancel();
-    _userSubscriptions.removeAt(index);
-    _setStateToContactsScreen();
-  }
-
-  _addContacts(List<PpNotification> invitationAcceptances) async {
-    var newList = _currentContactNicknames.map((n) => n).toList();
-    for (var acceptance in invitationAcceptances) {
-      final contactNickname = acceptance.receiver;
-      if (!newList.contains(contactNickname)) {
-        newList.add(contactNickname);
-        _addContactUserSubscription(contactNickname, firstMessage: acceptance.text);
-      }
-    }
-    await contactNicknamesDocRef.set({contactsFieldName: newList});
-    _currentContactNicknames = newList;
-  }
-
-  addConversationEvent(String contactNickname, String? firstMessage) {
-    final event = ContactsEvent.addContact(contactNickname, firstMessage);
-    _contactsEventStreamCtrl!.sink.add(event);
-  }
-
-  deleteConversationEvent(String contactNickname) {
-    final event = ContactsEvent.deleteContact(contactNickname);
-    _contactsEventStreamCtrl!.sink.add(event);
-  }
-
-  deleteAccountEvent() {
-    final event = ContactsEvent.deleteAccount();
-    _contactsEventStreamCtrl!.sink.add(event);
-  }
 }

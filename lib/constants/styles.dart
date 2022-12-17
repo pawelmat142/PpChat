@@ -14,3 +14,5 @@ const double CONTACTS_AVATAR_SIZE = 55;
 
 const double TILE_PADDING_HORIZONTAL = 10;
 const double TILE_PADDING_VERTICAL = 6;
+
+const Center NOTHING_HERE_WIDGET = Center(child: Text('Nothing here'));

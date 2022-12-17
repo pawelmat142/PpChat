@@ -44,11 +44,15 @@ class NotificationView extends StatelessWidget {
   String get nickname => notification.sender;
   List<Widget> get buttons => [];
 
+  markAsRead() {
+    notificationService.markNotificationAsRead(notification);
+  }
+
   @override
   Widget build(BuildContext context) {
 
     if (!notification.isRead) {
-      notificationService.markNotificationAsRead(notification);
+      markAsRead();
     }
 
     return Scaffold(

@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/contacts_tile/contact_avatar.dart';
+import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/screens/data_screens/conversation_view.dart';
 import 'package:flutter_chat_app/screens/data_screens/user_view.dart';
+import 'package:flutter_chat_app/services/conversation_service.dart';
 
 class ContactTile extends StatelessWidget {
   final PpUser user;
   const ContactTile(this.user, {super.key});
 
-  _navigateToContactView() {
-    UserView.navigate(user);
+
+  _navigateToConversationView() {
+    final conversationService = getIt.get<ConversationService>();
+    conversationService.navigateToConversationView(user.nickname);
   }
 
-  _navigateToConversation() {
-    ConversationView.navigate(user.nickname);
+  _navigateToContactView() {
+    UserView.navigate(user);
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: _navigateToConversation,
+      onTap: _navigateToConversationView,
       child: Column(
           children: [
             Padding(
