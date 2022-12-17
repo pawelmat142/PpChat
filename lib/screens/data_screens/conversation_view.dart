@@ -5,6 +5,7 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
@@ -20,11 +21,11 @@ class ConversationView extends StatelessWidget {
   final _userService = getIt.get<PpUserService>();
   final _conversationService = getIt.get<ConversationService>();
 
-  static navigate(String contactNickname) {
+  static navigate(PpUser contact) {
     Navigator.pushNamed(
       NavigationService.context,
       ConversationView.id,
-      arguments: contactNickname
+      arguments: contact
     );
   }
 
@@ -40,15 +41,13 @@ class ConversationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final contactNickname = ModalRoute.of(context)!.settings.arguments as String;
-
-
+    final contactUser = ModalRoute.of(context)!.settings.arguments as PpUser;
 
     return Scaffold(
 
         appBar: AppBar(
-          title: Text('$contactNickname - chat'),
-          actions: [PopupMenu(contactNickname: contactNickname)],
+          title: Text('${contactUser.nickname} - chat'),
+          actions: [PopupMenu(contactNickname: contactUser.nickname)],
         ),
 
         body: SafeArea(
@@ -57,7 +56,7 @@ class ConversationView extends StatelessWidget {
           //MESSAGES AREA
 
             Expanded(child: ValueListenableBuilder<Box<PpMessage>>(
-              valueListenable: conversation(contactNickname).box.listenable(),
+              valueListenable: conversation(contactUser.nickname).box.listenable(),
               builder: (context, box, _) {
 
                 // if (_isConversationClearedByContact) {
@@ -75,7 +74,7 @@ class ConversationView extends StatelessWidget {
             })),
 
 
-            MessageInput(contactNickname: contactNickname),
+            MessageInput(contactNickname: contactUser.nickname),
 
 
           ]),

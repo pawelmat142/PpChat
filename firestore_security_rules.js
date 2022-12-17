@@ -14,32 +14,28 @@ service cloud.firestore {
       	return UID == request.auth.uid;
       }
 
+      function isSender() {
+      	return request.resource.data.documentId == request.auth.uid && logged();
+      }
+
       function isContact() {
       // TODO: update
       	return true;
       }
 
-      function isSender() {
-      	// TODO: update
-        return true;
-      }
-
-      function owner() {
-      	return get(/databases/$(database)/documents/PpUser/$(nickname)/PRIVATE/$(nickname)).data.uid == request.auth.uid;
-      }
 
 			allow create: if request.auth.uid == request.resource.data.uid;
       allow read: if logged();
       allow delete, update: if isOwner();
 
       match /CONTACTS/{UID} {
-        allow write, read: if isOwner();
+        allow read, write: if UID == request.auth.uid;
       }
 
       match /NOTIFICATIONS/{docId} {
       	allow read, write: if isOwner();
-        allow create, delete: if isSender();
-      // TODO: some more rules to lock notifications only for sender/receiver
+        allow create: if logged(); //send invitation
+        allow update, delete: if isSender(); //accept, delete invitation, overwrite any notification
       }
 
       match /Messages/{msgDocId} {

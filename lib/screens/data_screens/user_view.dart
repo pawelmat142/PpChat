@@ -28,7 +28,7 @@ class UserView extends DataView {
               Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
               final conversationService = getIt.get<ConversationService>();
               if (contactsService.contactExists(user.nickname)) {
-                conversationService.navigateToConversationView(user.nickname);
+                conversationService.navigateToConversationView(user);
               } else {
                 PpFlushbar.contactNotExists();
               }

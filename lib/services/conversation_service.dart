@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_screens/conversation_view.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/state/conversations.dart';
@@ -102,9 +103,13 @@ class ConversationService {
   }
 
 
-  navigateToConversationView(String contactNickname) async {
-    await conversations.openOrCreate(contactNickname: contactNickname);
-    ConversationView.navigate(contactNickname);
+  navigateToConversationView(PpUser contactUser) async {
+    await conversations.openOrCreate(contactNickname: contactUser.nickname);
+    ConversationView.navigate(contactUser);
+  }
+
+  getContactUserByNickname(String contactNickname) {
+    return _contactsService.getBy(nickname: contactNickname);
   }
 
 

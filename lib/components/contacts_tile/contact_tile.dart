@@ -7,17 +7,17 @@ import 'package:flutter_chat_app/screens/data_screens/user_view.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 
 class ContactTile extends StatelessWidget {
-  final PpUser user;
-  const ContactTile(this.user, {super.key});
+  final PpUser contactUser;
+  const ContactTile(this.contactUser, {super.key});
 
 
   _navigateToConversationView() {
     final conversationService = getIt.get<ConversationService>();
-    conversationService.navigateToConversationView(user.nickname);
+    conversationService.navigateToConversationView(contactUser);
   }
 
   _navigateToContactView() {
-    UserView.navigate(user);
+    UserView.navigate(contactUser);
   }
 
   @override
@@ -37,7 +37,7 @@ class ContactTile extends StatelessWidget {
                     children: [
                       InkWell(onTap: _navigateToContactView, child: const ContactAvatar()),
 
-                      Content(nickname: user.nickname, text: user.role),
+                      Content(nickname: contactUser.nickname, text: contactUser.role),
                     ],
                   ),
 
@@ -45,7 +45,7 @@ class ContactTile extends StatelessWidget {
                     padding: const EdgeInsets.only(right: TILE_PADDING_VERTICAL),
                     child: Icon(Icons.message,
                         size: 35,
-                        color: user.logged ? Colors.green : Colors.red,
+                        color: contactUser.logged ? Colors.green : Colors.red,
                       ),
                   ),
 

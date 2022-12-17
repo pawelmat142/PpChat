@@ -17,25 +17,26 @@ class AcceptInvitationProcess extends LogProcess {
     log('[START] [AcceptInvitationProcess]');
     final batch = firestore.batch();
 
-    final contactNickname = invitation.sender;
+    final contactUid = invitation.documentId;
 
     // delete invitation
-    batch.delete(firestore.collection(Collections.PpUser).doc(state.nickname)
-        .collection(Collections.NOTIFICATIONS).doc(contactNickname));
+    batch.delete(firestore.collection(Collections.PpUser).doc(States.getUid)
+        .collection(Collections.NOTIFICATIONS).doc(contactUid));
 
     // update sender invitationSelfNotification to invitation acceptance
     final contactNotificationDocRef = firestore
-        .collection(Collections.PpUser).doc(contactNickname)
-        .collection(Collections.NOTIFICATIONS).doc(state.nickname);
+        .collection(Collections.PpUser).doc(contactUid)
+        .collection(Collections.NOTIFICATIONS).doc(States.getUid);
+
     final document = PpNotification.createInvitationAcceptance(text: invitation.text,
-        sender: invitation.receiver, receiver: invitation.sender, documentId: state.me.signature);
+        sender: invitation.receiver, receiver: invitation.sender, documentId: States.getUid);
     batch.set(contactNotificationDocRef, document.asMap);
 
     //add to contacts
-    final newContactNicknames = state.contacts.nicknames + [contactNickname];
+    final newContactNicknames = state.contacts.nicknames + [contactUid];
     final contactNicknamesDocRef = firestore
-        .collection(Collections.PpUser).doc(state.nickname)
-        .collection(Collections.CONTACTS).doc(state.nickname);
+        .collection(Collections.PpUser).doc(States.getUid)
+        .collection(Collections.CONTACTS).doc(States.getUid);
     batch.set(contactNicknamesDocRef,
         {Contacts.contactsFieldName: newContactNicknames});
 
