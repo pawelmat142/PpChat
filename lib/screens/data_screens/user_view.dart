@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
+import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
-import 'package:flutter_chat_app/screens/data_screens/conversation_view.dart';
 import 'package:flutter_chat_app/screens/data_screens/data_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/services/conversation_service.dart';
 
 class UserView extends DataView {
   const UserView({required super.interface,  super.key});
@@ -25,11 +26,20 @@ class UserView extends DataView {
             PpButton(text: 'message', onPressed: () {
               NavigationService.popToHome();
               Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-              ConversationView.navigate(user.nickname);
+              final conversationService = getIt.get<ConversationService>();
+              if (contactsService.contactExists(user.nickname)) {
+                conversationService.navigateToConversationView(user.nickname);
+              } else {
+                PpFlushbar.contactNotExists();
+              }
             }),
 
             PpButton(text: 'delete', color: Colors.red, onPressed: () async {
-              await contactsService.onDeleteContact(user.nickname);
+              if (contactsService.contactExists(user.nickname)) {
+                await contactsService.onDeleteContact(user.nickname);
+              } else {
+                PpFlushbar.contactNotExists();
+              }
             })
           ]
         )))

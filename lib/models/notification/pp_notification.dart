@@ -7,6 +7,8 @@ class PpNotification {
   final String receiver;
   final String type;
   bool isRead;
+  bool isFlushed;
+  bool isResolved;
   final String text;
 
   PpNotification({
@@ -14,6 +16,8 @@ class PpNotification {
     required this.receiver,
     required this.type,
     required this.isRead,
+    required this.isFlushed,
+    required this.isResolved,
     required this.text
   });
 
@@ -22,6 +26,8 @@ class PpNotification {
     PpNotificationFields.receiver: receiver,
     PpNotificationFields.type: type,
     PpNotificationFields.isRead: isRead,
+    PpNotificationFields.isFlushed: isFlushed,
+    PpNotificationFields.isResolved: isResolved,
     PpNotificationFields.text: text,
   };
 
@@ -32,16 +38,14 @@ class PpNotification {
       receiver: notificationMap[PpNotificationFields.receiver],
       type: notificationMap[PpNotificationFields.type],
       isRead: notificationMap[PpNotificationFields.isRead],
+      isFlushed: notificationMap[PpNotificationFields.isFlushed],
+      isResolved: notificationMap[PpNotificationFields.isResolved],
       text: notificationMap[PpNotificationFields.text],
     );
   }
 
-  static PpNotification fromDB(QueryDocumentSnapshot<Object?> doc) {
-    try {
-      return PpNotification.fromMap(doc.data() as Map<String, dynamic>);
-    } catch (error) {
-      throw Exception(['FIREBASE OBJECT CAST TO MAP ERROR - NOTIFICATION']);
-    }
+  static PpNotification fromDB(DocumentSnapshot<Object?> doc) {
+    return PpNotification.fromMap(doc.data() as Map<String, dynamic>);
   }
 
   static PpNotification createInvitation({required String text, required String sender, required String receiver}) => PpNotification(
@@ -49,6 +53,18 @@ class PpNotification {
       receiver: receiver,
       type: PpNotificationTypes.invitation,
       isRead: false,
+      isFlushed: false,
+      isResolved: true,
+      text: text
+  );
+
+  static PpNotification createInvitationAcceptance({required String text, required String sender, required String receiver}) => PpNotification(
+      sender: sender,
+      receiver: receiver,
+      type: PpNotificationTypes.invitationAcceptance,
+      isRead: false,
+      isFlushed: false,
+      isResolved: false,
       text: text
   );
 
@@ -57,6 +73,8 @@ class PpNotification {
       receiver: receiver,
       type: PpNotificationTypes.invitationSelfNotification,
       isRead: true,
+      isFlushed: true,
+      isResolved: true,
       text: text
   );
 
@@ -65,6 +83,8 @@ class PpNotification {
       receiver: receiver,
       type: PpNotificationTypes.contactDeletedNotification,
       isRead: true,
+      isFlushed: true,
+      isResolved: false,
       text: PpNotificationTypes.contactDeletedNotification
   );
 
@@ -73,6 +93,8 @@ class PpNotification {
       receiver: receiver,
       type: PpNotificationTypes.conversationClearNotification,
       isRead: true,
+      isFlushed: true,
+      isResolved: false,
       text: PpNotificationTypes.conversationClearNotification,
   );
 

@@ -21,12 +21,14 @@ class _NotificationInfoState extends State<NotificationInfo> {
   String unreadNotifications = "X";
   String totalNotifications = "X";
 
-  StreamSubscription? notificationsListenerOne;
+  StreamSubscription? notificationsListener;
 
   @override
   void initState() {
     super.initState();
-    notificationsListenerOne = widget.notificationService.stream.listen(_setState);
+    _setState(widget.notificationService.notifications.get);
+    notificationsListener = widget.notificationService
+        .notifications.stream.listen(_setState);
   }
 
   _setState(event) {
@@ -40,7 +42,7 @@ class _NotificationInfoState extends State<NotificationInfo> {
 
   @override
   void dispose() {
-    notificationsListenerOne!.cancel();
+    notificationsListener!.cancel();
     super.dispose();
   }
 

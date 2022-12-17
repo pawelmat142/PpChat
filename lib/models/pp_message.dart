@@ -60,7 +60,6 @@ class PpMessage extends HiveObject {
     try {
       return PpMessage.fromMap(doc.data() as Map<String, dynamic>);
     } catch (error) {
-      print(error);
       throw Exception(['FIREBASE OBJECT CAST FROM MAP ERROR - MESSAGE']);
     }
   }

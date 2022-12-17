@@ -5,6 +5,8 @@ abstract class PpNotificationFields {
   static const receiver = 'receiver';
   static const type = 'type';
   static const isRead = 'isRead';
+  static const isFlushed = 'isFlushed';
+  static const isResolved = 'isResolved';
   static const text = 'text';
 
   static validate(Map<String, dynamic>? notificationMap) {
@@ -16,10 +18,14 @@ abstract class PpNotificationFields {
         && PpNotificationTypes.list.contains(notificationMap[PpNotificationFields.type])
         && notificationMap.keys.contains(PpNotificationFields.isRead)
         && notificationMap[PpNotificationFields.isRead] is bool
+        && notificationMap.keys.contains(PpNotificationFields.isFlushed)
+        && notificationMap[PpNotificationFields.isFlushed] is bool
+        && notificationMap.keys.contains(PpNotificationFields.isResolved)
+        && notificationMap[PpNotificationFields.isResolved] is bool
         && notificationMap.keys.contains(PpNotificationFields.text)
         && notificationMap[PpNotificationFields.text] is String
     ) {return;} else {
-      throw Exception(["Notification MAP ERROR"]);
+      // throw Exception(["Notification MAP ERROR"]);
     }
   }
 }

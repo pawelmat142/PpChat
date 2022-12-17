@@ -255,3 +255,30 @@ notification remove bug
 ### [063] conversationClearNotification = event shown on conversation view
 
 ### [064] first message shown in conversation
+
+## feature/error_handling
+
+### [065] First step
+LogProcess class prepared
+</br> DeleteAccount as extension of LogProcess
+</br> new collection `log` with security rule
+
+### [066] Prepared firestore batch for delete account
+
+### [067] Count batch writes
+
+### [068] Batch overload solved
+
+### [069] Delete Hive data when delete account
+
+### [070] DeleteAccountProcess - reset services
+
+### [071] LogService
+Global LogProcess
+example on login process
+
+### [072] Finish branch
+
+## feature/data_state_object
+
+### [073] DataStageObject preparations

@@ -2,6 +2,10 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+  	match /logs/{logs} {
+    	allow create: if true;
+    }
+
   	function logged() { return request.auth != null; }
 
   	match /User/{nickname} {
