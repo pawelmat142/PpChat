@@ -22,10 +22,10 @@ class States {
     }
   }
 
-  final contactNicknames = ContactNicknames();
-
   /// User object representing signed in user - stored in firestore
   final me = Me();
+
+  final contactNicknames = ContactNicknames();
 
   String get nickname => me.nickname;
 

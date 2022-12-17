@@ -133,8 +133,13 @@ class ConversationService {
       }
 
       //send notification
-      final notification = PpNotification.createConversationClear(sender: _userService.nickname, receiver: contactNickname);
-      final docRef = _contactsService.contactNotificationDocRef(contactNickname: contactNickname);
+      final notification = PpNotification.createConversationClear(
+          documentId: _state.me.signature,
+          sender: _userService.nickname,
+          receiver: contactNickname
+      );
+      //todo: refactor method to pass PpUser object instead of nickname
+      final docRef = _contactsService.contactNotificationDocRef(contactUid: contactNickname);
       batch.set(docRef, notification.asMap);
 
       logService.log('[MSG] ${querySnapshot.docs.length} unread messages deleted in contact receive box');

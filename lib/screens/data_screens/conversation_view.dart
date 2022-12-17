@@ -130,6 +130,8 @@ class PopupMenu extends StatelessWidget {
   }
 
   _onDeleteContact() async {
+    //todo: refacotr view to store whole constact PpUser object - not only nickname
+    //todo: refactor method to pass PpUser object there
     await _contactsService.onDeleteContact(contactNickname);
   }
 

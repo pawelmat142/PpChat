@@ -28,7 +28,7 @@ class AcceptInvitationProcess extends LogProcess {
         .collection(Collections.PpUser).doc(contactNickname)
         .collection(Collections.NOTIFICATIONS).doc(state.nickname);
     final document = PpNotification.createInvitationAcceptance(text: invitation.text,
-        sender: invitation.receiver, receiver: invitation.sender);
+        sender: invitation.receiver, receiver: invitation.sender, documentId: state.me.signature);
     batch.set(contactNotificationDocRef, document.asMap);
 
     //add to contacts

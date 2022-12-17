@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
@@ -7,8 +6,6 @@ import 'package:flutter_chat_app/state/interfaces/firestore_collection_state.dar
 import 'package:flutter_chat_app/state/states.dart';
 
 class Notifications extends FirestoreCollectionState<PpNotification> {
-
-  final _state = getIt.get<States>();
 
   static String get getUid => States.getUid;
 
@@ -42,10 +39,8 @@ class Notifications extends FirestoreCollectionState<PpNotification> {
     super.clear();
   }
 
-  bool imSender(PpNotification item) => item.sender == _state.me.nickname;
-
   @override
-  String docIdFromItem(PpNotification item) => imSender(item) ? item.receiver : item.sender;
+  String docIdFromItem(PpNotification item) => item.documentId;
 
   getOne({required String sender}) {
     final index = get.indexWhere((n) => n.sender == sender);

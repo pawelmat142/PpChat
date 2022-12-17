@@ -195,8 +195,9 @@ class DeleteAccountProcess extends LogProcess {
     log('[START] Prepare batch - send notifications to contacts [NOTIFICATIONS]');
     for (var contactNickname in _contactsNicknames) {
       await _batchSet(
-        documentReference: _contactsService.contactNotificationDocRef(contactNickname: contactNickname),
-        data: PpNotification.createContactDeleted(sender: _nickname, receiver: contactNickname).asMap
+        //todo: contactNicknames to notifications
+        documentReference: _contactsService.contactNotificationDocRef(contactUid: contactNickname),
+        data: PpNotification.createContactDeleted(sender: _nickname, receiver: contactNickname, documentId: _state.me.signature).asMap
       );
       log('Notification for $contactNickname prepared');
     }

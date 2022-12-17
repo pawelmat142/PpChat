@@ -294,3 +294,6 @@ PpUser model - add signature field what is PpUser docId now
 
 ### [077] Update security rules
 access to CONTACTS, NOTIFICATIONS, Messages
+
+### [078] ContactNicknames to uids
+invitation send, delete, reject, remove notification updated

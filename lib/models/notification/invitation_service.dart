@@ -49,8 +49,8 @@ class InvitationService {
         throw Exception('[CANCEL SENT INVITATION] NOT INVITATION SELF ACCEPTANCE');
       }
       final batch = _firestore.batch();
-      batch.delete(_state.notifications.collectionRef.doc(notification.receiver));
-      batch.delete(_contactsService.contactNotificationDocRef(contactNickname: notification.receiver));
+      batch.delete(_state.notifications.collectionRef.doc(notification.documentId));
+      batch.delete(_contactsService.contactNotificationDocRef(contactUid: notification.documentId));
       await batch.commit();
       PpFlushbar.invitationDeleted();
       logService.log('[STOP] [CANCEL SENT INVITATION]');
@@ -66,8 +66,8 @@ class InvitationService {
         throw Exception('[REJECT RECEIVED INVITATION] NOT INVITATION');
       }
       final batch = _firestore.batch();
-      batch.delete(_state.notifications.collectionRef.doc(notification.sender));
-      batch.delete(_contactsService.contactNotificationDocRef(contactNickname: notification.sender));
+      batch.delete(_state.notifications.collectionRef.doc(notification.documentId));
+      batch.delete(_contactsService.contactNotificationDocRef(contactUid: notification.documentId));
       await batch.commit();
       PpFlushbar.invitationDeleted();
       logService.log('[STOP] [REJECT RECEIVED INVITATION]');

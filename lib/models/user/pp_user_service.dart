@@ -45,8 +45,21 @@ class PpUserService {
 
 
   Future<PpUser?> findByNickname(String nickname) async {
-    final snapshot = await _collection.doc(nickname).get();
-    return snapshot.exists ? PpUser.fromDB(snapshot) : null;
+    final querySnapshot = await _collection
+        .where(PpUserFields.nickname, isEqualTo: nickname)
+        .get();
+    return querySnapshot.size > 0
+      ? PpUser.fromDB(querySnapshot.docs.first)
+      : null;
+  }
+
+  Future<PpUser?> findBySignature(String signature) async {
+    final querySnapshot = await _collection
+        .where(PpUserFields.signature, isEqualTo: signature)
+        .get();
+    return querySnapshot.size > 0
+      ? PpUser.fromDB(querySnapshot.docs.first)
+      : null;
   }
 
 

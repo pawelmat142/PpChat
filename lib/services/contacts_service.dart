@@ -94,28 +94,26 @@ class ContactsService {
     try {
       final conversation = _state.conversations.getByNickname(contactNickname);
       if (conversation != null) await _state.conversations.killBoxAndDelete(conversation);
-      await _sendContactDeletedNotifications([contactNickname]);
+      //todo: refactor to pass PpUser object here
+      await _sendContactDeletedNotification(contactNickname);
       _state.contactNicknames.deleteOneEvent(contactNickname);
     } catch (error) {
       logService.error(error.toString());
     }
   }
 
-  _sendContactDeletedNotifications(List<String> nicknames) async {
-    if (nicknames.isNotEmpty) {
-      final batch = _firestore.batch();
-      for (var contactNickname in nicknames) {
-        final notification = PpNotification.createContactDeleted(sender: _state.nickname, receiver: contactNickname);
-        final docRef = contactNotificationDocRef(contactNickname: contactNickname);
-        batch.set(docRef, notification.asMap);
-      }
-      await batch.commit();
-    }
+  _sendContactDeletedNotification(String nickname) async {
+    final notification = PpNotification.createContactDeleted(
+        documentId: _state.me.signature,
+        sender: _state.nickname,
+        receiver: nickname);
+
+    await contactNotificationDocRef(contactUid: 'todo').set(notification.asMap);
   }
 
-  contactNotificationDocRef({required String contactNickname}) => _firestore
-      .collection(Collections.PpUser).doc(contactNickname)
-      .collection(Collections.NOTIFICATIONS).doc(_state.nickname);
+  DocumentReference contactNotificationDocRef({required String contactUid}) => _firestore
+      .collection(Collections.PpUser).doc(contactUid)
+      .collection(Collections.NOTIFICATIONS).doc(States.getUid);
 
   getBy({required String nickname}) => contacts.getBy(nickname);
 

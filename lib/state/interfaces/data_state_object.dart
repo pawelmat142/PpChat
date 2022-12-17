@@ -9,7 +9,7 @@ abstract class DataStateObject<T> {
   late List<T> state = [];
 
   DataStateObject({List<T>? initialValue}) {
-    log('[${T.toString()}] constructor');
+    log('[$runtimeType] [DataStateObject] constructor');
     state = initialValue ?? [];
   }
 

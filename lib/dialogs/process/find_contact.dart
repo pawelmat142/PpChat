@@ -8,8 +8,10 @@ import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/state/states.dart';
 
 class FindContact {
 
@@ -18,11 +20,15 @@ class FindContact {
   final _invitationService = getIt.get<InvitationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
+  final _states = getIt.get<States>();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String nickname = '';
   String message = '';
-  PpNotification? selfNotification;
+
+  late PpNotification selfNotification;
+
+  late PpUser foundUser;
 
   FindContact() {
     _searchPopup();
@@ -62,13 +68,14 @@ class FindContact {
       if (result == null) {
         _popup.show('Nothing found', error: true);
       } else {
+        foundUser = result;
         await _popup.show('Result!',
             enableNavigateBack: true,
             content: Column(children: [
 
               RichText(textAlign: TextAlign.left, text: TextSpan(children: [
                 const TextSpan(text: 'You have found user:  ', style: TextStyle(fontSize: 16, color: Colors.black87)),
-                TextSpan(text: result.nickname, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: PRIMARY_COLOR_DARKER)),
+                TextSpan(text: foundUser.nickname, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: PRIMARY_COLOR_DARKER)),
               ], )),
 
               const Padding(
@@ -118,29 +125,27 @@ class FindContact {
   _sendInvitationNotifications() async {
     final batch = _firestore.batch();
 
-    final receiverRef = _firestore
-        .collection(Collections.PpUser)
-        .doc(nickname)
-        .collection(Collections.NOTIFICATIONS)
-        .doc(_userService.nickname);
-
-    batch.set(receiverRef, PpNotification.createInvitation(
+    final receiverNotificationsRef = _firestore
+        .collection(Collections.PpUser).doc(foundUser.uid)
+        .collection(Collections.NOTIFICATIONS).doc(States.getUid);
+    //contact's notification docId = my uid so any next notification from me will overwrite it
+    batch.set(receiverNotificationsRef, PpNotification.createInvitation(
+        documentId: States.getUid,
         sender: _userService.nickname,
         receiver: nickname,
         text: message).asMap);
 
-    final selfRef = _firestore
-        .collection(Collections.PpUser)
-        .doc(_userService.nickname)
-        .collection(Collections.NOTIFICATIONS)
-        .doc(nickname);
-
+    final myNotificationsRef = _firestore
+        .collection(Collections.PpUser).doc(States.getUid)
+        .collection(Collections.NOTIFICATIONS).doc(foundUser.uid);
+    //my self notification docId = contact's uid so any notification from contact will overwrite it
     selfNotification = PpNotification.createInvitationSelfNotification(
+        documentId: foundUser.uid,
         sender: _userService.nickname,
         receiver: nickname,
         text: message,
     );
-    batch.set(selfRef, selfNotification!.asMap);
+    batch.set(myNotificationsRef, selfNotification.asMap);
 
     await batch.commit();
   }
