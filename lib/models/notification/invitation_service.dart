@@ -25,7 +25,7 @@ class InvitationService {
 
   resolveInvitationAcceptances(Set<PpNotification> notifications) async {
     if (notifications.isNotEmpty) {
-      final newContactNicknames = notifications.map((n) => n.sender).toList();
+      final newContactNicknames = notifications.map((n) => n.documentId).toList();
       _state.contactNicknames.addsEvent(newContactNicknames);
     }
   }

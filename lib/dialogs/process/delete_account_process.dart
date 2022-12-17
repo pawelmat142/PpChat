@@ -6,6 +6,7 @@ import 'package:flutter_chat_app/dialogs/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
@@ -63,16 +64,19 @@ class DeleteAccountProcess extends LogProcess {
   String _uid = '';
   get nickname => _nickname.isNotEmpty ? _nickname : null;
 
+  late List<PpUser> _contacts;
+
 
   WriteBatch? firestoreDeleteAccountBatch;
   int batchValue = 0;
 
   DeleteAccountProcess() {
+    _contacts = _state.contacts.get.map((c) => c).toList();
     firestoreDeleteAccountBatch = firestore.batch();
     process();
   }
 
-  _batchDetele(DocumentReference ref) async {
+  _batchDelete(DocumentReference ref) async {
     //  default to delete
     if (firestoreDeleteAccountBatch != null) {
       batchValue++;
@@ -193,36 +197,58 @@ class DeleteAccountProcess extends LogProcess {
 
   _prepareBatchSendNotifications() async {
     log('[START] Prepare batch - send notifications to contacts [NOTIFICATIONS]');
-    for (var contactNickname in _contactsNicknames) {
+
+    for (var contact in _contacts) {
       await _batchSet(
-        //todo: contactNicknames to notifications
-        documentReference: _contactsService.contactNotificationDocRef(contactUid: contactNickname),
-        data: PpNotification.createContactDeleted(sender: _nickname, receiver: contactNickname, documentId: _state.me.signature).asMap
-      );
-      log('Notification for $contactNickname prepared');
+          documentReference: _contactsService.contactNotificationDocRef(contactUid: contact.uid),
+          data: PpNotification.createContactDeleted(
+              sender: _nickname,
+              receiver: contact.nickname,
+              documentId: States.getUid
+          ).asMap);
+      log('Notification for ${contact.nickname} prepared');
     }
     log('[STOP] Prepare batch - send notifications to contacts');
+
+    // for (var contactNickname in _contactsNicknames) {
+    //   await _batchSet(
+        // documentReference: _contactsService.contactNotificationDocRef(contactUid: contactNickname),
+        // data: PpNotification.createContactDeleted(sender: _nickname, receiver: contactNickname, documentId: _state.me.signature).asMap
+      // );
+      // log('Notification for $contactNickname prepared');
+    // }
+    // log('[STOP] Prepare batch - send notifications to contacts');
   }
 
   _prepareBatchDeleteSentMessagesToContacts() async {
     log('[START] Prepare batch - delete sent messages to contacts [Messages]');
-    for (var contactNickname in _contactsNicknames) {
-
-      final contactMessagesCollectionQuerySnapshot = await _conversationService.contactMessagesCollectionRef(contactNickname)
+    for (var contact in _contacts) {
+      final contactMessagesCollectionQuerySnapshot = await _conversationService
+          .contactMessagesCollectionRef(contactUid: contact.uid)
           .where(PpMessageFields.sender, isEqualTo: _nickname).get();
-      log('${contactMessagesCollectionQuerySnapshot.docs.length} unread messages to delete found for $contactNickname.');
+      log('${contactMessagesCollectionQuerySnapshot.docs.length} unread messages to delete found for ${contact.nickname}.');
 
       for (var doc in contactMessagesCollectionQuerySnapshot.docs) {
-        await _batchDetele(doc.reference);
+        await _batchDelete(doc.reference);
       }
-
+      log('[STOP] Prepare batch - delete sent messages to contacts');
     }
-    log('[STOP] Prepare batch - delete sent messages to contacts');
+    // for (var contactNickname in _contactsNicknames) {
+      // final contactMessagesCollectionQuerySnapshot = await _conversationService.contactMessagesCollectionRef(contactUid: '')
+      //     .where(PpMessageFields.sender, isEqualTo: _nickname).get();
+      // log('${contactMessagesCollectionQuerySnapshot.docs.length} unread messages to delete found for $contactNickname.');
+      //
+      // for (var doc in contactMessagesCollectionQuerySnapshot.docs) {
+      //   await _batchDelete(doc.reference);
+      // }
+    //
+    // }
+    // log('[STOP] Prepare batch - delete sent messages to contacts');
   }
 
   _prepareBatchDeleteContacts() async {
     log('[START] Prepare batch - delete contacts [CONTACTS]');
-    await _batchDetele(_state.contactNicknames.documentRef);
+    await _batchDelete(_state.contactNicknames.documentRef);
     log('[STOP] Prepare batch - delete contacts [CONTACTS]');
   }
 
@@ -232,7 +258,7 @@ class DeleteAccountProcess extends LogProcess {
     final messages = await _conversationService.messagesCollectionRef.get();
     log('${messages.docs.length} messages found to delete.');
     for (var message in messages.docs) {
-      await _batchDetele(message.reference);
+      await _batchDelete(message.reference);
     }
     log('[STOP] Prepare batch - delete messages [Messages]');
   }
@@ -242,15 +268,15 @@ class DeleteAccountProcess extends LogProcess {
     final notificationsCollectionQuerySnapshot = await _state.notifications.collectionRef.get();
     log('${notificationsCollectionQuerySnapshot.docs.length} notifications found to delete.');
     for (var notification in notificationsCollectionQuerySnapshot.docs) {
-      await _batchDetele(notification.reference);
+      await _batchDelete(notification.reference);
     }
     log('[STOP] Prepare batch - delete notifications [NOTIFICATIONS]');
   }
 
   _prepareBatchDeleteUser() async {
     log('[START] Prepare batch - delete user [User][PRIVATE]');
-    await _batchDetele(firestore.collection(Collections.PpUser).doc(_nickname));
-    await _batchDetele(firestore.collection(Collections.PpUser).doc(_nickname).collection(Collections.PRIVATE).doc(_nickname));
+    await _batchDelete(firestore.collection(Collections.PpUser).doc(States.getUid));
+    // await _batchDelete(firestore.collection(Collections.PpUser).doc(States.getUid).collection(Collections.PRIVATE).doc(States.getUid));
     log('[STOP] Prepare batch - delete user [User][PRIVATE]');
   }
 

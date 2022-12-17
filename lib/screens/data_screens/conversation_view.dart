@@ -47,7 +47,7 @@ class ConversationView extends StatelessWidget {
 
         appBar: AppBar(
           title: Text('${contactUser.nickname} - chat'),
-          actions: [PopupMenu(contactNickname: contactUser.nickname)],
+          actions: [PopupMenu(contactUser: contactUser)],
         ),
 
         body: SafeArea(
@@ -74,8 +74,7 @@ class ConversationView extends StatelessWidget {
             })),
 
 
-            MessageInput(contactNickname: contactUser.nickname),
-
+            MessageInput(contactUser: contactUser),
 
           ]),
         ),
@@ -85,9 +84,9 @@ class ConversationView extends StatelessWidget {
 }
 
 class PopupMenu extends StatelessWidget {
-  PopupMenu({required this.contactNickname, Key? key}) : super(key: key);
+  PopupMenu({required this.contactUser, Key? key}) : super(key: key);
 
-  final String contactNickname;
+  final PpUser contactUser;
 
   final _conversationService = getIt.get<ConversationService>();
   final _contactsService = getIt.get<ContactsService>();
@@ -123,15 +122,13 @@ class PopupMenu extends StatelessWidget {
         text: 'Messages data will be lost also on the other side!',
         buttons: [PopupButton('Clear', onPressed: () async {
           _spinner.start();
-          await _conversationService.clearConversation(contactNickname);
+          await _conversationService.clearConversation(contactUser);
           _spinner.stop();
     })]);
   }
 
   _onDeleteContact() async {
-    //todo: refacotr view to store whole constact PpUser object - not only nickname
-    //todo: refactor method to pass PpUser object there
-    await _contactsService.onDeleteContact(contactNickname);
+    await _contactsService.onDeleteContact(contactUser);
   }
 
 //

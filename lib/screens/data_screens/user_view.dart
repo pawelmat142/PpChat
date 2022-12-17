@@ -27,7 +27,7 @@ class UserView extends DataView {
               NavigationService.popToHome();
               Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
               final conversationService = getIt.get<ConversationService>();
-              if (contactsService.contactExists(user.nickname)) {
+              if (contactsService.contactExists(user.uid)) {
                 conversationService.navigateToConversationView(user);
               } else {
                 PpFlushbar.contactNotExists();
@@ -35,8 +35,8 @@ class UserView extends DataView {
             }),
 
             PpButton(text: 'delete', color: Colors.red, onPressed: () async {
-              if (contactsService.contactExists(user.nickname)) {
-                await contactsService.onDeleteContact(user.nickname);
+              if (contactsService.contactExists(user.uid)) {
+                await contactsService.onDeleteContact(user);
               } else {
                 PpFlushbar.contactNotExists();
               }

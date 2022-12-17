@@ -6,6 +6,7 @@ import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/state/contact_nicknames.dart';
 import 'package:flutter_chat_app/state/contacts.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
@@ -78,37 +79,36 @@ class ContactsService {
   }
 
 
-  onDeleteContact(String contactNickname) async {
+  onDeleteContact(PpUser contactUser) async {
     await Future.delayed(const Duration(milliseconds: 100));
     await _popup.show('Are you sure?', error: true,
         text: 'All data will be lost also on the other side!',
         buttons: [PopupButton('Delete', error: true, onPressed: () async {
           NavigationService.popToHome();
           Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-          await _deleteContact(contactNickname);
-          PpFlushbar.contactDeletedNotificationForSender(nickname: contactNickname, delay: 200);
+          await _deleteContact(contactUser);
+          PpFlushbar.contactDeletedNotificationForSender(nickname: contactUser.nickname, delay: 200);
         })]);
   }
 
-  _deleteContact(String contactNickname) async {
+  _deleteContact(PpUser contactUser) async {
     try {
-      final conversation = _state.conversations.getByNickname(contactNickname);
+      final conversation = _state.conversations.getByNickname(contactUser.nickname);
       if (conversation != null) await _state.conversations.killBoxAndDelete(conversation);
-      //todo: refactor to pass PpUser object here
-      await _sendContactDeletedNotification(contactNickname);
-      _state.contactNicknames.deleteOneEvent(contactNickname);
+      await _sendContactDeletedNotification(contactUser);
+      _state.contactNicknames.deleteOneEvent(contactUser.uid);
     } catch (error) {
       logService.error(error.toString());
     }
   }
 
-  _sendContactDeletedNotification(String nickname) async {
+  _sendContactDeletedNotification(PpUser contactUser) async {
     final notification = PpNotification.createContactDeleted(
-        documentId: _state.me.signature,
+        documentId: States.getUid,
         sender: _state.nickname,
-        receiver: nickname);
+        receiver: contactUser.nickname);
 
-    await contactNotificationDocRef(contactUid: 'todo').set(notification.asMap);
+    await contactNotificationDocRef(contactUid: contactUser.uid).set(notification.asMap);
   }
 
   DocumentReference contactNotificationDocRef({required String contactUid}) => _firestore
@@ -117,6 +117,6 @@ class ContactsService {
 
   getBy({required String nickname}) => contacts.getBy(nickname);
 
-  contactExists(String contactNickname) => contactNicknames.contains(contactNickname);
+  contactExists(String contactUid) => contactNicknames.contains(contactUid);
 
 }

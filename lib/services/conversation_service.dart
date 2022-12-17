@@ -25,11 +25,11 @@ class ConversationService {
   final logService = getIt.get<LogService>();
 
   CollectionReference get messagesCollectionRef => _firestore
-      .collection(Collections.PpUser).doc(_userService.nickname)
+      .collection(Collections.PpUser).doc(States.getUid)
       .collection(Collections.Messages);
 
-  CollectionReference contactMessagesCollectionRef(String contactNickname) => _firestore
-      .collection(Collections.PpUser).doc(contactNickname)
+  CollectionReference contactMessagesCollectionRef({required String contactUid}) => _firestore
+      .collection(Collections.PpUser).doc(contactUid)
       .collection(Collections.Messages);
 
   StreamSubscription? _messagesObserver;
@@ -113,24 +113,24 @@ class ConversationService {
   }
 
 
-  sendMessage({required String message, required String contactNickname}) async {
+  sendMessage({required String message, required PpUser contactUser}) async {
     final msg = PpMessage.create(
         message: message,
         sender: _userService.nickname,
-        receiver: contactNickname
+        receiver: contactUser.nickname
     );
-    await contactMessagesCollectionRef(contactNickname).add(msg.asMap);
-    conversations.getByNickname(contactNickname)?.addMessage(msg);
+    await contactMessagesCollectionRef(contactUid: contactUser.uid).add(msg.asMap);
+    conversations.getByNickname(contactUser.nickname)?.addMessage(msg);
   }
 
 
-  clearConversation(String contactNickname) async {
+  clearConversation(PpUser contactUser) async {
     //TODO: security rule to delete doc in contact messages collection
     try {
       final batch = _firestore.batch();
 
       //get unread messages in contact receive box
-      final querySnapshot = await contactMessagesCollectionRef(contactNickname)
+      final querySnapshot = await contactMessagesCollectionRef(contactUid: contactUser.uid)
           .where(PpMessageFields.sender, isEqualTo: _userService.nickname)
           .get();
       for (var doc in querySnapshot.docs) {
@@ -141,16 +141,16 @@ class ConversationService {
       final notification = PpNotification.createConversationClear(
           documentId: _state.me.signature,
           sender: _userService.nickname,
-          receiver: contactNickname
+          receiver: contactUser.nickname
       );
       //todo: refactor method to pass PpUser object instead of nickname
-      final docRef = _contactsService.contactNotificationDocRef(contactUid: contactNickname);
+      final docRef = _contactsService.contactNotificationDocRef(contactUid: contactUser.uid);
       batch.set(docRef, notification.asMap);
 
       logService.log('[MSG] ${querySnapshot.docs.length} unread messages deleted in contact receive box');
 
       await batch.commit();
-      final conversation = conversations.getByNickname(contactNickname);
+      final conversation = conversations.getByNickname(contactUser.nickname);
       if (conversation != null) conversation.clearBox();
     } catch (error) {
       logService.error(error.toString());

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 
 class MessageInput extends StatefulWidget {
-  const MessageInput({required this.contactNickname, Key? key}) : super(key: key);
-  final String contactNickname;
+  const MessageInput({required this.contactUser, Key? key}) : super(key: key);
+  final PpUser contactUser;
 
   @override
   State<MessageInput> createState() => _MessageInputState();
@@ -63,7 +64,7 @@ class _MessageInputState extends State<MessageInput> {
 
     await _conversationService.sendMessage(
         message: message,
-        contactNickname: widget.contactNickname);
+        contactUser: widget.contactUser);
 
     _messageInputController.clear();
     setState((){_ready = true;});

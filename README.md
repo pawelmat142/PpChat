@@ -300,3 +300,6 @@ invitation send, delete, reject, remove notification updated
 
 ### [079] ContactNicknames refactor 2
 conversation, contact view, accept invitation
+
+### [080] ContactNicknames refactor 3
+delete contact, send message update
