@@ -3,20 +3,23 @@ import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
 import 'package:flutter_chat_app/models/user/pp_user_roles.dart';
 
 class PpUser {
-  final String docId;
+  final String uid;
+  final String signature;
   final String nickname;
   final String role;
   bool logged;
 
   PpUser({
-    required this.docId,
+    required this.uid,
+    required this.signature,
     required this.nickname,
     required this.role,
     required this.logged,
   });
 
   Map<String, dynamic> get asMap => {
-    PpUserFields.docId: docId,
+    PpUserFields.uid: uid,
+    PpUserFields.signature: signature,
     PpUserFields.nickname: nickname,
     PpUserFields.logged: logged,
     PpUserFields.role: role,
@@ -25,7 +28,8 @@ class PpUser {
   static PpUser fromMap(Map<String, dynamic> ppUserMap) {
     _validatePpUserMap(ppUserMap);
     return PpUser(
-      docId: ppUserMap[PpUserFields.docId],
+      uid: ppUserMap[PpUserFields.uid],
+      signature: ppUserMap[PpUserFields.signature],
       nickname: ppUserMap[PpUserFields.nickname],
       role: ppUserMap[PpUserFields.role],
       logged: ppUserMap[PpUserFields.logged],
@@ -40,16 +44,23 @@ class PpUser {
     }
   }
 
-  static PpUser create({required String nickname, required String docId}) => PpUser(
-      docId: docId,
+  static PpUser create({
+    required String nickname,
+    required String uid,
+    required String signature
+  }) => PpUser(
+      uid: uid,
+      signature: signature,
       nickname: nickname,
       role: PpUserRoles.USER,
       logged: false
   );
 
   static _validatePpUserMap(Map<String, dynamic>? ppUserMap) {
-    if (ppUserMap!.keys.contains(PpUserFields.docId)
-        && ppUserMap[PpUserFields.docId] is String
+    if (ppUserMap!.keys.contains(PpUserFields.uid)
+        && ppUserMap[PpUserFields.uid] is String
+        && ppUserMap.keys.contains(PpUserFields.signature)
+        && ppUserMap[PpUserFields.signature] is String
         && ppUserMap.keys.contains(PpUserFields.nickname)
         && ppUserMap[PpUserFields.nickname] is String
         && ppUserMap.keys.contains(PpUserFields.role)

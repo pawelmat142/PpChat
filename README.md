@@ -289,3 +289,5 @@ example on login process
 
 ### [075] PpUser - signature field
 PpUser model - add signature field what is PpUser docId now
+
+### [076] PpUser - PpUser document id change to uid
