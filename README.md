@@ -286,3 +286,6 @@ example on login process
 ## feature/security_rules_refactor
 
 ### [074] PpUser - change collection name
+
+### [075] PpUser - signature field
+PpUser model - add signature field what is PpUser docId now

@@ -19,12 +19,18 @@ class PpUserService {
   Me get me => _state.me;
   String get nickname => _state.me.nickname.isNotEmpty ? _state.me.nickname : AuthenticationService.nickname;
 
+  String _myDocId = '';
+  String get myDocId {
+    if (_myDocId.isNotEmpty) return _myDocId;
+    if (me.isNotEmpty) return me.get[0].docId;
+    throw Exception('no doc id available');
+  }
+
   CollectionReference<Map<String, dynamic>> get _collection => _firestore.collection(Collections.PpUser);
-  DocumentReference<Map<String, dynamic>> get documentRef => _collection.doc(nickname);
-  DocumentReference<Map<String, dynamic>> get _privateDocumentRef => documentRef.collection(Collections.PRIVATE).doc(nickname);
+  DocumentReference<Map<String, dynamic>> get documentRef => _collection.doc(myDocId);
+  DocumentReference<Map<String, dynamic>> get _privateDocumentRef => documentRef.collection(Collections.PRIVATE).doc(myDocId);
 
-
-  getUserDocRef({required String nickname}) => _collection.doc(nickname);
+  DocumentReference getUserDocRef({required String nickname}) => _collection.doc(nickname);
 
   bool initialized = false;
 
@@ -66,11 +72,11 @@ class PpUserService {
 
 
   Future<void> createNewUser({required String nickname}) async {
-    final newUser = PpUser.create(nickname: nickname);
-    final batch = _firestore.batch();
-    batch.set(getUserDocRef(nickname: newUser.nickname), newUser.asMap);
-    batch.set(_privateDocumentRef, _privateDocumentData);
-    await batch.commit();
+    _myDocId = _collection.doc().id;
+    final newUser = PpUser.create(nickname: nickname, docId: _myDocId);
+    await getUserDocRef(nickname: myDocId).set(newUser.asMap);
+    await _privateDocumentRef.set(_privateDocumentData);
+    _myDocId = '';
   }
 
 
