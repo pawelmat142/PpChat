@@ -13,7 +13,7 @@ class ContactNicknames extends FirestoreDocumentState<String> {
 
   @override
   CollectionReference<Map<String, dynamic>> get collectionRef => firestore
-      .collection(Collections.User).doc(nickname).collection(Collections.CONTACTS);
+      .collection(Collections.PpUser).doc(nickname).collection(Collections.CONTACTS);
 
   @override
   DocumentReference<Map<String, dynamic>> get documentRef => collectionRef.doc(nickname);

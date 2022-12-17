@@ -24,11 +24,11 @@ class ConversationService {
   final logService = getIt.get<LogService>();
 
   CollectionReference get messagesCollectionRef => _firestore
-      .collection(Collections.User).doc(_userService.nickname)
+      .collection(Collections.PpUser).doc(_userService.nickname)
       .collection(Collections.Messages);
 
   CollectionReference contactMessagesCollectionRef(String contactNickname) => _firestore
-      .collection(Collections.User).doc(contactNickname)
+      .collection(Collections.PpUser).doc(contactNickname)
       .collection(Collections.Messages);
 
   StreamSubscription? _messagesObserver;

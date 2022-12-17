@@ -119,7 +119,7 @@ class FindContact {
     final batch = _firestore.batch();
 
     final receiverRef = _firestore
-        .collection(Collections.User)
+        .collection(Collections.PpUser)
         .doc(nickname)
         .collection(Collections.NOTIFICATIONS)
         .doc(_userService.nickname);
@@ -130,7 +130,7 @@ class FindContact {
         text: message).asMap);
 
     final selfRef = _firestore
-        .collection(Collections.User)
+        .collection(Collections.PpUser)
         .doc(_userService.nickname)
         .collection(Collections.NOTIFICATIONS)
         .doc(nickname);

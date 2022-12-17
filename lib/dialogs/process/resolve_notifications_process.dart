@@ -121,7 +121,7 @@ class ResolveNotificationsProcess extends LogProcess {
 
 
   DocumentReference documentReference(PpNotification notification) => firestore
-      .collection(Collections.User).doc(_userService.nickname)
+      .collection(Collections.PpUser).doc(_userService.nickname)
       .collection(Collections.NOTIFICATIONS).doc(docId(notification));
 
   String docId(PpNotification notification) => imSender(notification) ? notification.receiver : notification.sender;

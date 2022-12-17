@@ -18,7 +18,7 @@ class Contacts extends FirestoreCollectionState<PpUser> {
 
 
   @override
-  get collectionRef => firestore.collection(Collections.User);
+  get collectionRef => firestore.collection(Collections.PpUser);
 
   @override
   get collectionQuery => collectionRef.where(PpUserFields.nickname, whereIn: contactNicknames);

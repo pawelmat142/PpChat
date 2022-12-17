@@ -248,8 +248,8 @@ class DeleteAccountProcess extends LogProcess {
 
   _prepareBatchDeleteUser() async {
     log('[START] Prepare batch - delete user [User][PRIVATE]');
-    await _batchDetele(firestore.collection(Collections.User).doc(_nickname));
-    await _batchDetele(firestore.collection(Collections.User).doc(_nickname).collection(Collections.PRIVATE).doc(_nickname));
+    await _batchDetele(firestore.collection(Collections.PpUser).doc(_nickname));
+    await _batchDetele(firestore.collection(Collections.PpUser).doc(_nickname).collection(Collections.PRIVATE).doc(_nickname));
     log('[STOP] Prepare batch - delete user [User][PRIVATE]');
   }
 

@@ -8,14 +8,15 @@ service cloud.firestore {
 
   	function logged() { return request.auth != null; }
 
-  	match /User/{nickname} {
+  	match /PpUser/{nickname} {
 
       function owner() {
-      	return get(/databases/$(database)/documents/User/$(nickname)/PRIVATE/$(nickname)).data.uid == request.auth.uid;
+      	return get(/databases/$(database)/documents/PpUser/$(nickname)/PRIVATE/$(nickname)).data.uid == request.auth.uid;
       }
 
       allow create: if logged();
-      allow get: if logged();
+      allow read, write: if logged();
+      // TODO: ifisincontacts rule
       allow update, delete: if owner();
 
       match /PRIVATE/{nickname} {

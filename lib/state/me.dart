@@ -16,7 +16,7 @@ class Me extends FirestoreDocumentState<PpUser> {
   int getItemIndex(PpUser item) => 0;
 
   @override
-  CollectionReference<Map<String, dynamic>> get collectionRef => firestore.collection(Collections.User);
+  CollectionReference<Map<String, dynamic>> get collectionRef => firestore.collection(Collections.PpUser);
 
   @override
   DocumentReference<Map<String, dynamic>> get documentRef => collectionRef.doc(nickname);

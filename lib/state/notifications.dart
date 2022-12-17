@@ -13,7 +13,7 @@ class Notifications extends FirestoreCollectionState<PpNotification> {
 
   @override
   CollectionReference<Map<String, dynamic>> get collectionRef => firestore
-      .collection(Collections.User).doc(nickname)
+      .collection(Collections.PpUser).doc(nickname)
       .collection(Collections.NOTIFICATIONS);
 
   @override

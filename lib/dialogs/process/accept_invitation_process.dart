@@ -20,12 +20,12 @@ class AcceptInvitationProcess extends LogProcess {
     final contactNickname = invitation.sender;
 
     // delete invitation
-    batch.delete(firestore.collection(Collections.User).doc(state.nickname)
+    batch.delete(firestore.collection(Collections.PpUser).doc(state.nickname)
         .collection(Collections.NOTIFICATIONS).doc(contactNickname));
 
     // update sender invitationSelfNotification to invitation acceptance
     final contactNotificationDocRef = firestore
-        .collection(Collections.User).doc(contactNickname)
+        .collection(Collections.PpUser).doc(contactNickname)
         .collection(Collections.NOTIFICATIONS).doc(state.nickname);
     final document = PpNotification.createInvitationAcceptance(text: invitation.text,
         sender: invitation.receiver, receiver: invitation.sender);
@@ -34,7 +34,7 @@ class AcceptInvitationProcess extends LogProcess {
     //add to contacts
     final newContactNicknames = state.contacts.nicknames + [contactNickname];
     final contactNicknamesDocRef = firestore
-        .collection(Collections.User).doc(state.nickname)
+        .collection(Collections.PpUser).doc(state.nickname)
         .collection(Collections.CONTACTS).doc(state.nickname);
     batch.set(contactNicknamesDocRef,
         {Contacts.contactsFieldName: newContactNicknames});

@@ -23,6 +23,7 @@ class AuthenticationService {
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
+
   log(String txt) => logService.log(txt);
   logError(String txt) => logService.error(txt);
 
@@ -44,6 +45,9 @@ class AuthenticationService {
       _isFirstUserListen = false;
     });
   }
+
+
+
 
   void register({required String nickname, required String password}) async {
     try {

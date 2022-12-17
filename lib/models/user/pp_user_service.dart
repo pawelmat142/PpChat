@@ -19,7 +19,7 @@ class PpUserService {
   Me get me => _state.me;
   String get nickname => _state.me.nickname.isNotEmpty ? _state.me.nickname : AuthenticationService.nickname;
 
-  CollectionReference<Map<String, dynamic>> get _collection => _firestore.collection(Collections.User);
+  CollectionReference<Map<String, dynamic>> get _collection => _firestore.collection(Collections.PpUser);
   DocumentReference<Map<String, dynamic>> get documentRef => _collection.doc(nickname);
   DocumentReference<Map<String, dynamic>> get _privateDocumentRef => documentRef.collection(Collections.PRIVATE).doc(nickname);
 

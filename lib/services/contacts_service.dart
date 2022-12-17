@@ -117,7 +117,7 @@ class ContactsService {
   }
 
   contactNotificationDocRef({required String contactNickname}) => _firestore
-      .collection(Collections.User).doc(contactNickname)
+      .collection(Collections.PpUser).doc(contactNickname)
       .collection(Collections.NOTIFICATIONS).doc(_state.nickname);
 
   getBy({required String nickname}) => contacts.getBy(nickname);

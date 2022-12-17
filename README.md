@@ -282,3 +282,7 @@ example on login process
 ## feature/data_state_object
 
 ### [073] DataStageObject preparations
+
+## feature/security_rules_refactor
+
+### [074] PpUser - change collection name
