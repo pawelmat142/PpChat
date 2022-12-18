@@ -9,6 +9,7 @@ import 'package:flutter_chat_app/models/notification/pp_notification_types.dart'
 import 'package:flutter_chat_app/services/log_service.dart';
 
 class InvitationService {
+  //TODO: clear conversation when delete account
 
   final _firestore = FirebaseFirestore.instance;
 
@@ -23,22 +24,11 @@ class InvitationService {
   }
 
 
-  resolveInvitationAcceptances(Set<PpNotification> notifications) async {
-    if (notifications.isNotEmpty) {
-      final newContactUids = notifications.map((n) => n.documentId).toList();
-      _state.contactUids.addsEvent(newContactUids);
-
-      // Future.delayed(const Duration(milliseconds: 1000), () {
-      //   _conversationService.resetMessagesObserver();
-      // });
-
-    //  set flag resolving acceptances
-
-    //  resolve first message
-    //  resolve messages in coming box
-    }
+  resolveInvitationAcceptances(Set<PpNotification> invitationAcceptances) async {
+    if (invitationAcceptances.isEmpty) return;
+    final newContactUids = invitationAcceptances.map((n) => n.documentId).toList();
+    _state.contactUids.addsEvent(newContactUids);
   }
-
 
   resolveContactDeletedNotifications(Set<PpNotification> notifications) async {
     //todo: if on contact / conversation view - navigate to home/contacts and show popup

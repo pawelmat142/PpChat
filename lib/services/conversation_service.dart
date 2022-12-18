@@ -63,9 +63,9 @@ class ConversationService {
       logService.log('[MSG] messages observer triggered');
 
       final Map<String, PpMessage> messages = {};
-      event.docChanges
-          .where((change) => DocumentChangeType.added == change.type)
-          .forEach((change) => messages[change.doc.id] = PpMessage.fromDB(change.doc));
+      for (var doc in event.docs) {
+        messages[doc.id] = PpMessage.fromDB(doc);
+      }
 
       if (messages.isNotEmpty) await _resolveMessages(messages);
 
@@ -76,13 +76,15 @@ class ConversationService {
 
   Map<String, PpMessage> unresolvedMessages = {};
 
-  _resolveMessages(Map<String, PpMessage> messages) async {
+  _resolveMessages(Map<String, PpMessage> messages, {bool skipFlushbar = false}) async {
     logService.log('[MSG] Received ${messages.length} messages.');
     Map<String, PpMessage> resolvedMessages = {};
+    unresolvedMessages = {};
 
     for (var documentId in messages.keys) {
 
-      final contactUid = messages[documentId]!.sender;
+      final senderUid = messages[documentId]!.sender;
+      final contactUid = senderUid != States.getUid ? senderUid : messages[documentId]!.receiver;
       if (contacts.containsByUid(contactUid)) {
 
         final conversation = await conversations.openOrCreate(contactUid: contactUid);
@@ -94,7 +96,7 @@ class ConversationService {
         unresolvedMessages[documentId] = messages[documentId]!;
       }
     }
-    if (initialized) PpFlushbar.comingMessages(messages: messages.values.toList());
+    if (initialized && !skipFlushbar) PpFlushbar.comingMessages(messages: messages.values.toList());
     await _deleteResolvedMessagesInFs(resolvedMessages.keys.toList());
   }
 
@@ -184,6 +186,13 @@ class ConversationService {
           if (conversation != null) conversation.box.clear();
         }
       }
+    }
+  }
+
+  resolveUnresolvedMessages() {
+    if (unresolvedMessages.isNotEmpty) {
+      logService.log('[resolveUnresolvedMessages] messages: ${unresolvedMessages.length}');
+      _resolveMessages(unresolvedMessages, skipFlushbar: true);
     }
   }
 

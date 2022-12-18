@@ -38,6 +38,7 @@ class ConversationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    _conversationService.resolveUnresolvedMessages();
     final contactUser = ModalRoute.of(context)!.settings.arguments as PpUser;
 
     return Scaffold(
@@ -104,7 +105,9 @@ class PopupMenu extends StatelessWidget {
           child: const Text('Delete contact'),
         ),
 
-        PopupMenuItem(onTap: () {},
+        PopupMenuItem(onTap: () {
+          _conversationService.resolveUnresolvedMessages();
+        },
           child: const Text('test'),
         ),
 

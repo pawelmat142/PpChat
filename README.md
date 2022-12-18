@@ -314,3 +314,5 @@ messages not saving after relogin
 
 ### [084] PpMessage refactor
 sending and resolving by uid - not nickname
+
+### [085] First message in conversation
