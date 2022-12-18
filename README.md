@@ -311,3 +311,6 @@ messages not saving after relogin
 </br> logout bug
 
 ### [083] Allow send messages if invitation is accepted
+
+### [084] PpMessage refactor
+sending and resolving by uid - not nickname

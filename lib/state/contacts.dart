@@ -35,22 +35,24 @@ class Contacts extends FirestoreCollectionState<PpUser> {
 
   @override
   void deleteOneEvent(PpUser item, {bool? skipFirestore = false}) {
-    contactUids.removeAt(contactUids.indexWhere((n) => n == item.nickname));
+    contactUids.removeAt(contactUids.indexWhere((n) => n == item.uid));
     updateContactUids();
   }
 
   @override
-  bool contains(PpUser item) => state.indexWhere((u) => item.nickname == u.nickname) != -1;
+  bool contains(PpUser item) => state.indexWhere((u) => item.uid == u.uid) != -1;
+
+  bool containsByUid(String uid) => state.indexWhere((u) => uid == u.uid) != -1;
 
 
   @override
-  String docIdFromItem(PpUser item) => item.nickname;
+  String docIdFromItem(PpUser item) => item.uid;
 
   @override
   Map<String, dynamic> toMap(PpUser item) => item.asMap;
 
   @override
-  int getItemIndex(PpUser item) => state.indexWhere((contact) => contact.nickname == item.nickname);
+  int getItemIndex(PpUser item) => state.indexWhere((contact) => contact.uid == item.uid);
 
   @override
   PpUser itemFromSnapshot(DocumentSnapshot<Map<String, dynamic>> documentSnapshot) => PpUser.fromDB(documentSnapshot);
@@ -75,6 +77,11 @@ class Contacts extends FirestoreCollectionState<PpUser> {
 
   PpUser? getByNickname(String nickname) {
     final index = state.indexWhere((s) => s.nickname == nickname);
+    return index != -1 ? state[index] : null;
+  }
+
+  PpUser? getByUid(String uid) {
+    final index = state.indexWhere((s) => s.uid == uid);
     return index != -1 ? state[index] : null;
   }
 

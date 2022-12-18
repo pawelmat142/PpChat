@@ -23,7 +23,7 @@ class Conversations extends DataStateObject<Conversation> {
   }
 
 
-  openOrCreate({required String contactUid}) async {
+  Future<Conversation> openOrCreate({required String contactUid}) async {
     final conversation = getByUid(contactUid);
     if (conversation == null) {
       addEvent(await Conversation.create(contactUid: contactUid));
@@ -31,6 +31,7 @@ class Conversations extends DataStateObject<Conversation> {
     else if (!conversation.isOpen) {
       await conversation.open();
     }
+    return getByUid(contactUid)!;
   }
 
   @override

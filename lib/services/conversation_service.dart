@@ -3,8 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/screens/data_screens/conversation_view.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
+import 'package:flutter_chat_app/state/contacts.dart';
 import 'package:flutter_chat_app/state/conversations.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
@@ -39,8 +40,7 @@ class ConversationService {
   StreamSubscription? _messagesObserver;
 
   Conversations get conversations => _state.conversations;
-
-  List<PpMessage> unresolvedMessages = [];
+  Contacts get contacts => _state.contacts;
 
   bool initialized = false;
 
@@ -60,24 +60,52 @@ class ConversationService {
   _startMessagesObserver() async {
     final completer = Completer();
     _messagesObserver ??= messagesCollectionRef.snapshots().listen((event) async {
-
       logService.log('[MSG] messages observer triggered');
-      final List<String> comingMessagesDocIds = [];
 
-      final comingMessages = event.docChanges
+      final Map<String, PpMessage> messages = {};
+      event.docChanges
           .where((change) => DocumentChangeType.added == change.type)
-          .map((change) {
-            comingMessagesDocIds.add(change.doc.id);
-            return PpMessage.fromDB(change.doc);
-          }).toList();
+          .forEach((change) => messages[change.doc.id] = PpMessage.fromDB(change.doc));
 
-      if (comingMessagesDocIds.length != comingMessages.length) throw Exception('[MSG] error');
-      await _resolveComingMessages(comingMessages);
-      await _deleteResolvedMessagesInFs(comingMessagesDocIds);
+      if (messages.isNotEmpty) await _resolveMessages(messages);
 
       if (!completer.isCompleted) completer.complete();
     });
     return completer.future;
+  }
+
+  Map<String, PpMessage> unresolvedMessages = {};
+
+  _resolveMessages(Map<String, PpMessage> messages) async {
+    logService.log('[MSG] Received ${messages.length} messages.');
+    Map<String, PpMessage> resolvedMessages = {};
+
+    for (var documentId in messages.keys) {
+
+      final contactUid = messages[documentId]!.sender;
+      if (contacts.containsByUid(contactUid)) {
+
+        final conversation = await conversations.openOrCreate(contactUid: contactUid);
+        final msg = messages[documentId]!;
+        conversation.addMessage(msg);
+        resolvedMessages[documentId] = msg;
+      }
+      else {
+        unresolvedMessages[documentId] = messages[documentId]!;
+      }
+    }
+    if (initialized) PpFlushbar.comingMessages(messages: messages.values.toList());
+    await _deleteResolvedMessagesInFs(resolvedMessages.keys.toList());
+  }
+
+  _deleteResolvedMessagesInFs(List<String> documentIds) async {
+    if (documentIds.isEmpty) return;
+    final batch = _firestore.batch();
+    for (var docId in documentIds) {
+      batch.delete(messagesCollectionRef.doc(docId));
+    }
+    await batch.commit();
+    logService.log('[MSG] ${documentIds.length} messages documents deleted in FS.');
   }
 
 
@@ -93,30 +121,6 @@ class ConversationService {
     await _startMessagesObserver();
   }
 
-  _resolveComingMessages(List<PpMessage> messages) async {
-    if (messages.isEmpty) return;
-    logService.log('[MSG] Received ${messages.length} messages.');
-    for (var message in messages) {
-      final contactUser = _contactsService.getByNickname(nickname: message.sender);
-      if (contactUser != null) {
-        await conversations.openOrCreate(contactUid: contactUser.uid);
-        conversations.getByUid(contactUser.uid)?.addMessage(message);
-      }
-    }
-    if (initialized) PpFlushbar.comingMessages(messages: messages);
-  }
-
-  _deleteResolvedMessagesInFs(List<String> docIds) async {
-    if (docIds.isEmpty) return;
-    final batch = _firestore.batch();
-    for (var docId in docIds) {
-      batch.delete(messagesCollectionRef.doc(docId));
-    }
-    await batch.commit();
-    logService.log('[MSG] ${docIds.length} messages documents deleted in FS.');
-  }
-
-
   navigateToConversationView(PpUser contactUser) async {
     await conversations.openOrCreate(contactUid: contactUser.uid);
     ConversationView.navigate(contactUser);
@@ -130,8 +134,8 @@ class ConversationService {
   sendMessage({required String message, required PpUser contactUser}) async {
     final msg = PpMessage.create(
         message: message,
-        sender: _userService.nickname,
-        receiver: contactUser.nickname
+        sender: States.getUid!,
+        receiver: contactUser.uid
     );
     await contactMessagesCollectionRef(contactUid: contactUser.uid).add(msg.asMap);
     conversations.getByUid(contactUser.uid)?.addMessage(msg);

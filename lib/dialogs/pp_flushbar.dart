@@ -5,7 +5,7 @@ import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
-import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
+import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
 import 'package:flutter_chat_app/screens/notifications_screen.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 

@@ -3,8 +3,8 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
-import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
-import 'package:flutter_chat_app/screens/data_screens/user_view.dart';
+import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
+import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 

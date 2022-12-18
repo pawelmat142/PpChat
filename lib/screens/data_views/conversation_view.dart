@@ -9,16 +9,15 @@ import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
-import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/state/conversation.dart';
 import 'package:flutter_chat_app/state/conversations.dart';
+import 'package:flutter_chat_app/state/states.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class ConversationView extends StatelessWidget {
   ConversationView({super.key});
   static const id = 'conversation_view';
 
-  final _userService = getIt.get<PpUserService>();
   final _conversationService = getIt.get<ConversationService>();
 
   static navigate(PpUser contact) {
@@ -35,8 +34,6 @@ class ConversationView extends StatelessWidget {
   Conversation conversation(contactUid) => _conversationService
       .conversations.getByUid(contactUid)!;
 
-
-  _isMyMsg(PpMessage message) => message.sender == _userService.nickname;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +64,7 @@ class ConversationView extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                   children: box.values.map((m) {
 
-                    return MessageBubble(message: m.message, my: _isMyMsg(m));
+                    return MessageBubble(message: m.message, my: m.sender == States.getUid);
 
                   }).toList().reversed.toList(),
                 );

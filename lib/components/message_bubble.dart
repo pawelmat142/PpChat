@@ -44,10 +44,10 @@ const double borderEdgeRadius = 5;
 const double roundBorderRadius = 30;
 
 const msgSenderBorder = BorderRadius.only(
-  topRight: Radius.circular(borderEdgeRadius),
+  topRight: Radius.circular(roundBorderRadius),
   topLeft: Radius.circular(roundBorderRadius),
   bottomLeft: Radius.circular(roundBorderRadius),
-  bottomRight: Radius.circular(roundBorderRadius),
+  bottomRight: Radius.circular(borderEdgeRadius),
 );
 
 const msgBorder = BorderRadius.only(

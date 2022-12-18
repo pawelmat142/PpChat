@@ -6,7 +6,7 @@ import 'package:flutter_chat_app/firebase_options.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
-import 'package:flutter_chat_app/screens/data_screens/conversation_view.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';

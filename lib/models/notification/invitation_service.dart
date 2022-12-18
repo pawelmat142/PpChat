@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/process/accept_invitation_process.dart';
@@ -15,7 +14,6 @@ class InvitationService {
 
   final _state = getIt.get<States>();
   final _contactsService = getIt.get<ContactsService>();
-  final _conversationService = getIt.get<ConversationService>();
   final logService = getIt.get<LogService>();
 
 
