@@ -10,14 +10,13 @@ class Conversation {
 
   bool get isOpen => box.isOpen;
 
-  closeBox() => box.close();
-
-  clearBox() => box.clear();
 
   Future<void> killBox() async {
     if (box.isOpen) await box.deleteFromDisk();
   }
 
+  List<PpMessage> get messages => box.values.toList();
+  List<String> get messagesTxt => box.values.map((m) => m.message).toList();
 
   //TODO: use compact more often
 
@@ -39,7 +38,5 @@ class Conversation {
     final box = await Hive.openBox<PpMessage>(hiveKey(contactUid: contactUid));
     return Conversation(contactUid: contactUid, box: box);
   }
-
-
 }
 

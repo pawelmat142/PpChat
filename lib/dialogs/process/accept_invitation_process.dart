@@ -29,7 +29,7 @@ class AcceptInvitationProcess extends LogProcess {
         .collection(Collections.NOTIFICATIONS).doc(States.getUid);
 
     final document = PpNotification.createInvitationAcceptance(text: invitation.text,
-        sender: invitation.receiver, receiver: invitation.sender, documentId: States.getUid);
+        sender: invitation.receiver, receiver: invitation.sender, documentId: States.getUid!);
     batch.set(contactNotificationDocRef, document.asMap);
 
     //add to contacts

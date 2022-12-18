@@ -30,11 +30,13 @@ class PpUserService {
   }
 
   logout({bool skipFirestore = false}) async {
-    if (!skipFirestore) {
-      await _updateLogged(false);
+    if (initialized) {
+      if (!skipFirestore) {
+        await _updateLogged(false);
+      }
+      await me.clear();
+      initialized = false;
     }
-    await me.clear();
-    initialized = false;
   }
 
 
@@ -65,7 +67,7 @@ class PpUserService {
 
   Future<void> createNewUser({required String nickname}) async {
     final signature = _collection.doc().id;
-    final newUser = PpUser.create(nickname: nickname, uid: States.getUid, signature: signature);
+    final newUser = PpUser.create(nickname: nickname, uid: States.getUid!, signature: signature);
     await documentRef.set(newUser.asMap);
     // await _privateDocumentRef.set(_privateDocumentData);
   }
@@ -80,12 +82,7 @@ class PpUserService {
 
 
   _updateLogged(bool logged) async {
-    if (States.getUid != '') {
-      await documentRef.update({PpUserFields.logged : logged});
-    }
-    // if ((nickname != null || me.nickname.isNotEmpty) && _fireAuth.currentUser != null) {
-    //   await documentRef.update({PpUserFields.logged : logged});
-    // }
+    await documentRef.update({PpUserFields.logged : logged});
   }
 
 }

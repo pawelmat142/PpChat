@@ -129,7 +129,7 @@ class FindContact {
         .collection(Collections.NOTIFICATIONS).doc(States.getUid);
     //contact's notification docId = my uid so any next notification from me will overwrite it
     batch.set(receiverNotificationsRef, PpNotification.createInvitation(
-        documentId: States.getUid,
+        documentId: States.getUid!,
         sender: _userService.nickname,
         receiver: nickname,
         text: message).asMap);

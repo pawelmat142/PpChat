@@ -10,13 +10,13 @@ import 'package:flutter_chat_app/state/notifications.dart';
 
 class States {
 
-  static String get getUid => FirebaseAuth.instance.currentUser == null
+  static String? get getUid => FirebaseAuth.instance.currentUser == null
       ? _handleNoCurrentUser()
       : FirebaseAuth.instance.currentUser!.uid;
 
   static _handleNoCurrentUser() {
-    //todo: handle no current user / clear state data
     NavigationService.popToBlank();
+    //todo: handle no current user / clear state data
     if (kDebugMode) {
       print('NO CURRENT USER!');
     }

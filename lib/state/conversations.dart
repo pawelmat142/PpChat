@@ -41,9 +41,15 @@ class Conversations extends DataStateObject<Conversation> {
     super.deleteOneEvent(item);
   }
 
-
   @override
   clear() async {
+    for (var conversation in state) {
+      await conversation.box.compact();
+    }
+    super.clear();
+  }
+
+  clearBoxes() async {
     for (var conversation in state) {
       await conversation.box.compact();
       await conversation.box.clear();

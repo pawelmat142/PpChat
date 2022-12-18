@@ -46,7 +46,7 @@ class AuthenticationService {
     });
   }
 
-  String get getUid => States.getUid;
+  String get getUid => States.getUid!;
 
   void register({required String nickname, required String password}) async {
     try {
@@ -145,7 +145,7 @@ class AuthenticationService {
   }
 
   logoutServices({bool skipSignOut = false}) async {
-    log('[START] logout services');
+    log('[START] logout services - skipSignOut: $skipSignOut');
     await _conversationsService.logout();
     await _contactsService.logout();
     _notificationService.logout();

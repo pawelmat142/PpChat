@@ -45,8 +45,10 @@ class ConversationService {
   }
 
   logout() async {
-    await _stopMessagesObserver();
-    conversations.clear();
+    if (initialized) {
+      await _stopMessagesObserver();
+      conversations.clear();
+    }
   }
 
   _startMessagesObserver() async {
@@ -149,7 +151,7 @@ class ConversationService {
 
       await batch.commit();
       final conversation = conversations.getByUid(contactUser.uid);
-      if (conversation != null) conversation.clearBox();
+      if (conversation != null) conversation.box.clear();
     } catch (error) {
       logService.error(error.toString());
       _popup.sww(text: 'Clear conversation error!');
@@ -161,7 +163,7 @@ class ConversationService {
       for (var n in notifications) {
         final contactUser = getContactUserByNickname(n.sender);
         final conversation = conversations.getByUid(contactUser.uid);
-        if (conversation != null) conversation.clearBox();
+        if (conversation != null) conversation.box.clear();
       }
     }
   }

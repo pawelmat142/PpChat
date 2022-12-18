@@ -31,19 +31,24 @@ class PpNotificationService {
 
   StreamSubscription? _notificationsListener;
 
+  bool initialized = false;
 
   Future<void> login() async {
     await notifications.startFirestoreObserver();
     final process = ResolveNotificationsProcess(notifications.get);
     await process.process();
     startNotificationsListener();
+    initialized = true;
   }
 
   logout() {
-    notifications.clear();
-    if (_notificationsListener != null) {
-      _notificationsListener!.cancel();
-      _notificationsListener = null;
+    if (initialized) {
+      notifications.clear();
+      if (_notificationsListener != null) {
+        _notificationsListener!.cancel();
+        _notificationsListener = null;
+      }
+      initialized = false;
     }
   }
 

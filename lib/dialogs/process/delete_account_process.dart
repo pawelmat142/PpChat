@@ -200,7 +200,7 @@ class DeleteAccountProcess extends LogProcess {
           data: PpNotification.createContactDeleted(
               sender: _state.me.nickname,
               receiver: contact.nickname,
-              documentId: States.getUid
+              documentId: States.getUid!
           ).asMap);
       log('Notification for ${contact.nickname} prepared');
     }

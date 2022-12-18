@@ -7,7 +7,7 @@ import 'package:flutter_chat_app/state/states.dart';
 
 class Notifications extends FirestoreCollectionState<PpNotification> {
 
-  static String get getUid => States.getUid;
+  static String get getUid => States.getUid!;
 
 
   @override

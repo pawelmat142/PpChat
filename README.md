@@ -305,3 +305,7 @@ conversation, contact view, accept invitation
 delete contact, send message update
 
 ### [081] ContactNicknames refactored to ContactUids
+
+### [082] BUGs
+messages not saving after relogin
+</br> logout bug

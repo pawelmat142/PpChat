@@ -46,10 +46,12 @@ class ContactsService {
   }
 
   logout() async {
-    await _stopContactUidsListener();
-    await contacts.clear();
-    await contactUids.clear();
-    initialized = false;
+    if (initialized) {
+      await _stopContactUidsListener();
+      await contacts.clear();
+      await contactUids.clear();
+      initialized = false;
+    }
   }
 
   _startContactUidsListener() {
@@ -102,7 +104,7 @@ class ContactsService {
 
   _sendContactDeletedNotification(PpUser contactUser) async {
     final notification = PpNotification.createContactDeleted(
-        documentId: States.getUid,
+        documentId: States.getUid!,
         sender: _state.me.nickname,
         receiver: contactUser.nickname);
 
