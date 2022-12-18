@@ -171,7 +171,9 @@ class PpFlushbar {
         if (contactsLength == 1) {
           final conversationService = getIt.get<ConversationService>();
           final contactUser = conversationService.getContactUserByNickname(messages!.first.sender);
-          conversationService.navigateToConversationView(contactUser);
+          if (contactUser != null) {
+            conversationService.navigateToConversationView(contactUser);
+          }
         } else {
           NavigationService.popToHome();
           Navigator.pushNamed(NavigationService.context, ContactsScreen.id);

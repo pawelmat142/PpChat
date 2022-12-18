@@ -6,12 +6,12 @@ import 'package:flutter_chat_app/dialogs/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
-import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
+import 'package:flutter_chat_app/state/states.dart';
 
 class ResolveNotificationsProcess extends LogProcess {
 
-  final _userService = getIt.get<PpUserService>();
+  final _state = getIt.get<States>();
   final _invitationService = getIt.get<InvitationService>();
   final _conversationService = getIt.get<ConversationService>();
 
@@ -121,11 +121,12 @@ class ResolveNotificationsProcess extends LogProcess {
 
 
   DocumentReference documentReference(PpNotification notification) => firestore
-      .collection(Collections.PpUser).doc(_userService.nickname)
-      .collection(Collections.NOTIFICATIONS).doc(docId(notification));
+      .collection(Collections.PpUser).doc(States.getUid)
+      .collection(Collections.NOTIFICATIONS).doc(notification.documentId);
+      // .collection(Collections.NOTIFICATIONS).doc(documentId(notification));
 
-  String docId(PpNotification notification) => imSender(notification) ? notification.receiver : notification.sender;
+  String documentId(PpNotification notification) => imSender(notification) ? notification.receiver : notification.sender;
 
-  bool imSender(PpNotification notification) => notification.sender == _userService.nickname;
+  bool imSender(PpNotification notification) => notification.sender == _state.me.nickname;
 
 }

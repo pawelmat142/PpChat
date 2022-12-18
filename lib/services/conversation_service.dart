@@ -14,7 +14,11 @@ import 'package:flutter_chat_app/models/pp_message.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
 
-
+//TODO: show time on tap message
+//TODO: sort messages on view by time
+//TODO: implement auto delete
+//TODO: configurable time to live
+//TODO: implement time to live after read
 class ConversationService {
 
   final _firestore = FirebaseFirestore.instance;
@@ -35,6 +39,8 @@ class ConversationService {
   StreamSubscription? _messagesObserver;
 
   Conversations get conversations => _state.conversations;
+
+  List<PpMessage> unresolvedMessages = [];
 
   bool initialized = false;
 
@@ -75,11 +81,16 @@ class ConversationService {
   }
 
 
-  _stopMessagesObserver() {
+  _stopMessagesObserver() async {
     if (_messagesObserver != null) {
-      _messagesObserver!.cancel();
+      await _messagesObserver!.cancel();
       _messagesObserver = null;
     }
+  }
+
+  resetMessagesObserver() async {
+    await _stopMessagesObserver();
+    await _startMessagesObserver();
   }
 
   _resolveComingMessages(List<PpMessage> messages) async {
@@ -87,8 +98,10 @@ class ConversationService {
     logService.log('[MSG] Received ${messages.length} messages.');
     for (var message in messages) {
       final contactUser = _contactsService.getByNickname(nickname: message.sender);
-      await conversations.openOrCreate(contactUid: contactUser.uid);
-      conversations.getByUid(contactUser.uid)?.addMessage(message);
+      if (contactUser != null) {
+        await conversations.openOrCreate(contactUid: contactUser.uid);
+        conversations.getByUid(contactUser.uid)?.addMessage(message);
+      }
     }
     if (initialized) PpFlushbar.comingMessages(messages: messages);
   }
@@ -109,7 +122,7 @@ class ConversationService {
     ConversationView.navigate(contactUser);
   }
 
-  PpUser getContactUserByNickname(String contactNickname) {
+  PpUser? getContactUserByNickname(String contactNickname) {
     return _contactsService.getByNickname(nickname: contactNickname);
   }
 
@@ -162,8 +175,10 @@ class ConversationService {
     if (initialized && notifications.isNotEmpty) {
       for (var n in notifications) {
         final contactUser = getContactUserByNickname(n.sender);
-        final conversation = conversations.getByUid(contactUser.uid);
-        if (conversation != null) conversation.box.clear();
+        if (contactUser != null) {
+          final conversation = conversations.getByUid(contactUser.uid);
+          if (conversation != null) conversation.box.clear();
+        }
       }
     }
   }

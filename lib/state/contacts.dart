@@ -73,6 +73,11 @@ class Contacts extends FirestoreCollectionState<PpUser> {
     return PpUser.fromDB(documentSnapshot);
   }
 
+  PpUser? getByNickname(String nickname) {
+    final index = state.indexWhere((s) => s.nickname == nickname);
+    return index != -1 ? state[index] : null;
+  }
+
   getBy(String nickname) {
     return state.firstWhere((c) => c.nickname == nickname);
   }

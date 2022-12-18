@@ -21,6 +21,11 @@ service cloud.firestore {
 
       function isContact(contactUid) { return request.auth.uid in getContactsUids(contactUid); }
 
+      function isInvitationAccepted(contactUid) {
+      	return get(/databases/$(database)/documents/PpUser/$(contactUid)/NOTIFICATIONS/$(request.auth.uid))
+        	.data.type == "invitationAcceptance";
+      }
+
 			allow create: if request.auth.uid == request.resource.data.uid;
       allow read: if logged();
       allow delete, update: if isOwner();
@@ -40,7 +45,7 @@ service cloud.firestore {
 
       match /Messages/{messageDocId} {
       	allow read, write: if isOwner();
-        allow create, delete: if isContact(UID);
+        allow create, delete: if isContact(UID) || isInvitationAccepted(UID);
       }
 
 

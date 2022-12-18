@@ -298,6 +298,4 @@ class DeleteAccountProcess extends LogProcess {
     log('[STOP] Reset services.');
   }
 
-
-  //TODO: another process for receive deleted account notification
 }

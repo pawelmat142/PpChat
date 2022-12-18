@@ -309,3 +309,5 @@ delete contact, send message update
 ### [082] BUGs
 messages not saving after relogin
 </br> logout bug
+
+### [083] Allow send messages if invitation is accepted
