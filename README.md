@@ -321,3 +321,9 @@ sending and resolving by uid - not nickname
 clear conversation
 </br> logout, delete account process
 </br> avoid multiple contact uids
+
+## feature/security_rules_refactor
+
+### [087] Conversation clear feature
+by ConversationMock feature
+</br> little files refactor

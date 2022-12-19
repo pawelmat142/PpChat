@@ -1,4 +1,5 @@
 import 'package:flutter_chat_app/models/pp_message.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:hive/hive.dart';
 
@@ -26,6 +27,10 @@ class Conversation {
   }
 
   addMessage(PpMessage message) async {
+    if (_isMocked) {
+      _isMocked = false;
+      await box.clear();
+    }
     await box.add(message);
   }
 
@@ -37,6 +42,27 @@ class Conversation {
   static create({required String contactUid}) async {
     final box = await Hive.openBox<PpMessage>(hiveKey(contactUid: contactUid));
     return Conversation(contactUid: contactUid, box: box);
+  }
+
+  bool _isMocked = false;
+
+  mock(String mockType, {required String sender}) async {
+    switch(mockType) {
+
+      case ConversationMock.CONVERSATION_MOCK_TYPE_CLEAR:
+        await box.clear();
+        box.add(PpMessage.create(
+            message: ConversationMock.CONVERSATION_MOCK_TYPE_CLEAR,
+            sender: sender,
+            receiver: ConversationMock.IS_MOCK_RECEIVER));
+        _isMocked = true;
+        break;
+
+      case ConversationMock.CONVERSATION_MOCK_TYPE_LOCK:
+        break;
+      default: throw Exception('WRONG CONVERSATION MOCK');
+    }
+
   }
 }
 

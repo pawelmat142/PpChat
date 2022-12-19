@@ -4,7 +4,8 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/screens/data_views/conversation_view.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/state/contacts.dart';
 import 'package:flutter_chat_app/state/conversations.dart';
@@ -171,7 +172,8 @@ class ConversationService {
 
       await batch.commit();
       final conversation = conversations.getByUid(contactUser.uid);
-      if (conversation != null) conversation.box.clear();
+      if (conversation != null) conversation.mock(ConversationMock.CONVERSATION_MOCK_TYPE_CLEAR, sender: States.getUid!);
+
     } catch (error) {
       _spinner.stop();
       logService.error(error.toString());
@@ -185,7 +187,8 @@ class ConversationService {
         final conversation = conversations.getByUid(n.documentId);
         if (conversation != null) {
           logService.log('[MSG] [RESOLVE] successful clear conversation box for ${n.sender}');
-          conversation.box.clear();
+          // conversation.box.clear();
+          conversation.mock(ConversationMock.CONVERSATION_MOCK_TYPE_CLEAR, sender: n.documentId);
         } else {
           logService.log('[MSG] [RESOLVE] failed clear conversation box for ${n.sender}');
         }
