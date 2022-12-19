@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
+import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
@@ -26,6 +27,7 @@ class ConversationService {
   final _userService = getIt.get<PpUserService>();
   final _contactsService = getIt.get<ContactsService>();
   final _popup = getIt.get<Popup>();
+  final _spinner = getIt.get<PpSpinner>();
   final _state = getIt.get<States>();
   final logService = getIt.get<LogService>();
 
@@ -145,13 +147,12 @@ class ConversationService {
 
 
   clearConversation(PpUser contactUser) async {
-    //TODO: security rule to delete doc in contact messages collection
     try {
       final batch = _firestore.batch();
 
-      //get unread messages in contact receive box
+      // get unread messages in contact receive box
       final querySnapshot = await contactMessagesCollectionRef(contactUid: contactUser.uid)
-          .where(PpMessageFields.sender, isEqualTo: _userService.nickname)
+          .where(PpMessageFields.sender, isEqualTo: States.getUid)
           .get();
       for (var doc in querySnapshot.docs) {
         batch.delete(doc.reference);
@@ -159,7 +160,7 @@ class ConversationService {
 
       //send notification
       final notification = PpNotification.createConversationClear(
-          documentId: _state.me.signature,
+          documentId: States.getUid!,
           sender: _userService.nickname,
           receiver: contactUser.nickname
       );
@@ -172,6 +173,7 @@ class ConversationService {
       final conversation = conversations.getByUid(contactUser.uid);
       if (conversation != null) conversation.box.clear();
     } catch (error) {
+      _spinner.stop();
       logService.error(error.toString());
       _popup.sww(text: 'Clear conversation error!');
     }
@@ -180,10 +182,12 @@ class ConversationService {
   resolveConversationClearNotifications(Set<PpNotification> notifications) {
     if (initialized && notifications.isNotEmpty) {
       for (var n in notifications) {
-        final contactUser = getContactUserByNickname(n.sender);
-        if (contactUser != null) {
-          final conversation = conversations.getByUid(contactUser.uid);
-          if (conversation != null) conversation.box.clear();
+        final conversation = conversations.getByUid(n.documentId);
+        if (conversation != null) {
+          logService.log('[MSG] [RESOLVE] successful clear conversation box for ${n.sender}');
+          conversation.box.clear();
+        } else {
+          logService.log('[MSG] [RESOLVE] failed clear conversation box for ${n.sender}');
         }
       }
     }

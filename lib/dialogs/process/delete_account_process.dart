@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/process/log_process.dart';
@@ -57,10 +56,10 @@ class DeleteAccountProcess extends LogProcess {
   final _authenticationService = getIt.get<AuthenticationService>();
   final _state = getIt.get<States>();
 
-  final _fireAuth = FirebaseAuth.instance;
-
   List<String> _contactUids = [];
   String _uid = '';
+
+  String get uid => _uid != '' ? _uid : throw Exception('NO UID!');
 
   late List<PpUser> _contacts;
 
@@ -109,7 +108,7 @@ class DeleteAccountProcess extends LogProcess {
   _batchCommit() async {
     if (firestoreDeleteAccountBatch != null) {
       log('[START] BATCH COMMIT');
-      await firestoreDeleteAccountBatch!.commit().onError((error, stackTrace) {});
+      await firestoreDeleteAccountBatch!.commit();
       log('[STOP] BATCH COMMIT');
       batchValue = 0;
     } else {
@@ -123,16 +122,11 @@ class DeleteAccountProcess extends LogProcess {
     try {
 
       super.setContext(_state.me.nickname);
-      log('[nickname: $_state.me.nickname]');
-
-      if (_fireAuth.currentUser != null) {
-        _uid = _fireAuth.currentUser!.uid;
-      } else {
-        _uid = 'NO FIRE AUTH UID!!';
-      }
-
+      log('[nickname: ${_state.me.nickname}]');
+      _uid = States.getUid!;
       _contactUids = _state.contactUids.get;
       log('${_contactUids.length} contact nicknames found');
+
 
       await _addDeletedAccountLogBatch();
 
@@ -166,6 +160,10 @@ class DeleteAccountProcess extends LogProcess {
 
 
   _deleteHiveConversationsData() async {
+    for (var conversation in _state.conversations.get) {
+      await conversation.box.clear();
+      log('[DeleteAccountProcess] clear conversation box for ${_state.contacts.getByUid(conversation.contactUid)}');
+    }
     await Hive.deleteFromDisk();
   }
 
@@ -195,25 +193,17 @@ class DeleteAccountProcess extends LogProcess {
     log('[START] Prepare batch - send notifications to contacts [NOTIFICATIONS]');
 
     for (var contact in _contacts) {
+      final data = PpNotification.createContactDeleted(
+          sender: _state.me.nickname,
+          receiver: contact.nickname,
+          documentId: uid
+      ).asMap;
       await _batchSet(
           documentReference: _contactsService.contactNotificationDocRef(contactUid: contact.uid),
-          data: PpNotification.createContactDeleted(
-              sender: _state.me.nickname,
-              receiver: contact.nickname,
-              documentId: States.getUid!
-          ).asMap);
+          data: data);
       log('Notification for ${contact.nickname} prepared');
     }
     log('[STOP] Prepare batch - send notifications to contacts');
-
-    // for (var contactNickname in _contactsNicknames) {
-    //   await _batchSet(
-        // documentReference: _contactsService.contactNotificationDocRef(contactUid: contactNickname),
-        // data: PpNotification.createContactDeleted(sender: _nickname, receiver: contactNickname, documentId: _state.me.signature).asMap
-      // );
-      // log('Notification for $contactNickname prepared');
-    // }
-    // log('[STOP] Prepare batch - send notifications to contacts');
   }
 
   _prepareBatchDeleteSentMessagesToContacts() async {
@@ -221,7 +211,7 @@ class DeleteAccountProcess extends LogProcess {
     for (var contact in _contacts) {
       final contactMessagesCollectionQuerySnapshot = await _conversationService
           .contactMessagesCollectionRef(contactUid: contact.uid)
-          .where(PpMessageFields.sender, isEqualTo: _state.me.nickname).get();
+          .where(PpMessageFields.sender, isEqualTo: uid).get();
       log('${contactMessagesCollectionQuerySnapshot.docs.length} unread messages to delete found for ${contact.nickname}.');
 
       for (var doc in contactMessagesCollectionQuerySnapshot.docs) {
@@ -229,17 +219,6 @@ class DeleteAccountProcess extends LogProcess {
       }
       log('[STOP] Prepare batch - delete sent messages to contacts');
     }
-    // for (var contactNickname in _contactsNicknames) {
-      // final contactMessagesCollectionQuerySnapshot = await _conversationService.contactMessagesCollectionRef(contactUid: '')
-      //     .where(PpMessageFields.sender, isEqualTo: _nickname).get();
-      // log('${contactMessagesCollectionQuerySnapshot.docs.length} unread messages to delete found for $contactNickname.');
-      //
-      // for (var doc in contactMessagesCollectionQuerySnapshot.docs) {
-      //   await _batchDelete(doc.reference);
-      // }
-    //
-    // }
-    // log('[STOP] Prepare batch - delete sent messages to contacts');
   }
 
   _prepareBatchDeleteContacts() async {
@@ -271,7 +250,7 @@ class DeleteAccountProcess extends LogProcess {
 
   _prepareBatchDeleteUser() async {
     log('[START] Prepare batch - delete user [User][PRIVATE]');
-    await _batchDelete(firestore.collection(Collections.PpUser).doc(States.getUid));
+    await _batchDelete(firestore.collection(Collections.PpUser).doc(uid));
     // await _batchDelete(firestore.collection(Collections.PpUser).doc(States.getUid).collection(Collections.PRIVATE).doc(States.getUid));
     log('[STOP] Prepare batch - delete user [User][PRIVATE]');
   }

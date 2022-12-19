@@ -9,7 +9,6 @@ import 'package:flutter_chat_app/models/notification/pp_notification_types.dart'
 import 'package:flutter_chat_app/services/log_service.dart';
 
 class InvitationService {
-  //TODO: clear conversation when delete account
 
   final _firestore = FirebaseFirestore.instance;
 
@@ -26,7 +25,7 @@ class InvitationService {
 
   resolveInvitationAcceptances(Set<PpNotification> invitationAcceptances) async {
     if (invitationAcceptances.isEmpty) return;
-    final newContactUids = invitationAcceptances.map((n) => n.documentId).toList();
+    final newContactUids = invitationAcceptances.map((n) => n.documentId).toSet().toList();
     _state.contactUids.addsEvent(newContactUids);
   }
 

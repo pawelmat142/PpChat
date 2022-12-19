@@ -316,3 +316,8 @@ messages not saving after relogin
 sending and resolving by uid - not nickname
 
 ### [085] First message in conversation
+
+### [086] BUGs
+clear conversation
+</br> logout, delete account process
+</br> avoid multiple contact uids

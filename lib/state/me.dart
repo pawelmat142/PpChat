@@ -8,12 +8,9 @@ class Me extends FirestoreDocumentState<PpUser> {
 
   String get signature => state.isNotEmpty ? state[0].signature : throw Exception('!!!!!!!!!!!Me not set');
 
-  String? _nickname;
-  setNickname(String nickname) => _nickname = nickname;
-
   String get nickname => state.isNotEmpty
       ? state[0].nickname
-      : _nickname != null ? _nickname! : '';
+      : throw Exception('no nickname!');
 
   @override
   int getItemIndex(PpUser item) => 0;

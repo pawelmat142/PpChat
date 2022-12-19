@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
+import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
@@ -11,6 +13,7 @@ class PpUserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final _state = getIt.get<States>();
+  final logService = getIt.get<LogService>();
 
   Me get me => _state.me;
   String get nickname => _state.me.nickname.isNotEmpty ? _state.me.nickname : AuthenticationService.nickname;
@@ -22,11 +25,20 @@ class PpUserService {
 
   bool initialized = false;
 
-  login({required String nickname}) async {
-    await _updateLogged(true);
-    me.setNickname(nickname);
+  login({bool loginByForm = false}) async {
+    logService.log('[START] UserService initializing');
+    try {
+      await _updateLogged(true);
+    } catch (e) {
+      if (loginByForm) {
+        throw FirebaseAuthException(code: 'loginByForm');
+      } else {
+        rethrow;
+      }
+    }
     await me.startFirestoreObserver();
     initialized = true;
+    logService.log('[STOP] UserService initializing');
   }
 
   logout({bool skipFirestore = false}) async {

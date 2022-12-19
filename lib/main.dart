@@ -14,7 +14,6 @@ import 'package:flutter_chat_app/screens/notifications_screen.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:navigation_history_observer/navigation_history_observer.dart';
 
-//TODO: error handling!
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();

@@ -116,6 +116,7 @@ class ContactsService {
       .collection(Collections.NOTIFICATIONS).doc(States.getUid);
 
   PpUser? getByNickname({required String nickname}) => contacts.getByNickname(nickname);
+  PpUser? getByUid({required String uid}) => contacts.getByUid(uid);
 
   contactExists(String contactUid) => contactUids.contains(contactUid);
 

@@ -62,9 +62,9 @@ class LogProcess {
       print(error.runtimeType);
     }
     if (label == null) {
-      logs.add('[ERROR] [${error.runtimeType.toString()}] $error');
+      logs.add('[ERROR] [${error.runtimeType}] $error');
     } else {
-      logs.add('[ERROR] [$label] [${error.runtimeType.toString()}] $error');
+      logs.add('[ERROR] [$label] [${error.runtimeType}] $error');
     }
     save();
     popup.sww(text: error.toString());
