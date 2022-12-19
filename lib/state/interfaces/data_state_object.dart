@@ -9,7 +9,7 @@ abstract class DataStateObject<T> {
   late List<T> state = [];
 
   DataStateObject({List<T>? initialValue}) {
-    log('[${T.toString()}] constructor');
+    log('[$T] [DataStateObject] constructor');
     state = initialValue ?? [];
   }
 
@@ -19,18 +19,18 @@ abstract class DataStateObject<T> {
 
 
   void addEvent(T item) {
-    log('[${T.toString()}] Add item: ${item.runtimeType}.');
+    log('[$T] Add item: ${item.toString()}.');
     state.add(item);
     onChangeEvent();
   }
 
   void addsEvent(List<T> items) {
-    log('[${T.toString()}] Adds ${items.length} items.');
+    log('[$T] Adds ${items.length} items.');
     setEvent(state  + items);
   }
 
   void setEvent(List<T> items) {
-    log('[${T.toString()}] Sets ${items.length} items.');
+    log('[$T] Sets ${items.length} items.');
     state = items;
     onChangeEvent();
   }
@@ -38,11 +38,11 @@ abstract class DataStateObject<T> {
   void updateOneEvent(T item) {
     final index = getItemIndex(item);
     if (index != -1) {
-      log('[${T.toString()}] Update item index: $index.');
+      log('[$T] Update item index: $index.');
       state[index] = item;
       onChangeEvent();
     } else {
-      log('[${T.toString()}] Tried to update item.');
+      log('[$T] Tried to update item.');
     }
   }
 
@@ -54,21 +54,21 @@ abstract class DataStateObject<T> {
         if (index == -1) throw Exception();
         state[index] = item;
       }
-      log('[${T.toString()}] Update ${items.length} items');
+      log('[$T] Update ${items.length} items');
       onChangeEvent();
     } catch (error) {
-      log('[${T.toString()}] Tried to update ${items.length} items.');
+      log('[$T] Tried to update ${items.length} items.');
     }
   }
 
   void deleteOneEvent(T item) {
     final index = getItemIndex(item);
     if (index != -1) {
-      log('[${T.toString()}] Delete item index: $index');
+      log('[$T] Delete item index: $index');
       state.removeAt(index);
       onChangeEvent();
     } else {
-      log('[${T.toString()}] Tried delete item');
+      log('[${item.runtimeType}] Tried delete item');
     }
   }
 

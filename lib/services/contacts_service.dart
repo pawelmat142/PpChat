@@ -6,7 +6,8 @@ import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
-import 'package:flutter_chat_app/state/contact_nicknames.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
+import 'package:flutter_chat_app/state/contact_uids.dart';
 import 'package:flutter_chat_app/state/contacts.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
@@ -15,8 +16,6 @@ import 'package:flutter_chat_app/state/states.dart';
 
 class ContactsService {
 
-  static const String contactsFieldName = 'contacts';
-
   final _firestore = FirebaseFirestore.instance;
   final _popup = getIt.get<Popup>();
   final _state = getIt.get<States>();
@@ -24,47 +23,46 @@ class ContactsService {
 
 
   Contacts get contacts => _state.contacts;
-  ContactNicknames get contactNicknames => _state.contactNicknames;
+  ContactUids get contactUids => _state.contactUids;
 
 
-  StreamSubscription? _contactNicknamesListener;
+  StreamSubscription? _contactUidsListener;
 
   bool initialized = false;
 
   login() async {
     initialized = false;
 
-    contactNicknames.setNickname(_state.nickname);
-    contacts.setNickname(_state.nickname);
-
-    //get initial contactNicknames
-    await contactNicknames.startFirestoreObserver();
-    contacts.setContactNicknames(contactNicknames.get);
+    //get initial contactUids
+    await contactUids.startFirestoreObserver();
+    contacts.setContactUids(contactUids.get);
 
     //get initial contact PpUser objects
     await contacts.startFirestoreObserver();
 
-    _startContactNicknamesListener();
+    _startContactUidsListener();
 
     initialized = true;
   }
 
   logout() async {
-    await _stopContactNicknamesListener();
-    await contacts.clear();
-    await contactNicknames.clear();
-    initialized = false;
+    if (initialized) {
+      await _stopContactUidsListener();
+      await contacts.clear();
+      await contactUids.clear();
+      initialized = false;
+    }
   }
 
-  _startContactNicknamesListener() {
+  _startContactUidsListener() {
     final completer = Completer();
-    _contactNicknamesListener ??= _state.contactNicknames.stream.listen((contactNicknames) async {
-        logService.log('[ContactNicknames] state listener, lenght: ${contactNicknames.length}');
-        if (contactNicknames.isNotEmpty) {
-          contacts.setContactNicknames(contactNicknames);
+    _contactUidsListener ??= _state.contactUids.stream.listen((contactUidsEvent) async {
+        logService.log('[ContactUids] state listener, length: ${contactUidsEvent.length}');
+        if (contactUidsEvent.isNotEmpty) {
+          contacts.setContactUids(contactUidsEvent);
           await contacts.resetFirestoreObserver();
         } else {
-          contacts.setContactNicknames([]);
+          contacts.setContactUids([]);
           await contacts.stopFirestoreObserver();
           contacts.setEvent([]);
         }
@@ -73,55 +71,53 @@ class ContactsService {
     return completer.future;
   }
 
-  _stopContactNicknamesListener() async {
-    if (_contactNicknamesListener != null) {
-      await _contactNicknamesListener!.cancel();
-      _contactNicknamesListener = null;
+  _stopContactUidsListener() async {
+    if (_contactUidsListener != null) {
+      await _contactUidsListener!.cancel();
+      _contactUidsListener = null;
     }
   }
 
 
-  onDeleteContact(String contactNickname) async {
+  onDeleteContact(PpUser contactUser) async {
     await Future.delayed(const Duration(milliseconds: 100));
     await _popup.show('Are you sure?', error: true,
         text: 'All data will be lost also on the other side!',
         buttons: [PopupButton('Delete', error: true, onPressed: () async {
           NavigationService.popToHome();
           Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-          await _deleteContact(contactNickname);
-          PpFlushbar.contactDeletedNotificationForSender(nickname: contactNickname, delay: 200);
+          await _deleteContact(contactUser);
+          PpFlushbar.contactDeletedNotificationForSender(nickname: contactUser.nickname, delay: 200);
         })]);
   }
 
-  _deleteContact(String contactNickname) async {
+  _deleteContact(PpUser contactUser) async {
     try {
-      final conversation = _state.conversations.getByNickname(contactNickname);
+      final conversation = _state.conversations.getByUid(contactUser.uid);
       if (conversation != null) await _state.conversations.killBoxAndDelete(conversation);
-      await _sendContactDeletedNotifications([contactNickname]);
-      _state.contactNicknames.deleteOneEvent(contactNickname);
+      await _sendContactDeletedNotification(contactUser);
+      _state.contactUids.deleteOneEvent(contactUser.uid);
     } catch (error) {
       logService.error(error.toString());
     }
   }
 
-  _sendContactDeletedNotifications(List<String> nicknames) async {
-    if (nicknames.isNotEmpty) {
-      final batch = _firestore.batch();
-      for (var contactNickname in nicknames) {
-        final notification = PpNotification.createContactDeleted(sender: _state.nickname, receiver: contactNickname);
-        final docRef = contactNotificationDocRef(contactNickname: contactNickname);
-        batch.set(docRef, notification.asMap);
-      }
-      await batch.commit();
-    }
+  _sendContactDeletedNotification(PpUser contactUser) async {
+    final notification = PpNotification.createContactDeleted(
+        documentId: States.getUid!,
+        sender: _state.me.nickname,
+        receiver: contactUser.nickname);
+
+    await contactNotificationDocRef(contactUid: contactUser.uid).set(notification.asMap);
   }
 
-  contactNotificationDocRef({required String contactNickname}) => _firestore
-      .collection(Collections.User).doc(contactNickname)
-      .collection(Collections.NOTIFICATIONS).doc(_state.nickname);
+  DocumentReference contactNotificationDocRef({required String contactUid}) => _firestore
+      .collection(Collections.PpUser).doc(contactUid)
+      .collection(Collections.NOTIFICATIONS).doc(States.getUid);
 
-  getBy({required String nickname}) => contacts.getBy(nickname);
+  PpUser? getByNickname({required String nickname}) => contacts.getByNickname(nickname);
+  PpUser? getByUid({required String uid}) => contacts.getByUid(uid);
 
-  contactExists(String contactNickname) => contactNicknames.contains(contactNickname);
+  contactExists(String contactUid) => contactUids.contains(contactUid);
 
 }

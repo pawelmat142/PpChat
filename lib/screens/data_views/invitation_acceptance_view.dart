@@ -3,8 +3,8 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
-import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
-import 'package:flutter_chat_app/screens/data_screens/user_view.dart';
+import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
+import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 
@@ -28,15 +28,16 @@ class InvitationAcceptanceView extends NotificationView {
 
       PpButton(text: 'show user', onPressed: () async {
         NavigationService.popToHome();
-        final user = super.contactsService.getBy(nickname: notification.sender);
+        final user = super.contactsService.getByNickname(nickname: notification.sender);
         Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-        UserView.navigate(user);
+        if (user != null) UserView.navigate(user);
       }),
 
       PpButton(text: 'Write message', onPressed: () async {
           NavigationService.popToHome();
           Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-          conversationService.navigateToConversationView(notification.receiver);
+          final contactUser = conversationService.getContactUserByNickname(notification.receiver);
+          if (contactUser != null) conversationService.navigateToConversationView(contactUser);
       }),
 
       PpButton(text: 'remove notification', color: Colors.red, onPressed: () async {

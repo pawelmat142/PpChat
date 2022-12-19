@@ -8,29 +8,30 @@ class Conversations extends DataStateObject<Conversation> {
 
   @override
   int getItemIndex(Conversation item) => state.indexWhere((conversation) =>
-    conversation.contactNickname == item.contactNickname);
+    conversation.contactUid == item.contactUid);
 
-  int indexByNickname(String contactNickname) => state.indexWhere((conversation) =>
-    conversation.contactNickname == contactNickname);
+  int indexByUid(String uid) => state.indexWhere((conversation) =>
+    conversation.contactUid == uid);
 
-  Conversation? getByNickname(String contactNickname) {
-    final index = indexByNickname(contactNickname);
+  Conversation? getByUid(String contactUid) {
+    final index = indexByUid(contactUid);
     return index != -1 ? state[index] : null;
   }
 
-  bool exists({required String contactNickname}) {
-    return indexByNickname(contactNickname) != -1;
+  bool exists({required String contactUid}) {
+    return indexByUid(contactUid) != -1;
   }
 
 
-  openOrCreate({required contactNickname}) async {
-    final conversation = getByNickname(contactNickname);
+  Future<Conversation> openOrCreate({required String contactUid}) async {
+    final conversation = getByUid(contactUid);
     if (conversation == null) {
-      addEvent(await Conversation.create(contactNickname: contactNickname));
+      addEvent(await Conversation.create(contactUid: contactUid));
     }
     else if (!conversation.isOpen) {
       await conversation.open();
     }
+    return getByUid(contactUid)!;
   }
 
   @override
@@ -41,9 +42,15 @@ class Conversations extends DataStateObject<Conversation> {
     super.deleteOneEvent(item);
   }
 
-
   @override
   clear() async {
+    for (var conversation in state) {
+      await conversation.box.compact();
+    }
+    super.clear();
+  }
+
+  clearBoxes() async {
     for (var conversation in state) {
       await conversation.box.compact();
       await conversation.box.clear();

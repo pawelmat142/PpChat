@@ -8,41 +8,49 @@ service cloud.firestore {
 
   	function logged() { return request.auth != null; }
 
-  	match /User/{nickname} {
-
-      function owner() {
-      	return get(/databases/$(database)/documents/User/$(nickname)/PRIVATE/$(nickname)).data.uid == request.auth.uid;
-      }
-
-      allow create: if logged();
-      allow get: if logged();
-      allow update, delete: if owner();
-
-      match /PRIVATE/{nickname} {
-      	allow create: if request.resource.data.uid == request.auth.uid;
-        allow delete: if resource.data.uid == request.auth.uid;
-        allow write: if request.resource.data.uid == request.auth.uid;
-      }
-
-      match /NOTIFICATIONS/{nickname} {
-      // TODO: some more rules to lock notifications only for sender/receiver
-      	allow read, write: if logged();
-      }
-
-      match /CONTACTS/{nickname} {
-        allow write, read: if owner();
-      }
-
-      match /Messages/{msgDocId} {
-       //TODO: make some rules to lock messages only for receiver and allow send for senders
-        allow write, read: if logged();
-      }
+    function getContactsUids(contactUid) { return
+    	get(/databases/$(database)/documents/PpUser/$(contactUid)/CONTACTS/$(contactUid))
+        .data.contactUids;
     }
 
+  	match /PpUser/{UID} {
 
-    match /DELETED_ACCOUNTS/{nickname} {
-    	allow create: if request.resource.data.uid == request.auth.uid
+    	function isOwner() { return UID == request.auth.uid; }
+
+      function isSender() {	return request.resource.data.documentId == request.auth.uid; }
+
+      function isContact(contactUid) { return request.auth.uid in getContactsUids(contactUid); }
+
+      function isInvitationAccepted(contactUid) {
+      	return get(/databases/$(database)/documents/PpUser/$(contactUid)/NOTIFICATIONS/$(request.auth.uid))
+        	.data.type == "invitationAcceptance";
+      }
+
+			allow create: if request.auth.uid == request.resource.data.uid;
+      allow read: if logged();
+      allow delete, update: if isOwner();
+
+
+      match /CONTACTS/{UID} {
+        allow read, write: if UID == request.auth.uid;
+      }
+
+
+      match /NOTIFICATIONS/{docId} {
+      	allow read, write: if isOwner();
+        allow create: if logged(); //send invitation
+        allow update, delete: if isSender(); //accept, delete invitation, overwrite any notification
+      }
+
+
+      match /Messages/{messageDocId} {
+      	allow read, write: if isOwner();
+        allow create, delete: if isContact(UID) || isInvitationAccepted(UID);
+      }
+
+
     }
+
 
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 
 class PpNotification {
+  final String documentId;
   final String sender;
   final String receiver;
   final String type;
@@ -12,6 +13,7 @@ class PpNotification {
   final String text;
 
   PpNotification({
+    required this.documentId,
     required this.sender,
     required this.receiver,
     required this.type,
@@ -22,6 +24,7 @@ class PpNotification {
   });
 
   Map<String, dynamic> get asMap => {
+    PpNotificationFields.documentId: documentId,
     PpNotificationFields.sender: sender,
     PpNotificationFields.receiver: receiver,
     PpNotificationFields.type: type,
@@ -34,6 +37,7 @@ class PpNotification {
   static PpNotification fromMap(Map<String, dynamic> notificationMap) {
     PpNotificationFields.validate(notificationMap);
     return PpNotification(
+      documentId: notificationMap[PpNotificationFields.documentId],
       sender: notificationMap[PpNotificationFields.sender],
       receiver: notificationMap[PpNotificationFields.receiver],
       type: notificationMap[PpNotificationFields.type],
@@ -48,7 +52,8 @@ class PpNotification {
     return PpNotification.fromMap(doc.data() as Map<String, dynamic>);
   }
 
-  static PpNotification createInvitation({required String text, required String sender, required String receiver}) => PpNotification(
+  static PpNotification createInvitation({required String text, required String sender, required String receiver, required String documentId}) => PpNotification(
+      documentId: documentId,
       sender: sender,
       receiver: receiver,
       type: PpNotificationTypes.invitation,
@@ -58,7 +63,8 @@ class PpNotification {
       text: text
   );
 
-  static PpNotification createInvitationAcceptance({required String text, required String sender, required String receiver}) => PpNotification(
+  static PpNotification createInvitationAcceptance({required String text, required String sender, required String receiver, required String documentId}) => PpNotification(
+      documentId: documentId,
       sender: sender,
       receiver: receiver,
       type: PpNotificationTypes.invitationAcceptance,
@@ -68,7 +74,8 @@ class PpNotification {
       text: text
   );
 
-  static PpNotification createInvitationSelfNotification({required String text, required String sender, required String receiver}) => PpNotification(
+  static PpNotification createInvitationSelfNotification({required String text, required String sender, required String receiver, required String documentId}) => PpNotification(
+      documentId: documentId,
       sender: sender,
       receiver: receiver,
       type: PpNotificationTypes.invitationSelfNotification,
@@ -78,7 +85,8 @@ class PpNotification {
       text: text
   );
 
-  static PpNotification createContactDeleted({required String sender, required String receiver}) => PpNotification(
+  static PpNotification createContactDeleted({required String sender, required String receiver, required String documentId}) => PpNotification(
+      documentId: documentId,
       sender: sender,
       receiver: receiver,
       type: PpNotificationTypes.contactDeletedNotification,
@@ -88,7 +96,8 @@ class PpNotification {
       text: PpNotificationTypes.contactDeletedNotification
   );
 
-  static PpNotification createConversationClear({required String sender, required String receiver}) => PpNotification(
+  static PpNotification createConversationClear({required String sender, required String receiver, required String documentId}) => PpNotification(
+      documentId: documentId,
       sender: sender,
       receiver: receiver,
       type: PpNotificationTypes.conversationClearNotification,

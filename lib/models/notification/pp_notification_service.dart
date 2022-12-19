@@ -31,21 +31,24 @@ class PpNotificationService {
 
   StreamSubscription? _notificationsListener;
 
+  bool initialized = false;
 
   Future<void> login() async {
-    notifications.setNickname(_state.nickname);
     await notifications.startFirestoreObserver();
     final process = ResolveNotificationsProcess(notifications.get);
     await process.process();
-    // await _resolveNotifications(notifications.get);
     startNotificationsListener();
+    initialized = true;
   }
 
   logout() {
-    notifications.clear();
-    if (_notificationsListener != null) {
-      _notificationsListener!.cancel();
-      _notificationsListener = null;
+    if (initialized) {
+      notifications.clear();
+      if (_notificationsListener != null) {
+        _notificationsListener!.cancel();
+        _notificationsListener = null;
+      }
+      initialized = false;
     }
   }
 
@@ -53,7 +56,7 @@ class PpNotificationService {
     _notificationsListener ??= notifications.stream.listen((event) async {
       final process = ResolveNotificationsProcess(event);
       await process.process();
-    });
+    }, onError: listenerErrorHandler);
   }
 
   stopNotificationsListener() async {
@@ -63,7 +66,9 @@ class PpNotificationService {
     }
   }
 
-  bool imSender(PpNotification notification) => notification.sender == _state.nickname;
+  listenerErrorHandler(error) {
+    logService.errorHandler(error, label: '_notificationsListener');
+  }
 
   markNotificationAsRead(PpNotification notification) async {
     notification.isRead = true;

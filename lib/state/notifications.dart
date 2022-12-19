@@ -3,17 +3,16 @@ import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/state/interfaces/firestore_collection_state.dart';
+import 'package:flutter_chat_app/state/states.dart';
 
 class Notifications extends FirestoreCollectionState<PpNotification> {
 
-  String? _nickname;
-  setNickname(String nickname) => _nickname = nickname;
-  String get nickname => _nickname != null ? _nickname! : throw Exception('no nickname - use setNickname first!');
+  static String get getUid => States.getUid!;
 
 
   @override
   CollectionReference<Map<String, dynamic>> get collectionRef => firestore
-      .collection(Collections.User).doc(nickname)
+      .collection(Collections.PpUser).doc(getUid)
       .collection(Collections.NOTIFICATIONS);
 
   @override
@@ -37,14 +36,11 @@ class Notifications extends FirestoreCollectionState<PpNotification> {
 
   @override
   clear() {
-    _nickname = null;
     super.clear();
   }
 
-  bool imSender(PpNotification item) => item.sender == nickname;
-
   @override
-  String docIdFromItem(PpNotification item) => imSender(item) ? item.receiver : item.sender;
+  String docIdFromItem(PpNotification item) => item.documentId;
 
   getOne({required String sender}) {
     final index = get.indexWhere((n) => n.sender == sender);

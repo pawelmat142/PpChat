@@ -1,29 +1,28 @@
 import 'package:flutter_chat_app/models/pp_message.dart';
-import 'package:flutter_chat_app/services/authentication_service.dart';
+import 'package:flutter_chat_app/state/states.dart';
 import 'package:hive/hive.dart';
 
 class Conversation {
-  Conversation({required this.contactNickname, required this.box});
+  Conversation({required this.contactUid, required this.box});
 
-  final String contactNickname;
+  final String contactUid;
   final Box<PpMessage> box;
 
   bool get isOpen => box.isOpen;
 
-  closeBox() => box.close();
-
-  clearBox() => box.clear();
 
   Future<void> killBox() async {
     if (box.isOpen) await box.deleteFromDisk();
   }
 
+  List<PpMessage> get messages => box.values.toList();
+  List<String> get messagesTxt => box.values.map((m) => m.message).toList();
 
   //TODO: use compact more often
 
 
   open() async {
-    await Hive.openBox(hiveKey(contactNickname: contactNickname));
+    await Hive.openBox(hiveKey(contactUid: contactUid));
   }
 
   addMessage(PpMessage message) async {
@@ -31,15 +30,13 @@ class Conversation {
   }
 
 
-  static hiveKey({required contactNickname}) {
-    return 'conversation_${AuthenticationService.nickname}_$contactNickname';
+  static hiveKey({required contactUid}) {
+    return 'conversation_${States.getUid}_$contactUid';
   }
 
-  static create({required String contactNickname}) async {
-    final box = await Hive.openBox<PpMessage>(hiveKey(contactNickname: contactNickname));
-    return Conversation(contactNickname: contactNickname, box: box);
+  static create({required String contactUid}) async {
+    final box = await Hive.openBox<PpMessage>(hiveKey(contactUid: contactUid));
+    return Conversation(contactUid: contactUid, box: box);
   }
-
-
 }
 

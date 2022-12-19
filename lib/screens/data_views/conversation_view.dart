@@ -5,50 +5,47 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
-import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/state/conversation.dart';
 import 'package:flutter_chat_app/state/conversations.dart';
+import 'package:flutter_chat_app/state/states.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class ConversationView extends StatelessWidget {
   ConversationView({super.key});
   static const id = 'conversation_view';
 
-  final _userService = getIt.get<PpUserService>();
   final _conversationService = getIt.get<ConversationService>();
 
-  static navigate(String contactNickname) {
+  static navigate(PpUser contact) {
     Navigator.pushNamed(
       NavigationService.context,
       ConversationView.id,
-      arguments: contactNickname
+      arguments: contact
     );
   }
 
 
   Conversations get conversations => _conversationService.conversations;
 
-  Conversation conversation(contactNickname) => _conversationService
-      .conversations.getByNickname(contactNickname)!;
+  Conversation conversation(contactUid) => _conversationService
+      .conversations.getByUid(contactUid)!;
 
-
-  _isMyMsg(PpMessage message) => message.sender == _userService.nickname;
 
   @override
   Widget build(BuildContext context) {
 
-    final contactNickname = ModalRoute.of(context)!.settings.arguments as String;
-
-
+    _conversationService.resolveUnresolvedMessages();
+    final contactUser = ModalRoute.of(context)!.settings.arguments as PpUser;
 
     return Scaffold(
 
         appBar: AppBar(
-          title: Text('$contactNickname - chat'),
-          actions: [PopupMenu(contactNickname: contactNickname)],
+          title: Text('${contactUser.nickname} - chat'),
+          actions: [PopupMenu(contactUser: contactUser)],
         ),
 
         body: SafeArea(
@@ -57,7 +54,7 @@ class ConversationView extends StatelessWidget {
           //MESSAGES AREA
 
             Expanded(child: ValueListenableBuilder<Box<PpMessage>>(
-              valueListenable: conversation(contactNickname).box.listenable(),
+              valueListenable: conversation(contactUser.uid).box.listenable(),
               builder: (context, box, _) {
 
                 // if (_isConversationClearedByContact) {
@@ -68,15 +65,14 @@ class ConversationView extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                   children: box.values.map((m) {
 
-                    return MessageBubble(message: m.message, my: _isMyMsg(m));
+                    return MessageBubble(message: m.message, my: m.sender == States.getUid);
 
                   }).toList().reversed.toList(),
                 );
             })),
 
 
-            MessageInput(contactNickname: contactNickname),
-
+            MessageInput(contactUser: contactUser),
 
           ]),
         ),
@@ -86,9 +82,9 @@ class ConversationView extends StatelessWidget {
 }
 
 class PopupMenu extends StatelessWidget {
-  PopupMenu({required this.contactNickname, Key? key}) : super(key: key);
+  PopupMenu({required this.contactUser, Key? key}) : super(key: key);
 
-  final String contactNickname;
+  final PpUser contactUser;
 
   final _conversationService = getIt.get<ConversationService>();
   final _contactsService = getIt.get<ContactsService>();
@@ -109,8 +105,10 @@ class PopupMenu extends StatelessWidget {
           child: const Text('Delete contact'),
         ),
 
-        PopupMenuItem(onTap: () {},
-          child: const Text('three'),
+        PopupMenuItem(onTap: () {
+          _conversationService.resolveUnresolvedMessages();
+        },
+          child: const Text('test'),
         ),
 
       ];
@@ -124,13 +122,13 @@ class PopupMenu extends StatelessWidget {
         text: 'Messages data will be lost also on the other side!',
         buttons: [PopupButton('Clear', onPressed: () async {
           _spinner.start();
-          await _conversationService.clearConversation(contactNickname);
+          await _conversationService.clearConversation(contactUser);
           _spinner.stop();
     })]);
   }
 
   _onDeleteContact() async {
-    await _contactsService.onDeleteContact(contactNickname);
+    await _contactsService.onDeleteContact(contactUser);
   }
 
 //

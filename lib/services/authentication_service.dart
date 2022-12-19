@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
+import 'package:flutter_chat_app/dialogs/process/login_process.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
@@ -23,6 +24,7 @@ class AuthenticationService {
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
+
   log(String txt) => logService.log(txt);
   logError(String txt) => logService.error(txt);
 
@@ -44,6 +46,8 @@ class AuthenticationService {
       _isFirstUserListen = false;
     });
   }
+
+  String get getUid => States.getUid!;
 
   void register({required String nickname, required String password}) async {
     try {
@@ -80,7 +84,8 @@ class AuthenticationService {
       log('[START] Login by form process');
       _spinner.start();
       await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
-      await _loginServices();
+      await _userService.login(loginByForm: true);
+      LoginProcess();
       log('[STOP] Login by form process');
       _spinner.stop();
       await Navigator.pushNamed(context, HomeScreen.id);
@@ -136,13 +141,12 @@ class AuthenticationService {
   }
 
   _loginServices() async {
-    final currentNickname = nickname;
-    States.login(nickname: currentNickname);
-    logService.setContext(currentNickname);
+    await _userService.login();
+    LoginProcess();
   }
 
   logoutServices({bool skipSignOut = false}) async {
-    log('[START] logout services');
+    log('[START] logout services - skipSignOut: $skipSignOut');
     await _conversationsService.logout();
     await _contactsService.logout();
     _notificationService.logout();

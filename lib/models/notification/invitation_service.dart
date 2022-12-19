@@ -23,22 +23,20 @@ class InvitationService {
   }
 
 
-  resolveInvitationAcceptances(Set<PpNotification> notifications) async {
-    if (notifications.isNotEmpty) {
-      final newContactNicknames = notifications.map((n) => n.sender).toList();
-      _state.contactNicknames.addsEvent(newContactNicknames);
-    }
+  resolveInvitationAcceptances(Set<PpNotification> invitationAcceptances) async {
+    if (invitationAcceptances.isEmpty) return;
+    final newContactUids = invitationAcceptances.map((n) => n.documentId).toSet().toList();
+    _state.contactUids.addsEvent(newContactUids);
   }
-
 
   resolveContactDeletedNotifications(Set<PpNotification> notifications) async {
     //todo: if on contact / conversation view - navigate to home/contacts and show popup
     if (notifications.isNotEmpty) {
       final nicknamesToDelete = notifications.map((n) => n.sender).toList();
-      final newState = _state.contactNicknames.get
+      final newState = _state.contactUids.get
           .where((n) => !nicknamesToDelete.contains(n))
           .toList();
-      _state.contactNicknames.setNewState(newState);
+      _state.contactUids.setNewState(newState);
     }
   }
 
@@ -49,8 +47,8 @@ class InvitationService {
         throw Exception('[CANCEL SENT INVITATION] NOT INVITATION SELF ACCEPTANCE');
       }
       final batch = _firestore.batch();
-      batch.delete(_state.notifications.collectionRef.doc(notification.receiver));
-      batch.delete(_contactsService.contactNotificationDocRef(contactNickname: notification.receiver));
+      batch.delete(_state.notifications.collectionRef.doc(notification.documentId));
+      batch.delete(_contactsService.contactNotificationDocRef(contactUid: notification.documentId));
       await batch.commit();
       PpFlushbar.invitationDeleted();
       logService.log('[STOP] [CANCEL SENT INVITATION]');
@@ -66,8 +64,8 @@ class InvitationService {
         throw Exception('[REJECT RECEIVED INVITATION] NOT INVITATION');
       }
       final batch = _firestore.batch();
-      batch.delete(_state.notifications.collectionRef.doc(notification.sender));
-      batch.delete(_contactsService.contactNotificationDocRef(contactNickname: notification.sender));
+      batch.delete(_state.notifications.collectionRef.doc(notification.documentId));
+      batch.delete(_contactsService.contactNotificationDocRef(contactUid: notification.documentId));
       await batch.commit();
       PpFlushbar.invitationDeleted();
       logService.log('[STOP] [REJECT RECEIVED INVITATION]');

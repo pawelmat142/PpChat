@@ -56,11 +56,10 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(context, ContactsScreen.id),
               ),
 
-              PpButton(text: 'check nickname',
+              PpButton(text: 'test',
                 onPressed: () {
                   if (kDebugMode) {
-                    print(userService.nickname);
-                    print(AuthenticationService.nickname);
+                    print('test');
                   }
                 },
               ),

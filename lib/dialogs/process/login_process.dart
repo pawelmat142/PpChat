@@ -35,28 +35,21 @@
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/dialogs/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
-import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 
 class LoginProcess extends LogProcess {
 
-  final _userService = getIt.get<PpUserService>();
   final _contactsService = getIt.get<ContactsService>();
   final _notificationService = getIt.get<PpNotificationService>();
   final _conversationsService = getIt.get<ConversationService>();
 
-  final String nickname;
-
-  LoginProcess({required this.nickname}) {
+  LoginProcess() {
     process();
   }
 
   process() async {
-    log('[START] LOGIN PROCESS - nickname: $nickname');
-
-    await _userService.login(nickname: nickname);
-    log('[STOP] UserService initializing');
+    log('[START] LOGIN PROCESS');
 
     log('[START] ContactsService initializing');
     await _contactsService.login();

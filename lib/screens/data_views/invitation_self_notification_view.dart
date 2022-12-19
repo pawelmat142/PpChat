@@ -4,7 +4,7 @@ import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
-import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
+import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 
 class InvitationSelfNotificationView extends NotificationView {

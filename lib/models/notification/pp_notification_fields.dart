@@ -1,6 +1,7 @@
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 
 abstract class PpNotificationFields {
+  static const documentId = 'documentId';
   static const sender = 'sender';
   static const receiver = 'receiver';
   static const type = 'type';
@@ -10,7 +11,9 @@ abstract class PpNotificationFields {
   static const text = 'text';
 
   static validate(Map<String, dynamic>? notificationMap) {
-    if (notificationMap!.keys.contains(PpNotificationFields.sender)
+    if (notificationMap!.keys.contains(PpNotificationFields.documentId)
+        && notificationMap[PpNotificationFields.documentId] is String
+        && notificationMap.keys.contains(PpNotificationFields.sender)
         && notificationMap[PpNotificationFields.sender] is String
         && notificationMap.keys.contains(PpNotificationFields.receiver)
         && notificationMap[PpNotificationFields.receiver] is String

@@ -3,7 +3,7 @@ import 'package:flutter_chat_app/components/contacts_tile/contact_avatar.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
-import 'package:flutter_chat_app/screens/data_screens/notification_view.dart';
+import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
 
 class NotificationTile extends StatelessWidget {
   final PpNotification notification;

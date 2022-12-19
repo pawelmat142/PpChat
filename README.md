@@ -282,3 +282,42 @@ example on login process
 ## feature/data_state_object
 
 ### [073] DataStageObject preparations
+
+## feature/security_rules_refactor
+
+### [074] PpUser - change collection name
+
+### [075] PpUser - signature field
+PpUser model - add signature field what is PpUser docId now
+
+### [076] PpUser - PpUser document id change to 
+
+### [077] Update security rules
+access to CONTACTS, NOTIFICATIONS, Messages
+
+### [078] ContactNicknames refactor 1
+invitation send, delete, reject, remove notification updated
+
+### [079] ContactNicknames refactor 2
+conversation, contact view, accept invitation
+
+### [080] ContactNicknames refactor 3
+delete contact, send message update
+
+### [081] ContactNicknames refactored to ContactUids
+
+### [082] BUGs
+messages not saving after relogin
+</br> logout bug
+
+### [083] Allow send messages if invitation is accepted
+
+### [084] PpMessage refactor
+sending and resolving by uid - not nickname
+
+### [085] First message in conversation
+
+### [086] BUGs
+clear conversation
+</br> logout, delete account process
+</br> avoid multiple contact uids
