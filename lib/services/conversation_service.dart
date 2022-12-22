@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
@@ -11,10 +12,7 @@ import 'package:flutter_chat_app/state/contacts.dart';
 import 'package:flutter_chat_app/state/conversations.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
-import 'package:flutter_chat_app/dialogs/popup.dart';
-import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
-import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
 
 //TODO: show time on tap message
@@ -25,11 +23,10 @@ import 'package:flutter_chat_app/services/contacts_service.dart';
 class ConversationService {
 
   final _firestore = FirebaseFirestore.instance;
-  final _userService = getIt.get<PpUserService>();
   final _contactsService = getIt.get<ContactsService>();
-  final _popup = getIt.get<Popup>();
-  final _spinner = getIt.get<PpSpinner>();
   final _state = getIt.get<States>();
+  final popup = getIt.get<Popup>();
+  final spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
 
   CollectionReference get messagesCollectionRef => _firestore
@@ -136,11 +133,12 @@ class ConversationService {
   }
 
 
-  sendMessage({required String message, required PpUser contactUser}) async {
+  sendMessage({required String message, required PpUser contactUser, bool isMock = false}) async {
     final msg = PpMessage.create(
         message: message,
         sender: States.getUid!,
-        receiver: contactUser.uid
+        receiver: contactUser.uid,
+        timeToLive: isMock ? -1 : 0
     );
     await contactMessagesCollectionRef(contactUid: contactUser.uid).add(msg.asMap);
     conversations.getByUid(contactUser.uid)?.addMessage(msg);
@@ -148,52 +146,19 @@ class ConversationService {
 
 
   clearConversation(PpUser contactUser) async {
-    try {
-      final batch = _firestore.batch();
-
-      // get unread messages in contact receive box
-      final querySnapshot = await contactMessagesCollectionRef(contactUid: contactUser.uid)
-          .where(PpMessageFields.sender, isEqualTo: States.getUid)
-          .get();
-      for (var doc in querySnapshot.docs) {
-        batch.delete(doc.reference);
-      }
-
-      //send notification
-      final notification = PpNotification.createConversationClear(
-          documentId: States.getUid!,
-          sender: _userService.nickname,
-          receiver: contactUser.nickname
-      );
-      final docRef = _contactsService.contactNotificationDocRef(contactUid: contactUser.uid);
-      batch.set(docRef, notification.asMap);
-
-      logService.log('[MSG] ${querySnapshot.docs.length} unread messages deleted in contact receive box');
-
-      await batch.commit();
-      final conversation = conversations.getByUid(contactUser.uid);
-      if (conversation != null) conversation.mock(ConversationMock.CONVERSATION_MOCK_TYPE_CLEAR, sender: States.getUid!);
-
-    } catch (error) {
-      _spinner.stop();
-      logService.error(error.toString());
-      _popup.sww(text: 'Clear conversation error!');
-    }
+    sendMessage(
+        message: MessageMock.TYPE_CLEAR,
+        contactUser: contactUser,
+        isMock: true
+    );
   }
 
-  resolveConversationClearNotifications(Set<PpNotification> notifications) {
-    if (initialized && notifications.isNotEmpty) {
-      for (var n in notifications) {
-        final conversation = conversations.getByUid(n.documentId);
-        if (conversation != null) {
-          logService.log('[MSG] [RESOLVE] successful clear conversation box for ${n.sender}');
-          // conversation.box.clear();
-          conversation.mock(ConversationMock.CONVERSATION_MOCK_TYPE_CLEAR, sender: n.documentId);
-        } else {
-          logService.log('[MSG] [RESOLVE] failed clear conversation box for ${n.sender}');
-        }
-      }
-    }
+  lockConversation(PpUser contactUser) async {
+    sendMessage(
+        message: MessageMock.TYPE_LOCK,
+        contactUser: contactUser,
+        isMock: true
+    );
   }
 
   resolveUnresolvedMessages() {
@@ -202,5 +167,46 @@ class ConversationService {
       _resolveMessages(unresolvedMessages, skipFlushbar: true);
     }
   }
+
+  onLockConversation(String uid) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    final contactUser = _contactsService.getByUid(uid: uid)!;
+    popup.show('Are you sure?',
+        text: 'Messages data will be lost also on the other side!',
+        buttons: [PopupButton('Clear and lock', onPressed: () async {
+          spinner.start();
+          await lockConversation(contactUser);
+          spinner.stop();
+        })]);
+  }
+
+  onUnlock(String uid) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    final contactUser = _contactsService.getByUid(uid: uid)!;
+    popup.show('Unlock conversation?', error: true, buttons: [PopupButton('Unlock', onPressed: () {
+      clearConversation(contactUser);
+    })]);
+  }
+
+  onClearConversation(PpUser contactUser) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    popup.show('Are you sure?',
+        text: 'Messages data will be lost also on the other side!',
+        buttons: [PopupButton('Clear', onPressed: () async {
+          spinner.start();
+          await clearConversation(contactUser);
+          spinner.stop();
+        })]);
+  }
+
+  onDeleteContact(PpUser contactUser) async {
+    final contactsService = getIt.get<ContactsService>();
+    await contactsService.onDeleteContact(contactUser.uid);
+  }
+
+  isConversationLocked(PpUser contactUser) {
+    return conversations.getByUid(contactUser.nickname)!.isLocked;
+  }
+
 
 }

@@ -26,8 +26,16 @@ class Conversation {
     await Hive.openBox(hiveKey(contactUid: contactUid));
   }
 
+  bool _isMocked = false;
+  bool get isLocked => box.values.length == 1 && box.values.first.message == MessageMock.TYPE_LOCK;
+
+
   addMessage(PpMessage message) async {
-    if (_isMocked) {
+    if (message.isMock) {
+      _isMocked = true;
+      await box.clear();
+    } else if (_isMocked) {
+      if (isLocked) return;
       _isMocked = false;
       await box.clear();
     }
@@ -44,25 +52,5 @@ class Conversation {
     return Conversation(contactUid: contactUid, box: box);
   }
 
-  bool _isMocked = false;
-
-  mock(String mockType, {required String sender}) async {
-    switch(mockType) {
-
-      case ConversationMock.CONVERSATION_MOCK_TYPE_CLEAR:
-        await box.clear();
-        box.add(PpMessage.create(
-            message: ConversationMock.CONVERSATION_MOCK_TYPE_CLEAR,
-            sender: sender,
-            receiver: ConversationMock.IS_MOCK_RECEIVER));
-        _isMocked = true;
-        break;
-
-      case ConversationMock.CONVERSATION_MOCK_TYPE_LOCK:
-        break;
-      default: throw Exception('WRONG CONVERSATION MOCK');
-    }
-
-  }
 }
 

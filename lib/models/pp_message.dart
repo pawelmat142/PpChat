@@ -43,6 +43,7 @@ class PpMessage extends HiveObject {
     PpMessageFields.isRead: isRead,
   };
 
+  bool get isMock => timeToLive == -1;
 
   static PpMessage fromMap(Map<String, dynamic> messageMap) {
     PpMessageFields.validate(messageMap);
@@ -68,13 +69,14 @@ class PpMessage extends HiveObject {
     required String message,
     required String sender,
     required String receiver,
+    int timeToLive = 0
   }) {
     return PpMessage(
       receiver: receiver,
       sender: sender,
       message: message,
       timestamp: DateTime.now(),
-      timeToLive: 0,
+      timeToLive: timeToLive,
       isRead: false
     );
   }

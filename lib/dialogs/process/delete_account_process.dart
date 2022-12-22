@@ -195,8 +195,7 @@ class DeleteAccountProcess extends LogProcess {
     for (var contact in _contacts) {
       final data = PpNotification.createContactDeleted(
           sender: _state.me.nickname,
-          receiver: contact.nickname,
-          documentId: uid
+          receiver: contact.nickname
       ).asMap;
       await _batchSet(
           documentReference: _contactsService.contactNotificationDocRef(contactUid: contact.uid),

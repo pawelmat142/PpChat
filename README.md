@@ -327,3 +327,5 @@ clear conversation
 ### [087] Conversation clear feature
 by ConversationMock feature
 </br> little files refactor
+
+### [088] Conversation lock feature
