@@ -322,7 +322,7 @@ clear conversation
 </br> logout, delete account process
 </br> avoid multiple contact uids
 
-## feature/security_rules_refactor
+## feature/chat_features
 
 ### [087] Conversation clear feature
 by ConversationMock feature
