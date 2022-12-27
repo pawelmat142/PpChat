@@ -6,14 +6,12 @@ import 'package:flutter_chat_app/dialogs/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
 import 'package:flutter_chat_app/state/states.dart';
 
 class ResolveNotificationsProcess extends LogProcess {
 
   final _state = getIt.get<States>();
   final _invitationService = getIt.get<InvitationService>();
-  final _conversationService = getIt.get<ConversationService>();
 
   ResolveNotificationsProcess(this.notifications, {this.skipFlushbar = false});
 
@@ -21,7 +19,6 @@ class ResolveNotificationsProcess extends LogProcess {
   final bool skipFlushbar;
 
   final Set<PpNotification> invitationAcceptances = {};
-  final Set<PpNotification> conversationClearNotifications = {};
   final Set<PpNotification> contactDeletedNotifications = {};
 
   final Set<PpNotification> notificationsToFlush = {};
@@ -69,13 +66,8 @@ class ResolveNotificationsProcess extends LogProcess {
             notificationsToFlush.add(notification);
             break;
 
-          case PpNotificationTypes.conversationClearNotification:
-            conversationClearNotifications.add(notification);
-            batch.delete(documentReference(notification));
-            break;
-
           case PpNotificationTypes.contactDeletedNotification:
-            conversationClearNotifications.add(notification);
+            //TODO: CLEAR CONVERSATION WHEN RESOLVE DELETE
             contactDeletedNotifications.add(notification);
             batch.delete(documentReference(notification));
             break;
@@ -84,7 +76,6 @@ class ResolveNotificationsProcess extends LogProcess {
       }
     }
     if (invitationAcceptances.isNotEmpty) log('${invitationAcceptances.length} invitation acceptances to resolve');
-    if (conversationClearNotifications.isNotEmpty) log('${conversationClearNotifications.length} conversations to clear');
     if (contactDeletedNotifications.isNotEmpty) log('${contactDeletedNotifications.length} contacts to delete');
     if (notificationsToFlush.isNotEmpty) log('${notificationsToFlush.length} notifications to flush');
     log('prepared');
@@ -96,8 +87,6 @@ class ResolveNotificationsProcess extends LogProcess {
     //IT WILL BE DONE IN _prepareBatch() AND commit()
 
     _invitationService.resolveInvitationAcceptances(invitationAcceptances);
-
-    _conversationService.resolveConversationClearNotifications(conversationClearNotifications);
 
     _invitationService.resolveContactDeletedNotifications(contactDeletedNotifications);
   }

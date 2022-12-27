@@ -1,4 +1,5 @@
 import 'package:flutter_chat_app/models/pp_message.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:hive/hive.dart';
 
@@ -25,7 +26,19 @@ class Conversation {
     await Hive.openBox(hiveKey(contactUid: contactUid));
   }
 
+  bool _isMocked = false;
+  bool get isLocked => box.values.length == 1 && box.values.first.message == MessageMock.TYPE_LOCK;
+
+
   addMessage(PpMessage message) async {
+    if (message.isMock) {
+      _isMocked = true;
+      await box.clear();
+    } else if (_isMocked) {
+      if (isLocked) return;
+      _isMocked = false;
+      await box.clear();
+    }
     await box.add(message);
   }
 
@@ -38,5 +51,6 @@ class Conversation {
     final box = await Hive.openBox<PpMessage>(hiveKey(contactUid: contactUid));
     return Conversation(contactUid: contactUid, box: box);
   }
+
 }
 

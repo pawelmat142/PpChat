@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
+import 'package:flutter_chat_app/state/states.dart';
 
 class PpNotification {
   final String documentId;
@@ -52,8 +53,8 @@ class PpNotification {
     return PpNotification.fromMap(doc.data() as Map<String, dynamic>);
   }
 
-  static PpNotification createInvitation({required String text, required String sender, required String receiver, required String documentId}) => PpNotification(
-      documentId: documentId,
+  static PpNotification createInvitation({required String text, required String sender, required String receiver}) => PpNotification(
+      documentId: States.getUid!,
       sender: sender,
       receiver: receiver,
       type: PpNotificationTypes.invitation,
@@ -85,8 +86,8 @@ class PpNotification {
       text: text
   );
 
-  static PpNotification createContactDeleted({required String sender, required String receiver, required String documentId}) => PpNotification(
-      documentId: documentId,
+  static PpNotification createContactDeleted({required String sender, required String receiver}) => PpNotification(
+      documentId: States.getUid!,
       sender: sender,
       receiver: receiver,
       type: PpNotificationTypes.contactDeletedNotification,
@@ -94,17 +95,6 @@ class PpNotification {
       isFlushed: true,
       isResolved: false,
       text: PpNotificationTypes.contactDeletedNotification
-  );
-
-  static PpNotification createConversationClear({required String sender, required String receiver, required String documentId}) => PpNotification(
-      documentId: documentId,
-      sender: sender,
-      receiver: receiver,
-      type: PpNotificationTypes.conversationClearNotification,
-      isRead: true,
-      isFlushed: true,
-      isResolved: false,
-      text: PpNotificationTypes.conversationClearNotification,
   );
 
   static List<PpNotification> filterUnread(List<PpNotification> input) {
@@ -123,7 +113,4 @@ class PpNotification {
     return input.where((notification) => notification.type == PpNotificationTypes.contactDeletedNotification).toList();
   }
 
-  static List<PpNotification> filterConversationClearNotifications(List<PpNotification> input) {
-    return input.where((notification) => notification.type == PpNotificationTypes.conversationClearNotification).toList();
-  }
 }

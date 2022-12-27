@@ -36,7 +36,7 @@ class UserView extends DataView {
 
             PpButton(text: 'delete', color: Colors.red, onPressed: () async {
               if (contactsService.contactExists(user.uid)) {
-                await contactsService.onDeleteContact(user);
+                await contactsService.onDeleteContact(user.uid);
               } else {
                 PpFlushbar.contactNotExists();
               }

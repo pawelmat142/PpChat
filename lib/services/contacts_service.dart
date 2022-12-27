@@ -79,21 +79,22 @@ class ContactsService {
   }
 
 
-  onDeleteContact(PpUser contactUser) async {
+  onDeleteContact(String uid) async {
     await Future.delayed(const Duration(milliseconds: 100));
     await _popup.show('Are you sure?', error: true,
         text: 'All data will be lost also on the other side!',
         buttons: [PopupButton('Delete', error: true, onPressed: () async {
           NavigationService.popToHome();
           Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-          await _deleteContact(contactUser);
-          PpFlushbar.contactDeletedNotificationForSender(nickname: contactUser.nickname, delay: 200);
+          await _deleteContact(uid);
+          PpFlushbar.contactDeletedNotificationForSender(nickname: _state.contacts.getByUid(uid)!.nickname, delay: 200);
         })]);
   }
 
-  _deleteContact(PpUser contactUser) async {
+  _deleteContact(String uid) async {
     try {
-      final conversation = _state.conversations.getByUid(contactUser.uid);
+      final conversation = _state.conversations.getByUid(uid);
+      final contactUser = _state.contacts.getByUid(uid)!;
       if (conversation != null) await _state.conversations.killBoxAndDelete(conversation);
       await _sendContactDeletedNotification(contactUser);
       _state.contactUids.deleteOneEvent(contactUser.uid);
@@ -104,7 +105,6 @@ class ContactsService {
 
   _sendContactDeletedNotification(PpUser contactUser) async {
     final notification = PpNotification.createContactDeleted(
-        documentId: States.getUid!,
         sender: _state.me.nickname,
         receiver: contactUser.nickname);
 

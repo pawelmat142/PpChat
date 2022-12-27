@@ -21,8 +21,6 @@ class _MessageInputState extends State<MessageInput> {
 
   bool _ready = true;
 
-  //TODO: block chat feature
-
   @override
   Widget build(BuildContext context) {
     return  Container(
