@@ -6,9 +6,10 @@ import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
+import 'package:flutter_chat_app/models/provider/contact_uids.dart';
+import 'package:flutter_chat_app/models/provider/contacts.dart';
+import 'package:flutter_chat_app/models/provider/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/state/contact_uids.dart';
-import 'package:flutter_chat_app/state/contacts.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
@@ -22,61 +23,62 @@ class ContactsService {
   final logService = getIt.get<LogService>();
 
 
-  ContactsOld get contacts => _state.contacts;
-  ContactUidsOld get contactUids => _state.contactUids;
+  Me get me => Me.reference;
+  Contacts get contacts => Contacts.reference;
+  ContactUids get contactUids => ContactUids.reference;
 
 
-  StreamSubscription? _contactUidsListener;
-
-  bool initialized = false;
+  // StreamSubscription? _contactUidsListener;
+  //
+  // bool initialized = false;
 
   login() async {
-    initialized = false;
-
-    //get initial contactUids
-    await contactUids.startFirestoreObserver();
-    contacts.setContactUids(contactUids.get);
-
-    //get initial contact PpUser objects
-    await contacts.startFirestoreObserver();
-
-    _startContactUidsListener();
-
-    initialized = true;
+    // initialized = false;
+    //
+    // get initial contactUids
+    // await contactUids.startFirestoreObserver();
+    // contacts.setContactUids(contactUids.get);
+    //
+    // get initial contact PpUser objects
+    // await contacts.startFirestoreObserver();
+    //
+    // _startContactUidsListener();
+    //
+    // initialized = true;
   }
 
   logout() async {
-    if (initialized) {
-      await _stopContactUidsListener();
-      await contacts.clear();
-      await contactUids.clear();
-      initialized = false;
-    }
+    // if (initialized) {
+    //   await _stopContactUidsListener();
+    //   await contacts.clear();
+    //   await contactUids.clear();
+    //   initialized = false;
+    // }
   }
 
-  _startContactUidsListener() {
-    final completer = Completer();
-    _contactUidsListener ??= _state.contactUids.stream.listen((contactUidsEvent) async {
-        logService.log('[ContactUids] state listener, length: ${contactUidsEvent.length}');
-        if (contactUidsEvent.isNotEmpty) {
-          contacts.setContactUids(contactUidsEvent);
-          await contacts.resetFirestoreObserver();
-        } else {
-          contacts.setContactUids([]);
-          await contacts.stopFirestoreObserver();
-          contacts.setEvent([]);
-        }
-        if (!completer.isCompleted) completer.complete();
-      });
-    return completer.future;
-  }
+  // _startContactUidsListener() {
+  //   final completer = Completer();
+  //   _contactUidsListener ??= _state.contactUids.stream.listen((contactUidsEvent) async {
+  //       logService.log('[ContactUids] state listener, length: ${contactUidsEvent.length}');
+  //       if (contactUidsEvent.isNotEmpty) {
+  //         contacts.setContactUids(contactUidsEvent);
+  //         await contacts.resetFirestoreObserver();
+  //       } else {
+  //         contacts.setContactUids([]);
+  //         await contacts.stopFirestoreObserver();
+  //         contacts.setEvent([]);
+  //       }
+  //       if (!completer.isCompleted) completer.complete();
+  //     });
+  //   return completer.future;
+  // }
 
-  _stopContactUidsListener() async {
-    if (_contactUidsListener != null) {
-      await _contactUidsListener!.cancel();
-      _contactUidsListener = null;
-    }
-  }
+  // _stopContactUidsListener() async {
+  //   if (_contactUidsListener != null) {
+  //     await _contactUidsListener!.cancel();
+  //     _contactUidsListener = null;
+  //   }
+  // }
 
 
   onDeleteContact(String uid) async {
@@ -87,17 +89,17 @@ class ContactsService {
           NavigationService.popToHome();
           Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
           await _deleteContact(uid);
-          PpFlushbar.contactDeletedNotificationForSender(nickname: _state.contacts.getByUid(uid)!.nickname, delay: 200);
+          PpFlushbar.contactDeletedNotificationForSender(nickname: contacts.getByUid(uid)!.nickname, delay: 200);
         })]);
   }
 
   _deleteContact(String uid) async {
     try {
       final conversation = _state.conversations.getByUid(uid);
-      final contactUser = _state.contacts.getByUid(uid)!;
+      final contactUser = contacts.getByUid(uid)!;
       if (conversation != null) await _state.conversations.killBoxAndDelete(conversation);
       await _sendContactDeletedNotification(contactUser);
-      _state.contactUids.deleteOneEvent(contactUser.uid);
+      contactUids.deleteOne(contactUser.uid);
     } catch (error) {
       logService.error(error.toString());
     }
@@ -105,7 +107,7 @@ class ContactsService {
 
   _sendContactDeletedNotification(PpUser contactUser) async {
     final notification = PpNotification.createContactDeleted(
-        sender: _state.me.nickname,
+        sender: me.nickname,
         receiver: contactUser.nickname);
 
     await contactNotificationDocRef(contactUid: contactUser.uid).set(notification.asMap);

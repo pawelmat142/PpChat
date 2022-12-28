@@ -5,7 +5,6 @@ import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/process/find_contact.dart';
 import 'package:flutter_chat_app/models/provider/contacts.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
-import 'package:flutter_chat_app/state/contacts.dart';
 import 'package:provider/provider.dart';
 
 class ContactsScreen extends StatelessWidget {
@@ -13,7 +12,6 @@ class ContactsScreen extends StatelessWidget {
   static const String id = 'contacts_screen';
 
   final contactsService = getIt.get<ContactsService>();
-  ContactsOld get contacts => contactsService.contacts;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +24,6 @@ class ContactsScreen extends StatelessWidget {
         children: [
 
           Consumer<Contacts>(builder: (context, contacts, child) {
-            print('contacts cosumer');
             return contacts.isNotEmpty
 
                 ? Column(children: contacts.get.map((u) => ContactTile(u)).toList())

@@ -1,7 +1,8 @@
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
+import 'package:flutter_chat_app/models/provider/contact_uids.dart';
+import 'package:flutter_chat_app/models/provider/me.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
-import 'package:flutter_chat_app/state/contact_uids.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/process/log_process.dart';
@@ -9,8 +10,11 @@ import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 
 class AcceptInvitationProcess extends LogProcess {
 
-  final _state = getIt.get<States>();
   final _conversationService = getIt.get<ConversationService>();
+
+  final ContactUids contactUids = ContactUids.reference;
+  final Me me = Me.reference;
+
 
   final PpNotification invitation;
 
@@ -36,12 +40,7 @@ class AcceptInvitationProcess extends LogProcess {
     batch.set(contactNotificationDocRef, document.asMap);
 
     //add to contacts
-    final newContactUids = _state.contacts.uids + [contactUid];
-    final contactUidsDocumentRef = firestore
-        .collection(Collections.PpUser).doc(States.getUid)
-        .collection(Collections.CONTACTS).doc(States.getUid);
-    batch.set(contactUidsDocumentRef,
-        {ContactUidsOld.contactUidsFieldName: newContactUids});
+    contactUids.addOne(contactUid);
 
     //finalize
     await batch.commit();
@@ -55,10 +54,10 @@ class AcceptInvitationProcess extends LogProcess {
 
     final message = PpMessage.create(
         message: invitation.text,
-        sender: invitation.sender == _state.me.nickname
+        sender: invitation.sender == me.nickname
             ? States.getUid!
             : invitation.documentId,
-        receiver: invitation.receiver == _state.me.nickname
+        receiver: invitation.receiver == me.nickname
             ? States.getUid!
             : invitation.documentId);
 

@@ -8,6 +8,7 @@ import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
+import 'package:flutter_chat_app/models/provider/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
@@ -21,6 +22,8 @@ class FindContact {
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  final Me me = Me.reference;
 
   String nickname = '';
   String message = '';
@@ -48,10 +51,10 @@ class FindContact {
     if (nickname.length < 6) {
       await _popup.show('Nickname must have at least 6 characters.', error: true);
     }
-    else if (nickname == _userService.nickname) {
+    else if (nickname == me.nickname) {
       await _popup.show('You have found yourself.', error: true);
     }
-    else if (_contactsService.contacts.nicknames.contains(nickname)) {
+    else if (_contactsService.contacts.getByNickname(nickname) != null) {
       await _popup.show('Already in contacts!', text: nickname, error: true);
     }
     else if (_invitationService.isInvitationSent(nickname)) {

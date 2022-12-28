@@ -1,15 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/provider/interfaces/fs_document_model.dart';
 import 'package:flutter_chat_app/state/states.dart';
+import 'package:provider/provider.dart';
 
 class ContactUids extends FsDocumentModel<List<String>> {
 
-  static const String contactUidsFieldName = 'contactUids';
+  static ContactUids get reference => Provider.of<ContactUids>(NavigationService.context, listen: false);
 
-  start() async {
-    await startFirestoreObserver();
-  }
+  static const String contactUidsFieldName = 'contactUids';
 
   @override
   List<String> get get {
@@ -43,5 +43,19 @@ class ContactUids extends FsDocumentModel<List<String>> {
     get.addAll(items);
     set(get);
   }
+
+  deleteOne(String item) {
+    final index = get.indexWhere((c) => c == item);
+    if (index != -1) {
+      get.removeAt(index);
+      set(get);
+      log('[$runtimeType] delete item index: $index');
+    }
+  }
+
+  bool contains(String contactUid) {
+    return get.indexWhere((c) => c == contactUid) != -1;
+  }
+
 
 }

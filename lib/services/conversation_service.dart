@@ -4,11 +4,11 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/provider/contacts.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
-import 'package:flutter_chat_app/state/contacts.dart';
 import 'package:flutter_chat_app/state/conversations.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
@@ -40,7 +40,7 @@ class ConversationService {
   StreamSubscription? _messagesObserver;
 
   Conversations get conversations => _state.conversations;
-  ContactsOld get contacts => _state.contacts;
+  Contacts get contacts => Contacts.reference;
 
   bool initialized = false;
 

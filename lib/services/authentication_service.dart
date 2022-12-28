@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/dialogs/process/login_process.dart';
+import 'package:flutter_chat_app/models/provider/clear_data.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
@@ -11,14 +12,12 @@ import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 
 class AuthenticationService {
   final _fireAuth = FirebaseAuth.instance;
   final _userService = getIt.get<PpUserService>();
-  final _contactsService = getIt.get<ContactsService>();
   final _notificationService = getIt.get<PpNotificationService>();
   final _conversationsService = getIt.get<ConversationService>();
   final _popup = getIt.get<Popup>();
@@ -84,8 +83,8 @@ class AuthenticationService {
       log('[START] Login by form process');
       _spinner.start();
       await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
-      await _userService.login(loginByForm: true);
-      LoginProcess();
+      // await _userService.login(loginByForm: true);
+      // LoginProcess();
       log('[STOP] Login by form process');
       _spinner.stop();
       await Navigator.pushNamed(context, HomeScreen.id);
@@ -147,10 +146,16 @@ class AuthenticationService {
 
   logoutServices({bool skipSignOut = false}) async {
     log('[START] logout services - skipSignOut: $skipSignOut');
+    // await _userService.updateLogged(false);
+
     await _conversationsService.logout();
-    await _contactsService.logout();
+    // await _contactsService.logout();
     _notificationService.logout();
-    await _userService.logout();
+
+    final process = ClearData(NavigationService.context);
+    await process.process();
+
+    // await _userService.logout();
     if (!skipSignOut) {
       await signOut();
     }

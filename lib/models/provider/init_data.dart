@@ -1,42 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/dialogs/process/log_process.dart';
+import 'package:flutter_chat_app/dialogs/process/login_process.dart';
 import 'package:flutter_chat_app/models/provider/contact_uids.dart';
 import 'package:flutter_chat_app/models/provider/contacts.dart';
 import 'package:flutter_chat_app/models/provider/me.dart';
-import 'package:provider/provider.dart';
 
 class InitData extends LogProcess {
   final BuildContext context;
 
-  InitData(this.context) {
-    start();
-  }
+  InitData(this.context);
 
-  Me get me => Provider.of<Me>(context, listen: false);
-  ContactUids get contactUids => Provider.of<ContactUids>(context, listen: false);
-  Contacts get contacts => Provider.of<Contacts>(context, listen: false);
-
-  start() async {
+  process() async {
     log('[InitData] [START]');
 
-    await me.startFirestoreObserver();
+    await Me.reference.startFirestoreObserver();
     log('[InitData] [Me] initialized');
 
-    await contactUids.startFirestoreObserver();
+    await ContactUids.reference.startFirestoreObserver();
     log('[InitData] [ContactUids] initialized');
 
-    await contacts.reload(contactUids.get);
+    await Contacts.reference.start(); //includes startFirestoreObserver
     log('[InitData] [Contacts] initialized');
 
-    contactUids.addListener(() {
-      log('[InitData] [Contacts] reloading');
-      contacts.reload(contactUids.get);
-    });
-    log('[InitData] [Contacts] listener added');
-
-
-
-
+    LoginProcess();
 
     log('[InitData] [STOP]');
   }

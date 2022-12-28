@@ -26,7 +26,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () => InitData(context));
+    Future.delayed(Duration.zero, () async {
+        final process = InitData(context);
+        await process.process();
+    });
   }
 
   @override

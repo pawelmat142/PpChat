@@ -1,22 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/models/provider/me.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
-import 'package:flutter_chat_app/state/me.dart';
 
 class PpUserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  final _state = getIt.get<States>();
   final logService = getIt.get<LogService>();
 
-  MeOld get me => _state.me;
-  String get nickname => _state.me.nickname.isNotEmpty ? _state.me.nickname : AuthenticationService.nickname;
+  Me get me => Me.reference;
+  String get nickname => me.nickname.isNotEmpty ? me.nickname : AuthenticationService.nickname;
 
 
   CollectionReference<Map<String, dynamic>> get _collection => _firestore.collection(Collections.PpUser);
@@ -28,7 +27,7 @@ class PpUserService {
   login({bool loginByForm = false}) async {
     logService.log('[START] UserService initializing');
     try {
-      await _updateLogged(true);
+      await updateLogged(true);
     } catch (e) {
       if (loginByForm) {
         throw FirebaseAuthException(code: 'loginByForm');
@@ -44,7 +43,7 @@ class PpUserService {
   logout({bool skipFirestore = false}) async {
     if (initialized) {
       if (!skipFirestore) {
-        await _updateLogged(false);
+        await updateLogged(false);
       }
       await me.clear();
       initialized = false;
@@ -93,7 +92,7 @@ class PpUserService {
   }
 
 
-  _updateLogged(bool logged) async {
+  updateLogged(bool logged) async {
     await documentRef.update({PpUserFields.logged : logged});
   }
 

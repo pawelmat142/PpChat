@@ -35,6 +35,7 @@ abstract class FsCollectionModel<T> with ChangeNotifier {
   bool get isEmpty => _state.isEmpty;
 
 
+
   clear() {
     _state = [];
     notifyListeners();

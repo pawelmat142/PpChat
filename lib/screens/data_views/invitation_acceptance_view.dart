@@ -36,8 +36,8 @@ class InvitationAcceptanceView extends NotificationView {
       PpButton(text: 'Write message', onPressed: () async {
           NavigationService.popToHome();
           Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-          final contactUser = conversationService.getContactUserByNickname(notification.receiver);
-          if (contactUser != null) conversationService.navigateToConversationView(contactUser);
+          // final contactUser = conversationService.getContactUserByNickname(notification.receiver);
+          // if (contactUser != null) conversationService.navigateToConversationView(contactUser);
       }),
 
       PpButton(text: 'remove notification', color: Colors.red, onPressed: () async {

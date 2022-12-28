@@ -6,12 +6,14 @@ import 'package:flutter_chat_app/dialogs/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
+import 'package:flutter_chat_app/models/provider/me.dart';
 import 'package:flutter_chat_app/state/states.dart';
 
 class ResolveNotificationsProcess extends LogProcess {
 
-  final _state = getIt.get<States>();
   final _invitationService = getIt.get<InvitationService>();
+
+  Me get me => Me.reference;
 
   ResolveNotificationsProcess(this.notifications, {this.skipFlushbar = false});
 
@@ -28,7 +30,7 @@ class ResolveNotificationsProcess extends LogProcess {
   process() async {
     try {
       log('[START] ResolveNotificationsProcess');
-      setContext('ResolveNotificationsProcess');
+      setContext(me.nickname);
       setProcess('ResolveNotificationsProcess');
       batch = firestore.batch();
 
@@ -115,6 +117,6 @@ class ResolveNotificationsProcess extends LogProcess {
 
   String documentId(PpNotification notification) => imSender(notification) ? notification.receiver : notification.sender;
 
-  bool imSender(PpNotification notification) => notification.sender == _state.me.nickname;
+  bool imSender(PpNotification notification) => notification.sender == me.nickname;
 
 }
