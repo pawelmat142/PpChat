@@ -59,6 +59,9 @@ abstract class FsDocumentModel<T> with ChangeNotifier {
       notifyListeners();
 
       if (!completer.isCompleted) completer.complete();
+
+    }, onError: (error) {
+      errorHandler(error, null, '_firestoreDocumentObserver');
     });
     return completer.future;
   }
@@ -88,5 +91,11 @@ abstract class FsDocumentModel<T> with ChangeNotifier {
     }
   }
 
+
+
+  errorHandler(error, stackTrace, String method) {
+    final log = '[ERROR] [$method] [${error.runtimeType}] [${T.toString()}] $error';
+    logService.handlePreparedLog(log);
+  }
 
 }

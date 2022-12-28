@@ -7,9 +7,13 @@ class ContactUids extends FsDocumentModel<List<String>> {
 
   static const String contactUidsFieldName = 'contactUids';
 
-  Future<List<String>> start() async {
+  start() async {
     await startFirestoreObserver();
-    return get;
+  }
+
+  @override
+  List<String> get get {
+    return super.isNotEmpty ? super.get : [];
   }
 
   @override

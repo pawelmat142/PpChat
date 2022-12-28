@@ -7,7 +7,7 @@ import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
 import 'package:flutter_chat_app/state/states.dart';
 
-class Contacts extends FirestoreCollectionState<PpUser> {
+class ContactsOld extends FirestoreCollectionState<PpUser> {
 
   static get getUid => States.getUid;
 

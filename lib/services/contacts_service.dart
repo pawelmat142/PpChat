@@ -22,7 +22,7 @@ class ContactsService {
   final logService = getIt.get<LogService>();
 
 
-  Contacts get contacts => _state.contacts;
+  ContactsOld get contacts => _state.contacts;
   ContactUidsOld get contactUids => _state.contactUids;
 
 

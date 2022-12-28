@@ -40,7 +40,7 @@ class ConversationService {
   StreamSubscription? _messagesObserver;
 
   Conversations get conversations => _state.conversations;
-  Contacts get contacts => _state.contacts;
+  ContactsOld get contacts => _state.contacts;
 
   bool initialized = false;
 

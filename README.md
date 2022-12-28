@@ -335,3 +335,5 @@ by ConversationMock feature
 ### [089] Initialize provider, Me refactor
 
 ### [090] ContactUids refactor
+
+### [091] Contacts refactor

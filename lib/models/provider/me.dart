@@ -13,9 +13,8 @@ class Me extends FsDocumentModel<PpUser> {
   String get uid => get.uid;
   String get nickname => get.nickname;
 
-  Future<PpUser> start() async {
+  start() async {
     await startFirestoreObserver();
-    return get;
   }
 
   @override

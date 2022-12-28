@@ -17,7 +17,7 @@ class States {
   final contactUids = ContactUidsOld();
 
   /// PpUser objects representing contacts - stored in firestore
-  final contacts = Contacts();
+  final contacts = ContactsOld();
 
   /// Conversations object stores Conversation objects what stores hive box representing single conversation
   /// based on Messages subcollection listener
