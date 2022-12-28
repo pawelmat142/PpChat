@@ -14,7 +14,7 @@ class States {
   final me = MeOld();
 
   /// list of contacts fireAuth uid
-  final contactUids = ContactUids();
+  final contactUids = ContactUidsOld();
 
   /// PpUser objects representing contacts - stored in firestore
   final contacts = Contacts();

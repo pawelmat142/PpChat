@@ -23,7 +23,7 @@ class ContactsService {
 
 
   Contacts get contacts => _state.contacts;
-  ContactUids get contactUids => _state.contactUids;
+  ContactUidsOld get contactUids => _state.contactUids;
 
 
   StreamSubscription? _contactUidsListener;

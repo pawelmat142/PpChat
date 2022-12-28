@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
-import 'package:flutter_chat_app/models/fs_document_model.dart';
+import 'package:flutter_chat_app/models/provider/interfaces/fs_document_model.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/state/states.dart';
 
@@ -14,7 +14,6 @@ class Me extends FsDocumentModel<PpUser> {
   String get nickname => get.nickname;
 
   Future<PpUser> start() async {
-    print('start');
     await startFirestoreObserver();
     return get;
   }

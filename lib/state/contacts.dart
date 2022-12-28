@@ -91,6 +91,6 @@ class Contacts extends FirestoreCollectionState<PpUser> {
 
   updateContactUids() async {
     //triggers resetFirestoreObserver
-    await contactUidsDocumentRef.set({ContactUids.contactUidsFieldName: contactUids.toSet().toList()});
+    await contactUidsDocumentRef.set({ContactUidsOld.contactUidsFieldName: contactUids.toSet().toList()});
   }
 }

@@ -41,7 +41,7 @@ class AcceptInvitationProcess extends LogProcess {
         .collection(Collections.PpUser).doc(States.getUid)
         .collection(Collections.CONTACTS).doc(States.getUid);
     batch.set(contactUidsDocumentRef,
-        {ContactUids.contactUidsFieldName: newContactUids});
+        {ContactUidsOld.contactUidsFieldName: newContactUids});
 
     //finalize
     await batch.commit();

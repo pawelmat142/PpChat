@@ -3,7 +3,7 @@ import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/state/interfaces/firestore_document_state.dart';
 import 'package:flutter_chat_app/state/states.dart';
 
-class ContactUids extends FirestoreDocumentState<String> {
+class ContactUidsOld extends FirestoreDocumentState<String> {
 
   static const String contactUidsFieldName = 'contactUids';
 

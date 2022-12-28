@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/firebase_options.dart';
-import 'package:flutter_chat_app/models/me.dart';
+import 'package:flutter_chat_app/models/provider/contact_uids.dart';
+import 'package:flutter_chat_app/models/provider/me.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
@@ -23,6 +24,7 @@ void main() async {
 
   runApp(MultiProvider(providers: [
         ChangeNotifierProvider(create: (_) => Me()),
+        ChangeNotifierProvider(create: (_) => ContactUids()),
       ],
       child: const MyApp(),
     )
