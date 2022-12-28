@@ -345,3 +345,5 @@ Contacts, ContactUids, Me states refactored
 
 ### [094] Conversations refactored
 directories paths refactored
+
+### [095] Directories refactor

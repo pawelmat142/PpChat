@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_chat_app/dialogs/process/log_process.dart';
+import 'package:flutter_chat_app/process/log_process.dart';
 
 class LogService extends LogProcess {
 

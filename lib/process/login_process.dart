@@ -1,38 +1,33 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
-import 'package:flutter_chat_app/dialogs/process/log_process.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/process/log_process.dart';
 import 'package:flutter_chat_app/models/contact/contact_uids.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 
-class InitData extends LogProcess {
-  final BuildContext context;
-
-  InitData(this.context);
+class LoginProcess extends LogProcess {
 
   process() async {
-    log('[InitData] [START]');
+    log('[LoginProcess] [START]');
 
     await Me.reference.startFirestoreObserver();
-    log('[InitData] [Me] initialized');
+    log('[LoginProcess] [Me] initialized');
 
     await ContactUids.reference.startFirestoreObserver();
-    log('[InitData] [ContactUids] initialized');
+    log('[LoginProcess] [ContactUids] initialized');
 
     await Contacts.reference.start(); //includes startFirestoreObserver
-    log('[InitData] [Contacts] initialized');
+    log('[LoginProcess] [Contacts] initialized');
 
     await Notifications.reference.start();
-    log('[InitData] [Notifications] initialized');
+    log('[LoginProcess] [Notifications] initialized');
 
     final conversationService = getIt.get<ConversationService>();
     await conversationService.login();
+    log('[LoginProcess] [Conversations] initialized');
 
-    // LoginProcess();
-
-    log('[InitData] [STOP]');
+    log('[LoginProcess] [STOP]');
   }
 
 }

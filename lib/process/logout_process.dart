@@ -1,19 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
-import 'package:flutter_chat_app/dialogs/process/log_process.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/process/log_process.dart';
 import 'package:flutter_chat_app/models/contact/contact_uids.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 
-class ClearData extends LogProcess {
-  final BuildContext context;
-
-  ClearData(this.context);
+class LogoutProcess extends LogProcess {
 
   process() async {
-    log('[ClearData] [START]');
+    log('[LogoutProcess] [START]');
 
     final conversationService = getIt.get<ConversationService>();
     await conversationService.logout();
@@ -22,7 +18,7 @@ class ClearData extends LogProcess {
 
     clearData();
 
-    log('[ClearData] [STOP]');
+    log('[LogoutProcess] [STOP]');
   }
 
   stopListeners() async {
@@ -32,7 +28,7 @@ class ClearData extends LogProcess {
     await ContactUids.reference.stopFirestoreObserver();
     await Contacts.reference.stopFirestoreObserver();
     await Me.reference.stopFirestoreObserver();
-    log('[ClearData] [stopListeners]');
+    log('[LogoutProcess] stopListeners');
   }
 
   clearData() {

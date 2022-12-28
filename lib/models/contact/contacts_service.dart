@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
-import 'package:flutter_chat_app/config/navigation_service.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
@@ -14,7 +14,7 @@ import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 
 class ContactsService {
 
@@ -63,7 +63,7 @@ class ContactsService {
 
   DocumentReference contactNotificationDocRef({required String contactUid}) => _firestore
       .collection(Collections.PpUser).doc(contactUid)
-      .collection(Collections.NOTIFICATIONS).doc(States.getUid);
+      .collection(Collections.NOTIFICATIONS).doc(Uid.get);
 
   PpUser? getByNickname({required String nickname}) => contacts.getByNickname(nickname);
   PpUser? getByUid({required String uid}) => contacts.getByUid(uid);

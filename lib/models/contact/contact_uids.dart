@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_chat_app/config/navigation_service.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
-import 'package:flutter_chat_app/models/provider/fs_document_model.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/models/interfaces/fs_document_model.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 import 'package:provider/provider.dart';
 
 class ContactUids extends FsDocumentModel<List<String>> {
@@ -18,8 +18,8 @@ class ContactUids extends FsDocumentModel<List<String>> {
 
   @override
   DocumentReference<Map<String, dynamic>> get documentRef => firestore
-      .collection(Collections.PpUser).doc(States.getUid)
-      .collection(Collections.CONTACTS).doc(States.getUid);
+      .collection(Collections.PpUser).doc(Uid.get)
+      .collection(Collections.CONTACTS).doc(Uid.get);
 
   @override
   Map<String, dynamic> get stateAsMap => {contactUidsFieldName: get};

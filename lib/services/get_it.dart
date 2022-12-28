@@ -8,7 +8,7 @@ import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;
@@ -31,7 +31,7 @@ Future<void> initGetIt() async {
 
   getIt.registerLazySingleton(() => ConversationService());
 
-  getIt.registerLazySingleton(() => States());
+  getIt.registerLazySingleton(() => Uid());
 
   getIt.registerLazySingleton(() => LogService());
 

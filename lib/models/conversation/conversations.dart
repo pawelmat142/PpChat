@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_chat_app/config/navigation_service.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:provider/provider.dart';
 

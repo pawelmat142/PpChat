@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
@@ -29,7 +29,7 @@ class ConversationService {
   final logService = getIt.get<LogService>();
 
   CollectionReference get messagesCollectionRef => _firestore
-      .collection(Collections.PpUser).doc(States.getUid)
+      .collection(Collections.PpUser).doc(Uid.get)
       .collection(Collections.Messages);
 
   CollectionReference contactMessagesCollectionRef({required String contactUid}) => _firestore
@@ -84,7 +84,7 @@ class ConversationService {
     for (var documentId in messages.keys) {
 
       final senderUid = messages[documentId]!.sender;
-      final contactUid = senderUid != States.getUid ? senderUid : messages[documentId]!.receiver;
+      final contactUid = senderUid != Uid.get ? senderUid : messages[documentId]!.receiver;
       if (contacts.containsByUid(contactUid)) {
 
         final conversation = await conversations.openOrCreate(contactUid: contactUid);
@@ -136,7 +136,7 @@ class ConversationService {
   sendMessage({required String message, required PpUser contactUser, bool isMock = false}) async {
     final msg = PpMessage.create(
         message: message,
-        sender: States.getUid!,
+        sender: Uid.get!,
         receiver: contactUser.uid,
         timeToLive: isMock ? -1 : 0
     );

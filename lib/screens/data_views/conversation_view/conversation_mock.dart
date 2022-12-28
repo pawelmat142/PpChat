@@ -1,12 +1,12 @@
 // ignore_for_file: constant_identifier_names, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 
 class MessageMock extends StatelessWidget {
   final PpMessage mock;
@@ -75,9 +75,9 @@ class MessageMock extends StatelessWidget {
 
 
   String get conversationClearInfo =>
-      'Conversation cleared by ${mock.sender == States.getUid! ? 'You' : contactUser.nickname}';
+      'Conversation cleared by ${mock.sender == Uid.get! ? 'You' : contactUser.nickname}';
 
   String get conversationLockInfo =>
-      'Conversation locked by ${mock.sender == States.getUid! ? 'You' : contactUser.nickname}';
+      'Conversation locked by ${mock.sender == Uid.get! ? 'You' : contactUser.nickname}';
 }
 

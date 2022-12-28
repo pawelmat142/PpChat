@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_chat_app/config/navigation_service.dart';
+import 'package:flutter_chat_app/process/resolve_notifications_process.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
-import 'package:flutter_chat_app/dialogs/process/resolve_notifications_process.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
-import 'package:flutter_chat_app/models/provider/fs_collection_state.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/models/interfaces/fs_collection_state.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 import 'package:provider/provider.dart';
 
 class Notifications extends FsCollectionModel<PpNotification> {
@@ -35,7 +35,7 @@ class Notifications extends FsCollectionModel<PpNotification> {
 
   @override
   CollectionReference<Map<String, dynamic>> get collectionRef => firestore
-      .collection(Collections.PpUser).doc(States.getUid)
+      .collection(Collections.PpUser).doc(Uid.get)
       .collection(Collections.NOTIFICATIONS);
 
   @override

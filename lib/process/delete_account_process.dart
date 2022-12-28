@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
-import 'package:flutter_chat_app/config/navigation_service.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
-import 'package:flutter_chat_app/dialogs/process/log_process.dart';
+import 'package:flutter_chat_app/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/models/conversation/conversations.dart';
-import 'package:flutter_chat_app/models/provider/clear_data.dart';
+import 'package:flutter_chat_app/process/logout_process.dart';
 import 'package:flutter_chat_app/models/contact/contact_uids.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
@@ -14,40 +13,8 @@ import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 import 'package:hive/hive.dart';
-
-///LOGIN PROCESS:
-///
-/// Login by form triggers sign in fireAuth and login services process:
-///
-///  - PpUserService login - stores current signed in user nickname
-///  #first bcs anything else needs nickname
-///
-///  - ContactsService login - stores contacts nicknames, contacts User objects with streams,
-///  streams triggers events like add/delete conversation (delete account also)
-///  stores contacts user objects Stream Controllers
-///
-///  - ConversationService - stores conversations for each contact,
-///  stores Messages collection subscription, listens to contacts events,
-///  #after contacts bcs needs contacts
-///
-///  - PpNotificationService login - stores subscription of notifications collection,
-///  login triggers operations sent by other side users as notifications (invitation, clear conversation clear)
-///  #last bcs needs access to data stored by other services
-
-
-///LOGOUT PROCESS:
-///
-/// Triggered by fireAuth listener or logout button. First logout services:
-/// at the moment have no access to uid
-///
-///  - ConversationService - reset data about conversation,
-///
-///  - ContactsService - reset data about contacts,
-///
-///  - PpNotificationService - reset data about notifications
-///
-/// - PpUserService - reset data about user - set login status to firestore if have access
 
 
 class DeleteAccountProcess extends LogProcess {
@@ -63,7 +30,7 @@ class DeleteAccountProcess extends LogProcess {
   final Notifications notifications = Notifications.reference;
   final Conversations conversations = Conversations.reference;
 
-  String get uid => me.uid;
+  String get uid => Uid.get!;
 
 
   WriteBatch? firestoreDeleteAccountBatch;
@@ -139,9 +106,8 @@ class DeleteAccountProcess extends LogProcess {
       //after this no access to firestore data anymore
       //only stored here remains like nickname, uid, contactUids
 
-      final clearDataProcess = ClearData(NavigationService.context);
-      await clearDataProcess.process();
-      // await _resetServices();
+      final logoutProcess = LogoutProcess();
+      await logoutProcess .process();
 
       await save();
 
