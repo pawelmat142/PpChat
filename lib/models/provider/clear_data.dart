@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/dialogs/process/log_process.dart';
 import 'package:flutter_chat_app/models/provider/contact_uids.dart';
 import 'package:flutter_chat_app/models/provider/contacts.dart';
+import 'package:flutter_chat_app/models/provider/notifications.dart';
 import 'package:flutter_chat_app/models/provider/me.dart';
 
 class ClearData extends LogProcess {
@@ -17,6 +18,8 @@ class ClearData extends LogProcess {
   }
 
   stopListeners() async {
+    await Notifications.reference.stopNotificationsListener();
+    await Notifications.reference.stopFirestoreObserver();
     await Contacts.reference.stopContactUidsListener();
     await ContactUids.reference.stopFirestoreObserver();
     await Contacts.reference.stopFirestoreObserver();
@@ -25,6 +28,7 @@ class ClearData extends LogProcess {
   }
 
   clearData() {
+    Notifications.reference.clear();
     ContactUids.reference.clear();
     Contacts.reference.clear();
     Me.reference.clear();

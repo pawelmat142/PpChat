@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
-import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
+import 'package:flutter_chat_app/models/provider/clear_data.dart';
 import 'package:flutter_chat_app/models/provider/contact_uids.dart';
 import 'package:flutter_chat_app/models/provider/contacts.dart';
 import 'package:flutter_chat_app/models/provider/me.dart';
+import 'package:flutter_chat_app/models/provider/notifications.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/models/user/pp_user_service.dart';
-import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/contacts_service.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 import 'package:flutter_chat_app/state/states.dart';
@@ -52,11 +52,8 @@ import 'package:hive/hive.dart';
 
 class DeleteAccountProcess extends LogProcess {
 
-  final _userService = getIt.get<PpUserService>();
   final _contactsService = getIt.get<ContactsService>();
   final _conversationService = getIt.get<ConversationService>();
-  final _notificationService = getIt.get<PpNotificationService>();
-  final _authenticationService = getIt.get<AuthenticationService>();
   final _state = getIt.get<States>();
 
   List<String> _contactUids = [];
@@ -66,18 +63,15 @@ class DeleteAccountProcess extends LogProcess {
 
   late List<PpUser> _contacts;
 
-  late Me me;
-  late Contacts contacts;
-  late ContactUids contactUids;
+  final Me me = Me.reference;
+  final Contacts contacts = Contacts.reference;
+  final ContactUids contactUids = ContactUids.reference;
+  final Notifications notifications = Notifications.reference;
 
   WriteBatch? firestoreDeleteAccountBatch;
   int batchValue = 0;
 
   DeleteAccountProcess() {
-    me = Me.reference;
-    contacts = Contacts.reference;
-    contactUids = ContactUids.reference;
-
     _uid = me.uid;
     _contacts = contacts.get.map((c) => c).toList();
     _contactUids = contactUids.get.map((c) => c).toList();
@@ -98,7 +92,9 @@ class DeleteAccountProcess extends LogProcess {
     }
   }
 
-  _batchSet({required DocumentReference documentReference, required Map<String, dynamic> data}) async {
+  _batchSet({required DocumentReference documentReference, required Map<
+      String,
+      dynamic> data}) async {
     if (firestoreDeleteAccountBatch != null) {
       batchValue++;
       firestoreDeleteAccountBatch!.set(documentReference, data);
@@ -133,7 +129,6 @@ class DeleteAccountProcess extends LogProcess {
 
   process() async {
     try {
-
       super.setProcess('DeleteAccountProcess');
       super.setContext(me.nickname);
       log('[nickname: ${me.nickname}]');
@@ -150,12 +145,13 @@ class DeleteAccountProcess extends LogProcess {
       //after this no access to firestore data anymore
       //only stored here remains like nickname, uid, contactUids
 
-      await _resetServices();
+      final clearDataProcess = ClearData(NavigationService.context);
+      await clearDataProcess.process();
+      // await _resetServices();
 
       await save();
 
       super.popup.show('Delete account successful!');
-
     } catch (error) {
       errorHandler(error);
     }
@@ -174,11 +170,11 @@ class DeleteAccountProcess extends LogProcess {
   _deleteHiveConversationsData() async {
     for (var conversation in _state.conversations.get) {
       await conversation.box.clear();
-      log('[DeleteAccountProcess] clear conversation box for ${contacts.getByUid(conversation.contactUid)}');
+      log('[DeleteAccountProcess] clear conversation box for ${contacts
+          .getByUid(conversation.contactUid)}');
     }
     await Hive.deleteFromDisk();
   }
-
 
 
   _prepareBatch() async {
@@ -200,17 +196,20 @@ class DeleteAccountProcess extends LogProcess {
   }
 
 
-
   _prepareBatchSendNotifications() async {
-    log('[START] Prepare batch - send notifications to contacts [NOTIFICATIONS]');
+    log(
+        '[START] Prepare batch - send notifications to contacts [NOTIFICATIONS]');
 
     for (var contact in _contacts) {
-      final data = PpNotification.createContactDeleted(
+      final data = PpNotification
+          .createContactDeleted(
           sender: me.nickname,
           receiver: contact.nickname
-      ).asMap;
+      )
+          .asMap;
       await _batchSet(
-          documentReference: _contactsService.contactNotificationDocRef(contactUid: contact.uid),
+          documentReference: _contactsService.contactNotificationDocRef(
+              contactUid: contact.uid),
           data: data);
       log('Notification for ${contact.nickname} prepared');
     }
@@ -223,7 +222,8 @@ class DeleteAccountProcess extends LogProcess {
       final contactMessagesCollectionQuerySnapshot = await _conversationService
           .contactMessagesCollectionRef(contactUid: contact.uid)
           .where(PpMessageFields.sender, isEqualTo: uid).get();
-      log('${contactMessagesCollectionQuerySnapshot.docs.length} unread messages to delete found for ${contact.nickname}.');
+      log('${contactMessagesCollectionQuerySnapshot.docs
+          .length} unread messages to delete found for ${contact.nickname}.');
 
       for (var doc in contactMessagesCollectionQuerySnapshot.docs) {
         await _batchDelete(doc.reference);
@@ -251,8 +251,10 @@ class DeleteAccountProcess extends LogProcess {
 
   _prepareBatchDeleteNotifications() async {
     log('[START] Prepare batch - delete notifications [NOTIFICATIONS]');
-    final notificationsCollectionQuerySnapshot = await _state.notifications.collectionRef.get();
-    log('${notificationsCollectionQuerySnapshot.docs.length} notifications found to delete.');
+    final notificationsCollectionQuerySnapshot = await notifications
+        .collectionRef.get();
+    log('${notificationsCollectionQuerySnapshot.docs
+        .length} notifications found to delete.');
     for (var notification in notificationsCollectionQuerySnapshot.docs) {
       await _batchDelete(notification.reference);
     }
@@ -264,28 +266,6 @@ class DeleteAccountProcess extends LogProcess {
     await _batchDelete(firestore.collection(Collections.PpUser).doc(uid));
     // await _batchDelete(firestore.collection(Collections.PpUser).doc(States.getUid).collection(Collections.PRIVATE).doc(States.getUid));
     log('[STOP] Prepare batch - delete user [User][PRIVATE]');
-  }
-
-
-  _resetServices() async {
-    log('[START] Reset services.');
-
-    await _notificationService.logout();
-    log('PpNotificationService clean!');
-
-    await _conversationService.logout();
-    log('ConversationService clean!');
-
-    await _contactsService.logout();
-    log('ContactsService clean!');
-
-    await _userService.logout(skipFirestore: true);
-    log('PpUserService clean!');
-
-    await _authenticationService.signOut();
-    log('fireAuth signed out!');
-
-    log('[STOP] Reset services.');
   }
 
 }

@@ -34,12 +34,10 @@
 
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/dialogs/process/log_process.dart';
-import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/services/conversation_service.dart';
 
 class LoginProcess extends LogProcess {
 
-  final _notificationService = getIt.get<PpNotificationService>();
   final _conversationsService = getIt.get<ConversationService>();
 
   LoginProcess() {
@@ -47,19 +45,19 @@ class LoginProcess extends LogProcess {
   }
 
   process() async {
-    log('[START] LOGIN PROCESS');
+    // log('[START] LOGIN PROCESS');
 
-    log('[START] ContactsService initializing');
+    // log('[START] ContactsService initializing');
     // await _contactsService.login();
-    log('[STOP] ContactsService initializing');
+    // log('[STOP] ContactsService initializing');
 
     log('[START] ConversationsService initializing');
     _conversationsService.login();
     log('[STOP] ConversationsService initializing');
 
-    log('[START] PpNotificationsService initializing');
-    await _notificationService.login();
-    log('[STOP] PpNotificationsService initializing');
+    // log('[START] PpNotificationsService initializing');
+    // await _notificationService.login();
+    // log('[STOP] PpNotificationsService initializing');
 
     log('[STOP] LOGIN PROCESS');
   }

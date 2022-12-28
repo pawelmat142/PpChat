@@ -9,9 +9,7 @@ class LogProcess {
 
   final _spinner = getIt.get<PpSpinner>();
 
-  LogProcess() {
-    firstLog();
-  }
+  LogProcess();
 
   final firestore = FirebaseFirestore.instance;
   final popup = getIt.get<Popup>();
@@ -33,10 +31,6 @@ class LogProcess {
 
   setSaveMode(bool mode) {
     saveMode = mode;
-  }
-
-  firstLog() {
-    log('first log');
   }
 
   log(String log) {

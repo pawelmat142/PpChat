@@ -3,6 +3,7 @@ import 'package:flutter_chat_app/dialogs/process/log_process.dart';
 import 'package:flutter_chat_app/dialogs/process/login_process.dart';
 import 'package:flutter_chat_app/models/provider/contact_uids.dart';
 import 'package:flutter_chat_app/models/provider/contacts.dart';
+import 'package:flutter_chat_app/models/provider/notifications.dart';
 import 'package:flutter_chat_app/models/provider/me.dart';
 
 class InitData extends LogProcess {
@@ -21,6 +22,9 @@ class InitData extends LogProcess {
 
     await Contacts.reference.start(); //includes startFirestoreObserver
     log('[InitData] [Contacts] initialized');
+
+    await Notifications.reference.start();
+    log('[InitData] [Notifications] initialized');
 
     LoginProcess();
 

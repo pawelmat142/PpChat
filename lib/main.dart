@@ -7,6 +7,7 @@ import 'package:flutter_chat_app/models/provider/contact_uids.dart';
 import 'package:flutter_chat_app/models/provider/contacts.dart';
 import 'package:flutter_chat_app/models/provider/me.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
+import 'package:flutter_chat_app/models/provider/notifications.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
@@ -23,10 +24,12 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(PpMessageAdapter());
 
-  runApp(MultiProvider(providers: [
+  runApp(
+      MultiProvider(providers: [
         ChangeNotifierProvider(create: (_) => Me()),
         ChangeNotifierProvider(create: (_) => ContactUids()),
         ChangeNotifierProvider(create: (_) => Contacts()),
+        ChangeNotifierProvider(create: (_) => Notifications()),
       ],
       child: const MyApp(),
     )

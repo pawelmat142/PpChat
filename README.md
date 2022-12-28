@@ -340,3 +340,5 @@ by ConversationMock feature
 
 ### [092] Refactoring states
 Contacts, ContactUids, Me states refactored
+
+### [093] Notifications refactored

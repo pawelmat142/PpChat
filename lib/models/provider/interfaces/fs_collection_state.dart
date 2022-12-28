@@ -15,7 +15,9 @@ abstract class FsCollectionModel<T> with ChangeNotifier {
 
 
   /// OVERRIDE
-  Query<Map<String, dynamic>> get collectionQuery;
+  CollectionReference<Map<String, dynamic>> get collectionRef;
+
+  Query<Map<String, dynamic>> get collectionQuery => collectionRef;
 
   Map<String, dynamic> toMap(T item);
 
@@ -23,7 +25,7 @@ abstract class FsCollectionModel<T> with ChangeNotifier {
 
   String docIdFromItem(T item);
 
-
+  int indexFromItem(T item);
 
 
   /// STATE
@@ -35,6 +37,17 @@ abstract class FsCollectionModel<T> with ChangeNotifier {
   bool get isEmpty => _state.isEmpty;
 
 
+  updateOne(T item) {
+    final docRef = collectionRef.doc(docIdFromItem(item));
+    docRef.set(toMap(item)).onError((error, stackTrace) => errorHandler(error, stackTrace, 'updateOne'));
+    log('[$runtimeType] updateOne');
+  }
+
+  deleteOne(T item) {
+    final docRef = collectionRef.doc(docIdFromItem(item));
+    docRef.delete().onError((error, stackTrace) => errorHandler(error, stackTrace, 'deleteOne'));
+    log('[$runtimeType] deleteOne');
+  }
 
   clear() {
     _state = [];
@@ -94,6 +107,17 @@ abstract class FsCollectionModel<T> with ChangeNotifier {
   resumeFirestoreDocument() async {
     if (_firestoreCollectionObserver != null) {
       _firestoreCollectionObserver!.resume();
+    }
+  }
+
+  clearFirestoreCollection() async {
+    if (get.isNotEmpty) {
+      final batch = firestore.batch();
+      for (var item in get) {
+        batch.delete(collectionRef.doc(docIdFromItem(item)));
+      }
+      log('[$runtimeType] clearFirestoreCollection: ${get.length} items');
+      await batch.commit().onError((error, stackTrace) => errorHandler(error, stackTrace, 'clearFirestoreCollection'));
     }
   }
 

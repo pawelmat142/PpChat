@@ -45,6 +45,14 @@ class BlankScreen extends StatelessWidget {
                   },
               ),
 
+              PpButton(
+                  text: 'log bbbbbb',
+                  onPressed: () {
+                    final authService = getIt.get<AuthenticationService>();
+                    authService.login(nickname: 'bbbbbb', password: 'bbbbbb');
+                  },
+              ),
+
             ]
           ),
         ),

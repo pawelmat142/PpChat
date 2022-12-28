@@ -36,10 +36,13 @@ class Contacts extends FsCollectionModel<PpUser> {
     }
   }
 
+  @override
+  CollectionReference<Map<String, dynamic>> get collectionRef => firestore
+      .collection(Collections.PpUser);
 
   @override
-  Query<Map<String, dynamic>> get collectionQuery => firestore
-      .collection(Collections.PpUser).where(PpUserFields.uid, whereIn: contactUids);
+  Query<Map<String, dynamic>> get collectionQuery => collectionRef
+      .where(PpUserFields.uid, whereIn: contactUids);
 
   @override
   String docIdFromItem(PpUser item) {
@@ -54,6 +57,11 @@ class Contacts extends FsCollectionModel<PpUser> {
   @override
   Map<String, dynamic> toMap(PpUser item) {
     return item.asMap;
+  }
+
+  @override
+  int indexFromItem(PpUser item) {
+    return get.indexWhere((i) => i.uid == item.uid);
   }
 
 
@@ -72,6 +80,7 @@ class Contacts extends FsCollectionModel<PpUser> {
   bool containsByUid(String uid) {
     return get.indexWhere((c) => c.uid == uid) != -1;
   }
+
 
 }
 

@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
             children: [
 
-              NotificationInfo(),
+              const NotificationInfo(),
 
               PpButton(text: 'LOGOUT',
                 onPressed: authService.logout,

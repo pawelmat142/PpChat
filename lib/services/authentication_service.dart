@@ -7,7 +7,6 @@ import 'package:flutter_chat_app/models/provider/clear_data.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
-import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
@@ -18,7 +17,6 @@ import 'package:flutter_chat_app/services/log_service.dart';
 class AuthenticationService {
   final _fireAuth = FirebaseAuth.instance;
   final _userService = getIt.get<PpUserService>();
-  final _notificationService = getIt.get<PpNotificationService>();
   final _conversationsService = getIt.get<ConversationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
@@ -150,7 +148,7 @@ class AuthenticationService {
 
     await _conversationsService.logout();
     // await _contactsService.logout();
-    _notificationService.logout();
+    // _notificationService.logout();
 
     final process = ClearData(NavigationService.context);
     await process.process();

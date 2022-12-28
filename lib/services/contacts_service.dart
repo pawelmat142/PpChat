@@ -28,59 +28,6 @@ class ContactsService {
   ContactUids get contactUids => ContactUids.reference;
 
 
-  // StreamSubscription? _contactUidsListener;
-  //
-  // bool initialized = false;
-
-  login() async {
-    // initialized = false;
-    //
-    // get initial contactUids
-    // await contactUids.startFirestoreObserver();
-    // contacts.setContactUids(contactUids.get);
-    //
-    // get initial contact PpUser objects
-    // await contacts.startFirestoreObserver();
-    //
-    // _startContactUidsListener();
-    //
-    // initialized = true;
-  }
-
-  logout() async {
-    // if (initialized) {
-    //   await _stopContactUidsListener();
-    //   await contacts.clear();
-    //   await contactUids.clear();
-    //   initialized = false;
-    // }
-  }
-
-  // _startContactUidsListener() {
-  //   final completer = Completer();
-  //   _contactUidsListener ??= _state.contactUids.stream.listen((contactUidsEvent) async {
-  //       logService.log('[ContactUids] state listener, length: ${contactUidsEvent.length}');
-  //       if (contactUidsEvent.isNotEmpty) {
-  //         contacts.setContactUids(contactUidsEvent);
-  //         await contacts.resetFirestoreObserver();
-  //       } else {
-  //         contacts.setContactUids([]);
-  //         await contacts.stopFirestoreObserver();
-  //         contacts.setEvent([]);
-  //       }
-  //       if (!completer.isCompleted) completer.complete();
-  //     });
-  //   return completer.future;
-  // }
-
-  // _stopContactUidsListener() async {
-  //   if (_contactUidsListener != null) {
-  //     await _contactUidsListener!.cancel();
-  //     _contactUidsListener = null;
-  //   }
-  // }
-
-
   onDeleteContact(String uid) async {
     await Future.delayed(const Duration(milliseconds: 100));
     await _popup.show('Are you sure?', error: true,
