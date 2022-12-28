@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
-import 'package:flutter_chat_app/models/provider/interfaces/fs_document_model.dart';
+import 'package:flutter_chat_app/models/provider/fs_document_model.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:provider/provider.dart';

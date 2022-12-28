@@ -4,16 +4,16 @@ import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
-import 'package:flutter_chat_app/models/pp_message.dart';
+import 'package:flutter_chat_app/models/conversation/pp_message.dart';
+import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/provider/clear_data.dart';
-import 'package:flutter_chat_app/models/provider/contact_uids.dart';
-import 'package:flutter_chat_app/models/provider/contacts.dart';
-import 'package:flutter_chat_app/models/provider/me.dart';
-import 'package:flutter_chat_app/models/provider/notifications.dart';
+import 'package:flutter_chat_app/models/contact/contact_uids.dart';
+import 'package:flutter_chat_app/models/contact/contacts.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
+import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/models/contact/contacts_service.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:hive/hive.dart';
 
 ///LOGIN PROCESS:
@@ -54,12 +54,6 @@ class DeleteAccountProcess extends LogProcess {
 
   final _contactsService = getIt.get<ContactsService>();
   final _conversationService = getIt.get<ConversationService>();
-  final _state = getIt.get<States>();
-
-  List<String> _contactUids = [];
-  String _uid = '';
-
-  String get uid => _uid != '' ? _uid : throw Exception('NO UID!');
 
   late List<PpUser> _contacts;
 
@@ -67,15 +61,15 @@ class DeleteAccountProcess extends LogProcess {
   final Contacts contacts = Contacts.reference;
   final ContactUids contactUids = ContactUids.reference;
   final Notifications notifications = Notifications.reference;
+  final Conversations conversations = Conversations.reference;
+
+  String get uid => me.uid;
+
 
   WriteBatch? firestoreDeleteAccountBatch;
   int batchValue = 0;
 
   DeleteAccountProcess() {
-    _uid = me.uid;
-    _contacts = contacts.get.map((c) => c).toList();
-    _contactUids = contactUids.get.map((c) => c).toList();
-
     firestoreDeleteAccountBatch = firestore.batch();
 
     process();
@@ -133,7 +127,7 @@ class DeleteAccountProcess extends LogProcess {
       super.setContext(me.nickname);
       log('[nickname: ${me.nickname}]');
 
-      log('${_contactUids.length} contact nicknames found');
+      log('${contactUids.get.length} contact nicknames found');
 
       await _addDeletedAccountLogBatch();
 
@@ -161,14 +155,14 @@ class DeleteAccountProcess extends LogProcess {
     final documentReference = firestore
         .collection(Collections.DELETED_ACCOUNTS).doc(me.nickname);
 
-    final data = {'uid': _uid, 'nickname': me.nickname};
+    final data = {'uid': uid, 'nickname': me.nickname};
 
     _batchSet(documentReference: documentReference, data: data);
   }
 
 
   _deleteHiveConversationsData() async {
-    for (var conversation in _state.conversations.get) {
+    for (var conversation in conversations.get) {
       await conversation.box.clear();
       log('[DeleteAccountProcess] clear conversation box for ${contacts
           .getByUid(conversation.contactUid)}');

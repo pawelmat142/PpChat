@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
-import 'package:flutter_chat_app/models/provider/notifications.dart';
+import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/screens/forms/others/form_styles.dart';
 import 'package:flutter_chat_app/screens/notifications_screen.dart';
 import 'package:provider/provider.dart';

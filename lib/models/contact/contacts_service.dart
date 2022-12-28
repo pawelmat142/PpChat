@@ -6,9 +6,10 @@ import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
-import 'package:flutter_chat_app/models/provider/contact_uids.dart';
-import 'package:flutter_chat_app/models/provider/contacts.dart';
-import 'package:flutter_chat_app/models/provider/me.dart';
+import 'package:flutter_chat_app/models/conversation/conversations.dart';
+import 'package:flutter_chat_app/models/contact/contact_uids.dart';
+import 'package:flutter_chat_app/models/contact/contacts.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
@@ -19,13 +20,13 @@ class ContactsService {
 
   final _firestore = FirebaseFirestore.instance;
   final _popup = getIt.get<Popup>();
-  final _state = getIt.get<States>();
   final logService = getIt.get<LogService>();
 
 
   Me get me => Me.reference;
   Contacts get contacts => Contacts.reference;
   ContactUids get contactUids => ContactUids.reference;
+  Conversations get conversations => Conversations.reference;
 
 
   onDeleteContact(String uid) async {
@@ -42,9 +43,9 @@ class ContactsService {
 
   _deleteContact(String uid) async {
     try {
-      final conversation = _state.conversations.getByUid(uid);
+      final conversation = conversations.getByUid(uid);
       final contactUser = contacts.getByUid(uid)!;
-      if (conversation != null) await _state.conversations.killBoxAndDelete(conversation);
+      if (conversation != null) await conversations.killBoxAndDelete(conversation);
       await _sendContactDeletedNotification(contactUser);
       contactUids.deleteOne(contactUser.uid);
     } catch (error) {

@@ -1,4 +1,4 @@
-import 'package:flutter_chat_app/models/pp_message.dart';
+import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:hive/hive.dart';

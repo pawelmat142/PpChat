@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
-import 'package:flutter_chat_app/models/pp_message.dart';
+import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:flutter_chat_app/state/states.dart';
 
 class MessageMock extends StatelessWidget {

@@ -8,10 +8,10 @@ import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
-import 'package:flutter_chat_app/models/provider/me.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:flutter_chat_app/state/states.dart';
 
 class FindContact {

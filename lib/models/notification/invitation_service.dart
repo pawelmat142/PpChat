@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
-import 'package:flutter_chat_app/models/provider/contact_uids.dart';
-import 'package:flutter_chat_app/models/provider/notifications.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/models/contact/contact_uids.dart';
+import 'package:flutter_chat_app/models/notification/notifications.dart';
+import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';

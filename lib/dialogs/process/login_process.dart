@@ -34,7 +34,7 @@
 
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/dialogs/process/log_process.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 
 class LoginProcess extends LogProcess {
 

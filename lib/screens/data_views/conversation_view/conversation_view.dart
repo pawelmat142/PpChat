@@ -6,8 +6,8 @@ import 'package:flutter_chat_app/screens/data_views/conversation_view/message_in
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
-import 'package:flutter_chat_app/models/pp_message.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
+import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:hive_flutter/adapters.dart';
 

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
-import 'package:flutter_chat_app/models/provider/contact_uids.dart';
-import 'package:flutter_chat_app/models/provider/interfaces/fs_collection_state.dart';
+import 'package:flutter_chat_app/models/contact/contact_uids.dart';
+import 'package:flutter_chat_app/models/provider/fs_collection_state.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
 import 'package:provider/provider.dart';

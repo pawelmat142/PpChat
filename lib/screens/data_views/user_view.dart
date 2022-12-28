@@ -6,8 +6,8 @@ import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/data_views/data_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
+import 'package:flutter_chat_app/models/contact/contacts_service.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 
 class UserView extends DataView {
   const UserView({required super.interface,  super.key});

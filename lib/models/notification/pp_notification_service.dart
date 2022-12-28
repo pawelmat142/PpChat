@@ -4,7 +4,7 @@ import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
-import 'package:flutter_chat_app/models/provider/notifications.dart';
+import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 
 class PpNotificationService {

@@ -11,7 +11,7 @@ import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 
 class AuthenticationService {

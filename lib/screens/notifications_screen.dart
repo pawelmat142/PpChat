@@ -4,7 +4,7 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
-import 'package:flutter_chat_app/models/provider/notifications.dart';
+import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:provider/provider.dart';
 

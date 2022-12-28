@@ -7,7 +7,7 @@ import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/process/delete_account_process.dart';
 import 'package:flutter_chat_app/models/provider/init_data.dart';
-import 'package:flutter_chat_app/models/provider/me.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';

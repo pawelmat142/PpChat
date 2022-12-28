@@ -4,16 +4,16 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
-import 'package:flutter_chat_app/models/provider/contacts.dart';
+import 'package:flutter_chat_app/models/contact/contacts.dart';
+import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
-import 'package:flutter_chat_app/state/conversations.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
-import 'package:flutter_chat_app/models/pp_message.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/models/conversation/pp_message.dart';
+import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 
 //TODO: show time on tap message
 //TODO: sort messages on view by time
@@ -24,7 +24,6 @@ class ConversationService {
 
   final _firestore = FirebaseFirestore.instance;
   final _contactsService = getIt.get<ContactsService>();
-  final _state = getIt.get<States>();
   final popup = getIt.get<Popup>();
   final spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
@@ -39,7 +38,8 @@ class ConversationService {
 
   StreamSubscription? _messagesObserver;
 
-  Conversations get conversations => _state.conversations;
+  // ConversationsOld get conversations => _state.conversations;
+  Conversations conversations = Conversations.reference;
   Contacts get contacts => Contacts.reference;
 
   bool initialized = false;

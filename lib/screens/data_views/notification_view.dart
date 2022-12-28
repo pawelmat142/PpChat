@@ -10,7 +10,7 @@ import 'package:flutter_chat_app/models/notification/pp_notification_types.dart'
 import 'package:flutter_chat_app/screens/data_views/invitation_acceptance_view.dart';
 import 'package:flutter_chat_app/screens/data_views/invitation_self_notification_view.dart';
 import 'package:flutter_chat_app/screens/data_views/invitation_view.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 
 class NotificationView extends StatelessWidget {
 

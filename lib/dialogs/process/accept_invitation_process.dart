@@ -1,8 +1,8 @@
 import 'package:flutter_chat_app/config/get_it.dart';
-import 'package:flutter_chat_app/models/pp_message.dart';
-import 'package:flutter_chat_app/models/provider/contact_uids.dart';
-import 'package:flutter_chat_app/models/provider/me.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
+import 'package:flutter_chat_app/models/conversation/pp_message.dart';
+import 'package:flutter_chat_app/models/contact/contact_uids.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:flutter_chat_app/state/states.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/process/log_process.dart';

@@ -3,8 +3,8 @@ import 'package:flutter_chat_app/components/contacts_tile/contact_tile.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/process/find_contact.dart';
-import 'package:flutter_chat_app/models/provider/contacts.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/models/contact/contacts.dart';
+import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:provider/provider.dart';
 
 class ContactsScreen extends StatelessWidget {

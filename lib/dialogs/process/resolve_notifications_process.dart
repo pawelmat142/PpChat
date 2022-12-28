@@ -6,7 +6,7 @@ import 'package:flutter_chat_app/dialogs/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
-import 'package:flutter_chat_app/models/provider/me.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/state/states.dart';
 
 class ResolveNotificationsProcess extends LogProcess {

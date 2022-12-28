@@ -4,7 +4,7 @@ import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 
 class ContactTile extends StatelessWidget {
   final PpUser contactUser;
