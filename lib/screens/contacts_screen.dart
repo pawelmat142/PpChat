@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/contacts_tile/contact_tile.dart';
-import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/process/find_contact.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
-import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:provider/provider.dart';
 
 class ContactsScreen extends StatelessWidget {
-  ContactsScreen({Key? key}) : super(key: key);
+  const ContactsScreen({Key? key}) : super(key: key);
   static const String id = 'contacts_screen';
-
-  final contactsService = getIt.get<ContactsService>();
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
 
       appBar: AppBar(title: const Text('CONTACTS')),

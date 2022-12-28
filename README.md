@@ -347,3 +347,5 @@ Contacts, ContactUids, Me states refactored
 directories paths refactored
 
 ### [095] Directories refactor
+
+### [096] Make screen widgets const

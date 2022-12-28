@@ -58,8 +58,8 @@ class MyApp extends StatelessWidget {
       routes: {
         BlankScreen.id: (context) => const BlankScreen(),
         HomeScreen.id: (context) => const HomeScreen(),
-        ContactsScreen.id: (context) => ContactsScreen(),
-        NotificationsScreen.id: (context) => NotificationsScreen(),
+        ContactsScreen.id: (context) => const ContactsScreen(),
+        NotificationsScreen.id: (context) => const NotificationsScreen(),
         LoginFormScreen.id: (context) => LoginFormScreen(),
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
         ConversationView.id: (context) => const ConversationView(),

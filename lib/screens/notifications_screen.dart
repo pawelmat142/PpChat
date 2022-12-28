@@ -10,10 +10,9 @@ import 'package:provider/provider.dart';
 
 
 class NotificationsScreen extends StatelessWidget {
-  NotificationsScreen({super.key});
+  const NotificationsScreen({super.key});
   static const String id = 'notifications_screen';
 
-  final notificationService = getIt.get<PpNotificationService>();
   // Notifications get notifications => notificationService.notifications;
 
   List<NotificationTile> _notificationTilesMapper(List<PpNotification> notifications) {
@@ -61,6 +60,7 @@ class NotificationsScreen extends StatelessWidget {
   removeAllButton() => Padding(
     padding: BASIC_HORIZONTAL_PADDING,
     child: PpButton(text: 'remove all', color: Colors.red, onPressed: () {
+      final notificationService = getIt.get<PpNotificationService>();
       notificationService.onRemoveAll();
   }));
 
