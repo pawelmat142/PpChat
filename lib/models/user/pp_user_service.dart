@@ -15,7 +15,7 @@ class PpUserService {
   final _state = getIt.get<States>();
   final logService = getIt.get<LogService>();
 
-  Me get me => _state.me;
+  MeOld get me => _state.me;
   String get nickname => _state.me.nickname.isNotEmpty ? _state.me.nickname : AuthenticationService.nickname;
 
 

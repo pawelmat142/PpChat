@@ -6,36 +6,41 @@ import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/process/delete_account_process.dart';
+import 'package:flutter_chat_app/models/init_data.dart';
+import 'package:flutter_chat_app/models/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
   static const String id = 'home_screen';
 
-  final contactsService = getIt.get<ContactsService>();
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () => InitData(context));
+  }
 
   @override
   Widget build(BuildContext context) {
 
     final authService = getIt.get<AuthenticationService>();
-    final userService = getIt.get<PpUserService>();
 
     return Scaffold(
 
-      appBar: AppBar(title: StreamBuilder<List<PpUser>>(
-          initialData: userService.initialized ? userService.me.get : [],
-          stream: userService.me.stream,
-          builder: (context, snapshot) {
-              return Text(snapshot.data != null && userService.initialized
-                  ? 'HOME SCREEN - ${userService.me.nickname}'
-                  : 'xx');
-          })),
+      appBar: AppBar(title: Consumer<Me>(
+        builder: (context, me, child) => Text(me.isNotEmpty ? me.nickname : 'xx')
+      )),
 
       body: Padding(
         padding: BASIC_HORIZONTAL_PADDING,
@@ -69,7 +74,6 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-
 
   onDeleteAccount() async {
     final popup = getIt.get<Popup>();

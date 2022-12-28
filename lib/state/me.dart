@@ -4,7 +4,7 @@ import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/state/interfaces/firestore_document_state.dart';
 import 'package:flutter_chat_app/state/states.dart';
 
-class Me extends FirestoreDocumentState<PpUser> {
+class MeOld extends FirestoreDocumentState<PpUser> {
 
   String get signature => state.isNotEmpty ? state[0].signature : throw Exception('!!!!!!!!!!!Me not set');
 

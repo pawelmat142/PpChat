@@ -11,7 +11,7 @@ import 'package:flutter_chat_app/state/notifications.dart';
 class States {
 
   /// PpUser object representing signed in user - stored in firestore
-  final me = Me();
+  final me = MeOld();
 
   /// list of contacts fireAuth uid
   final contactUids = ContactUids();

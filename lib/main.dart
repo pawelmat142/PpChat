@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/config/get_it.dart';
 import 'package:flutter_chat_app/config/navigation_service.dart';
 import 'package:flutter_chat_app/firebase_options.dart';
+import 'package:flutter_chat_app/models/me.dart';
 import 'package:flutter_chat_app/models/pp_message.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
@@ -13,13 +14,19 @@ import 'package:flutter_chat_app/screens/home_screen.dart';
 import 'package:flutter_chat_app/screens/notifications_screen.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:navigation_history_observer/navigation_history_observer.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(PpMessageAdapter());
 
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+        ChangeNotifierProvider(create: (_) => Me()),
+      ],
+      child: const MyApp(),
+    )
+  );
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -41,7 +48,7 @@ class MyApp extends StatelessWidget {
       initialRoute: BlankScreen.id,
       routes: {
         BlankScreen.id: (context) => const BlankScreen(),
-        HomeScreen.id: (context) => HomeScreen(),
+        HomeScreen.id: (context) => const HomeScreen(),
         ContactsScreen.id: (context) => ContactsScreen(),
         NotificationsScreen.id: (context) => NotificationsScreen(),
         LoginFormScreen.id: (context) => LoginFormScreen(),
