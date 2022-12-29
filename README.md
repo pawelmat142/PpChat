@@ -349,3 +349,9 @@ directories paths refactored
 ### [095] Directories refactor
 
 ### [096] Make screen widgets const
+
+## chat_features
+
+### [097] DateFormatter - AnimatedContainer
+`flutter pub add intl`
+</br> show time on tap message bubble

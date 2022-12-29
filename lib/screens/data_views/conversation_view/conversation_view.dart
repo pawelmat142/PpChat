@@ -61,7 +61,7 @@ class ConversationView extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                   children: box.values.map((m) {
 
-                    return MessageBubble(message: m.message, my: m.sender == Uid.get);
+                    return MessageBubble(message: m.message, my: m.sender == Uid.get, timestamp: m.timestamp);
 
                   }).toList().reversed.toList(),
                 );

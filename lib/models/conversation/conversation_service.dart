@@ -15,7 +15,7 @@ import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 
-//TODO: show time on tap message
+//TODO: divide messages by day
 //TODO: sort messages on view by time
 //TODO: implement auto delete
 //TODO: configurable time to live
