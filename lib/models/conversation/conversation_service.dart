@@ -187,8 +187,9 @@ class ConversationService {
     })]);
   }
 
-  onClearConversation(PpUser contactUser) async {
+  onClearConversation(String uid) async {
     await Future.delayed(const Duration(milliseconds: 100));
+    final contactUser = _contactsService.getByUid(uid: uid)!;
     popup.show('Are you sure?',
         text: 'Messages data will be lost also on the other side!',
         buttons: [PopupButton('Clear', onPressed: () async {

@@ -21,7 +21,7 @@ class ConversationPopupMenu extends StatelessWidget {
         PopupMenuItem(
           onTap: () => conversation.isLocked
             ? conversationService.onUnlock(conversation.contactUid)
-            : conversationService.onLockConversation(conversation.contactUid),
+            : conversationService.onClearConversation(conversation.contactUid),
           child: Row(
             children: const [
               Icon(Icons.speaker_notes_off, color: Colors.deepOrangeAccent, size: 34),

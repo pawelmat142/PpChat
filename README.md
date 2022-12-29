@@ -359,3 +359,5 @@ directories paths refactored
 ### [098] Sort and show time of messages
 
 ### [099] Conversation settings view navigation
+
+### [100] Conversation settings data model - hive
