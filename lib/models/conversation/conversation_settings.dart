@@ -6,12 +6,20 @@ part 'conversation_settings.g.dart';
 @HiveType(typeId: 1)
 class ConversationSettings extends HiveObject {
 
-  /// 1 week = 7 x 24 h = 168 h = 10080 min
   static const int timeToLiveInMinutesDefault = 10080;
-  /// 1 day = 24 h = 1440 min
+  /// 1 week = 7 x 24 h = 168 h = 10080 min
   static const int timeToLiveAfterReadInMinutesDefault = 1440;
+  /// 1 day = 24 h = 1440 min
 
-  static ConversationSettings getDefault({required String contactUid}) {
+  static const int timeToLiveMin = 10;
+  static const int timeToLiveMax = 302400;
+  /// 1 month = 30 x 10080 min = 302400
+
+  static const int timeToLiveAfterReadMin = 10;
+  static const int timeToLiveAfterReadMax = 10080;
+
+
+  static ConversationSettings createDefault({required String contactUid}) {
     return ConversationSettings(contactUid: contactUid);
   }
 
@@ -33,6 +41,10 @@ class ConversationSettings extends HiveObject {
   int timeToLiveAfterReadInMinutes;
 
   String get hiveKey => 'config_${Uid.get!}_$contactUid';
+
+  static String createKey({required String contactUid}) {
+    return 'config_${Uid.get!}_$contactUid';
+  }
 
 }
 
