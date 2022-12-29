@@ -355,3 +355,5 @@ directories paths refactored
 ### [097] DateFormatter - AnimatedContainer
 `flutter pub add intl`
 </br> show time on tap message bubble
+
+### [098] Sort and show time of messages
