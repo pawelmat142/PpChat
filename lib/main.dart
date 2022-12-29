@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_settings_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/firebase_options.dart';
@@ -63,6 +64,7 @@ class MyApp extends StatelessWidget {
         LoginFormScreen.id: (context) => LoginFormScreen(),
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
         ConversationView.id: (context) => const ConversationView(),
+        ConversationSettingsView.id: (context) => const ConversationSettingsView(),
       },
     );
   }

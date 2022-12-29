@@ -357,3 +357,5 @@ directories paths refactored
 </br> show time on tap message bubble
 
 ### [098] Sort and show time of messages
+
+### [099] Conversation settings view navigation
