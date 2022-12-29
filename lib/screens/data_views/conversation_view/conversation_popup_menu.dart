@@ -1,9 +1,9 @@
-import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
-import 'package:flutter_chat_app/state/conversation.dart';
+import 'package:flutter_chat_app/models/contact/contacts_service.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
+import 'package:flutter_chat_app/models/conversation/conversation.dart';
 
 class ConversationPopupMenu extends StatelessWidget {
   const ConversationPopupMenu({required this.conversation, Key? key}) : super(key: key);

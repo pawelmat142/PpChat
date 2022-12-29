@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 
 class PpNotification {
   final String documentId;
@@ -54,7 +54,7 @@ class PpNotification {
   }
 
   static PpNotification createInvitation({required String text, required String sender, required String receiver}) => PpNotification(
-      documentId: States.getUid!,
+      documentId: Uid.get!,
       sender: sender,
       receiver: receiver,
       type: PpNotificationTypes.invitation,
@@ -87,7 +87,7 @@ class PpNotification {
   );
 
   static PpNotification createContactDeleted({required String sender, required String receiver}) => PpNotification(
-      documentId: States.getUid!,
+      documentId: Uid.get!,
       sender: sender,
       receiver: receiver,
       type: PpNotificationTypes.contactDeletedNotification,

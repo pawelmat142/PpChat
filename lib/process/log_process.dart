@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
@@ -9,9 +9,7 @@ class LogProcess {
 
   final _spinner = getIt.get<PpSpinner>();
 
-  LogProcess() {
-    firstLog();
-  }
+  LogProcess();
 
   final firestore = FirebaseFirestore.instance;
   final popup = getIt.get<Popup>();
@@ -33,10 +31,6 @@ class LogProcess {
 
   setSaveMode(bool mode) {
     saveMode = mode;
-  }
-
-  firstLog() {
-    log('first log');
   }
 
   log(String log) {

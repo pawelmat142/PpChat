@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/contact/contacts.dart';
+import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
-import 'package:flutter_chat_app/state/contacts.dart';
-import 'package:flutter_chat_app/state/conversations.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
-import 'package:flutter_chat_app/models/pp_message.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
+import 'package:flutter_chat_app/models/conversation/pp_message.dart';
+import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 
 //TODO: show time on tap message
 //TODO: sort messages on view by time
@@ -24,13 +24,12 @@ class ConversationService {
 
   final _firestore = FirebaseFirestore.instance;
   final _contactsService = getIt.get<ContactsService>();
-  final _state = getIt.get<States>();
   final popup = getIt.get<Popup>();
   final spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
 
   CollectionReference get messagesCollectionRef => _firestore
-      .collection(Collections.PpUser).doc(States.getUid)
+      .collection(Collections.PpUser).doc(Uid.get)
       .collection(Collections.Messages);
 
   CollectionReference contactMessagesCollectionRef({required String contactUid}) => _firestore
@@ -39,8 +38,9 @@ class ConversationService {
 
   StreamSubscription? _messagesObserver;
 
-  Conversations get conversations => _state.conversations;
-  Contacts get contacts => _state.contacts;
+  // ConversationsOld get conversations => _state.conversations;
+  Conversations conversations = Conversations.reference;
+  Contacts get contacts => Contacts.reference;
 
   bool initialized = false;
 
@@ -84,7 +84,7 @@ class ConversationService {
     for (var documentId in messages.keys) {
 
       final senderUid = messages[documentId]!.sender;
-      final contactUid = senderUid != States.getUid ? senderUid : messages[documentId]!.receiver;
+      final contactUid = senderUid != Uid.get ? senderUid : messages[documentId]!.receiver;
       if (contacts.containsByUid(contactUid)) {
 
         final conversation = await conversations.openOrCreate(contactUid: contactUid);
@@ -136,7 +136,7 @@ class ConversationService {
   sendMessage({required String message, required PpUser contactUser, bool isMock = false}) async {
     final msg = PpMessage.create(
         message: message,
-        sender: States.getUid!,
+        sender: Uid.get!,
         receiver: contactUser.uid,
         timeToLive: isMock ? -1 : 0
     );

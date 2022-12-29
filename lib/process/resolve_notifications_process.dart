@@ -1,17 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
-import 'package:flutter_chat_app/dialogs/process/log_process.dart';
+import 'package:flutter_chat_app/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 
 class ResolveNotificationsProcess extends LogProcess {
 
-  final _state = getIt.get<States>();
   final _invitationService = getIt.get<InvitationService>();
+
+  Me get me => Me.reference;
 
   ResolveNotificationsProcess(this.notifications, {this.skipFlushbar = false});
 
@@ -28,7 +30,7 @@ class ResolveNotificationsProcess extends LogProcess {
   process() async {
     try {
       log('[START] ResolveNotificationsProcess');
-      setContext('ResolveNotificationsProcess');
+      setContext(me.nickname);
       setProcess('ResolveNotificationsProcess');
       batch = firestore.batch();
 
@@ -78,7 +80,6 @@ class ResolveNotificationsProcess extends LogProcess {
     if (invitationAcceptances.isNotEmpty) log('${invitationAcceptances.length} invitation acceptances to resolve');
     if (contactDeletedNotifications.isNotEmpty) log('${contactDeletedNotifications.length} contacts to delete');
     if (notificationsToFlush.isNotEmpty) log('${notificationsToFlush.length} notifications to flush');
-    log('prepared');
   }
 
 
@@ -110,11 +111,11 @@ class ResolveNotificationsProcess extends LogProcess {
 
 
   DocumentReference documentReference(PpNotification notification) => firestore
-      .collection(Collections.PpUser).doc(States.getUid)
+      .collection(Collections.PpUser).doc(Uid.get)
       .collection(Collections.NOTIFICATIONS).doc(notification.documentId);
 
   String documentId(PpNotification notification) => imSender(notification) ? notification.receiver : notification.sender;
 
-  bool imSender(PpNotification notification) => notification.sender == _state.me.nickname;
+  bool imSender(PpNotification notification) => notification.sender == me.nickname;
 
 }

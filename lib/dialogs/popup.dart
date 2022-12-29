@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/config/navigation_service.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
 
 class PopupButton {
   final Function? onPressed;

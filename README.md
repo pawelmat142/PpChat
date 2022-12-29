@@ -329,3 +329,23 @@ by ConversationMock feature
 </br> little files refactor
 
 ### [088] Conversation lock feature
+
+## feature/provider_refactor
+
+### [089] Initialize provider, Me refactor
+
+### [090] ContactUids refactor
+
+### [091] Contacts refactor
+
+### [092] Refactoring states
+Contacts, ContactUids, Me states refactored
+
+### [093] Notifications refactored
+
+### [094] Conversations refactored
+directories paths refactored
+
+### [095] Directories refactor
+
+### [096] Make screen widgets const

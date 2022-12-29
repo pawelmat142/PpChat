@@ -3,12 +3,12 @@ import 'package:flutter_chat_app/components/message_bubble.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_popup_menu.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/message_input.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
-import 'package:flutter_chat_app/config/navigation_service.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
-import 'package:flutter_chat_app/models/pp_message.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
+import 'package:flutter_chat_app/models/conversation/pp_message.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class ConversationView extends StatelessWidget {
@@ -61,7 +61,7 @@ class ConversationView extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                   children: box.values.map((m) {
 
-                    return MessageBubble(message: m.message, my: m.sender == States.getUid);
+                    return MessageBubble(message: m.message, my: m.sender == Uid.get);
 
                   }).toList().reversed.toList(),
                 );

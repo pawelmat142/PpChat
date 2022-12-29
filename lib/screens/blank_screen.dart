@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
@@ -42,6 +42,14 @@ class BlankScreen extends StatelessWidget {
                   onPressed: () {
                     final authService = getIt.get<AuthenticationService>();
                     authService.login(nickname: 'aaaaaa', password: 'aaaaaa');
+                  },
+              ),
+
+              PpButton(
+                  text: 'log bbbbbb',
+                  onPressed: () {
+                    final authService = getIt.get<AuthenticationService>();
+                    authService.login(nickname: 'bbbbbb', password: 'bbbbbb');
                   },
               ),
 

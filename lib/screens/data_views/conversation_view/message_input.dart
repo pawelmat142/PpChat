@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/services/conversation_service.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 
 class MessageInput extends StatefulWidget {
   const MessageInput({required this.contactUser, Key? key}) : super(key: key);

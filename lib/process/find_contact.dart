@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/config/get_it.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
@@ -8,10 +8,11 @@ import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
-import 'package:flutter_chat_app/services/contacts_service.dart';
-import 'package:flutter_chat_app/state/states.dart';
+import 'package:flutter_chat_app/models/contact/contacts_service.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 
 class FindContact {
 
@@ -21,6 +22,8 @@ class FindContact {
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  final Me me = Me.reference;
 
   String nickname = '';
   String message = '';
@@ -48,10 +51,10 @@ class FindContact {
     if (nickname.length < 6) {
       await _popup.show('Nickname must have at least 6 characters.', error: true);
     }
-    else if (nickname == _userService.nickname) {
+    else if (nickname == me.nickname) {
       await _popup.show('You have found yourself.', error: true);
     }
-    else if (_contactsService.contacts.nicknames.contains(nickname)) {
+    else if (_contactsService.contacts.getByNickname(nickname) != null) {
       await _popup.show('Already in contacts!', text: nickname, error: true);
     }
     else if (_invitationService.isInvitationSent(nickname)) {
@@ -126,7 +129,7 @@ class FindContact {
 
     final receiverNotificationsRef = _firestore
         .collection(Collections.PpUser).doc(foundUser.uid)
-        .collection(Collections.NOTIFICATIONS).doc(States.getUid);
+        .collection(Collections.NOTIFICATIONS).doc(Uid.get);
     //contact's notification docId = my uid so any next notification from me will overwrite it
     batch.set(receiverNotificationsRef, PpNotification.createInvitation(
         sender: _userService.nickname,
@@ -134,7 +137,7 @@ class FindContact {
         text: message).asMap);
 
     final myNotificationsRef = _firestore
-        .collection(Collections.PpUser).doc(States.getUid)
+        .collection(Collections.PpUser).doc(Uid.get)
         .collection(Collections.NOTIFICATIONS).doc(foundUser.uid);
     //my self notification docId = contact's uid so any notification from contact will overwrite it
     selfNotification = PpNotification.createInvitationSelfNotification(
