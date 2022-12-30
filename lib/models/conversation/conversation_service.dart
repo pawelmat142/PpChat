@@ -14,6 +14,7 @@ import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
+import 'package:hive/hive.dart';
 
 //TODO: implement auto delete
 //TODO: implement time to live after read
@@ -207,5 +208,25 @@ class ConversationService {
     return conversations.getByUid(contactUser.nickname)!.isLocked;
   }
 
+  markAsRead(Box<PpMessage> box) {
+    Future.delayed(Duration.zero, () {
+      Map<dynamic, PpMessage> result = {};
+      int markedAsRead = 0;
+
+      for (var key in box.keys) {
+        PpMessage? message = box.get(key);
+        if (message != null && !message.isRead) {
+          message.readTimestamp = DateTime.now();
+          markedAsRead++;
+        }
+        result[key] = message!;
+      }
+
+      if (markedAsRead > 0) {
+        box.putAll(result);
+        logService.log('[MSG] $markedAsRead messages marked as read');
+      }
+    });
+  }
 
 }

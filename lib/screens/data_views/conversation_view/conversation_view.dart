@@ -57,6 +57,8 @@ class ConversationView extends StatelessWidget {
 
                 if (isMock(box)) return MessageMock(box.values.first, contactUser);
 
+                conversationService.markAsRead(box);
+
                 final interfaces = box.values.map((m) => MessageBubbleInterface(
                     message: m.message,
                     my: m.sender == Uid.get,

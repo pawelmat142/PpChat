@@ -365,3 +365,5 @@ directories paths refactored
 ### [101] Conversation settings view - form
 
 ### [102] Conversation settings service
+
+### [103] Set read timestamp to PpMessage on ConversationView

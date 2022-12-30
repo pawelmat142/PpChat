@@ -21,15 +21,16 @@ class PpMessageAdapter extends TypeAdapter<PpMessage> {
       receiver: fields[1] as String,
       message: fields[2] as String,
       timestamp: fields[3] as DateTime,
-      timeToLive: fields[4] as int,
-      isRead: fields[5] as bool,
+      readTimestamp: fields[4] as DateTime,
+      timeToLive: fields[5] as int,
+      timeToLiveAfterRead: fields[6] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, PpMessage obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.sender)
       ..writeByte(1)
@@ -39,9 +40,11 @@ class PpMessageAdapter extends TypeAdapter<PpMessage> {
       ..writeByte(3)
       ..write(obj.timestamp)
       ..writeByte(4)
-      ..write(obj.timeToLive)
+      ..write(obj.readTimestamp)
       ..writeByte(5)
-      ..write(obj.isRead);
+      ..write(obj.timeToLive)
+      ..writeByte(6)
+      ..write(obj.timeToLiveAfterRead);
   }
 
   @override
