@@ -1,3 +1,4 @@
+import 'package:flutter_chat_app/models/conversation/conversation_settings.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/models/contact/contact_uids.dart';
@@ -59,7 +60,10 @@ class AcceptInvitationProcess extends LogProcess {
             : invitation.documentId,
         receiver: invitation.receiver == me.nickname
             ? Uid.get!
-            : invitation.documentId);
+            : invitation.documentId,
+        timeToLive: ConversationSettings.timeToLiveInMinutesDefault,
+        timeToLiveAfterRead: ConversationSettings.timeToLiveAfterReadInMinutesDefault,
+    );
 
     _conversationService.messagesCollectionRef.add(message.asMap);
     _conversationService.contactMessagesCollectionRef(contactUid: invitation.documentId)

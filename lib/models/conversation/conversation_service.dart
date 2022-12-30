@@ -132,31 +132,29 @@ class ConversationService {
   }
 
 
-  sendMessage({required String message, required PpUser contactUser, bool isMock = false}) async {
-    final msg = PpMessage.create(
-        message: message,
-        sender: Uid.get!,
-        receiver: contactUser.uid,
-        timeToLive: isMock ? -1 : 0
-    );
-    await contactMessagesCollectionRef(contactUid: contactUser.uid).add(msg.asMap);
-    conversations.getByUid(contactUser.uid)?.addMessage(msg);
+  sendMessage(PpMessage message) async {
+    await contactMessagesCollectionRef(contactUid: message.receiver).add(message.asMap);
+    conversations.getByUid(message.receiver)?.addMessage(message);
   }
 
 
   clearConversation(PpUser contactUser) async {
-    sendMessage(
+    sendMessage(PpMessage.create(
         message: MessageMock.TYPE_CLEAR,
-        contactUser: contactUser,
-        isMock: true
+        sender: Uid.get!,
+        receiver: contactUser.uid,
+        timeToLive: -1,
+        timeToLiveAfterRead: -1)
     );
   }
 
   lockConversation(PpUser contactUser) async {
-    sendMessage(
+    sendMessage(PpMessage.create(
         message: MessageMock.TYPE_LOCK,
-        contactUser: contactUser,
-        isMock: true
+        sender: Uid.get!,
+        receiver: contactUser.uid,
+        timeToLive: -1,
+        timeToLiveAfterRead: -1)
     );
   }
 
