@@ -363,3 +363,5 @@ directories paths refactored
 ### [100] Conversation settings data model - hive
 
 ### [101] Conversation settings view - form
+
+### [102] Conversation settings service

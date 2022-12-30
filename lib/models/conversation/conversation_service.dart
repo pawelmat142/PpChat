@@ -16,7 +16,6 @@ import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 
 //TODO: implement auto delete
-//TODO: configurable time to live
 //TODO: implement time to live after read
 //TODO: show unread messages on tile
 class ConversationService {

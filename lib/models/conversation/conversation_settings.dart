@@ -7,22 +7,38 @@ part 'conversation_settings.g.dart';
 class ConversationSettings extends HiveObject {
 
   static const int timeToLiveInMinutesDefault = 10080;
-  /// 1 week = 7 x 24 h = 168 h = 10080 min
+  /// 1 week = 7 x 24 h = 168 h = 10 080 min
   static const int timeToLiveAfterReadInMinutesDefault = 1440;
   /// 1 day = 24 h = 1440 min
 
   static const int timeToLiveMin = 10;
-  static const int timeToLiveMax = 302400;
-  /// 1 month = 30 x 10080 min = 302400
+  static const int timeToLiveMax = 43200;
+  /// 1 month = 30 x 24 x 60 min = 43 200
 
   static const int timeToLiveAfterReadMin = 10;
   static const int timeToLiveAfterReadMax = 10080;
 
+  static String createKey({required String contactUid}) {
+    return 'config_${Uid.get!}_$contactUid';
+  }
 
   static ConversationSettings createDefault({required String contactUid}) {
     return ConversationSettings(contactUid: contactUid);
   }
 
+  static ConversationSettings create({
+    required String contactUid,
+    required int timeToLive,
+    required int timeToLiveAfterRead,
+  }) {
+    final settings = ConversationSettings(contactUid: contactUid);
+    settings.timeToLiveInMinutes = timeToLive;
+    settings.timeToLiveAfterReadInMinutes = timeToLiveAfterRead;
+    settings.validate();
+    return settings;
+  }
+
+  String get hiveKey => 'config_${Uid.get!}_$contactUid';
 
 
   ConversationSettings({
@@ -40,11 +56,28 @@ class ConversationSettings extends HiveObject {
   @HiveField(2)
   int timeToLiveAfterReadInMinutes;
 
-  String get hiveKey => 'config_${Uid.get!}_$contactUid';
 
-  static String createKey({required String contactUid}) {
-    return 'config_${Uid.get!}_$contactUid';
+  //
+  // Future<Conversation> openOrCreate({required String contactUid}) async {
+  //   final conversation = getByUid(contactUid);
+  //   if (conversation == null) {
+  //     _addOne(await Conversation.create(contactUid: contactUid));
+  //   }
+  //   else if (!conversation.isOpen) {
+  //     await conversation.open();
+  //   }
+  //   return getByUid(contactUid)!;
+  // }
+
+
+  validate() {
+    if (timeToLiveInMinutes < timeToLiveMin
+        || timeToLiveInMinutes > timeToLiveMax
+        || timeToLiveAfterReadInMinutes < timeToLiveAfterReadMin
+        || timeToLiveAfterReadInMinutes > timeToLiveAfterReadMax
+    ) throw Exception('LIMIT EXCEEDED!!');
   }
+
 
 }
 
