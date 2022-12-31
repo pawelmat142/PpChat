@@ -52,6 +52,7 @@ abstract class FsCollectionModel<T> with ChangeNotifier {
   clear() {
     _state = [];
     notifyListeners();
+    log('[clear] [$runtimeType]');
   }
 
 

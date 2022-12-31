@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const NotificationInfo(),
 
               PpButton(text: 'LOGOUT',
-                onPressed: authService.logout,
+                onPressed: authService.onLogout,
               ),
 
               PpButton(text: 'DELETE ACCOUNT',

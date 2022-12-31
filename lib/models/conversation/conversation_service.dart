@@ -45,18 +45,15 @@ class ConversationService {
 
   login() async {
     initialized = false;
-    await _startMessagesObserver();
+    await startMessagesObserver();
     initialized = true;
   }
 
-  logout() async {
-    if (initialized) {
-      await _stopMessagesObserver();
-      conversations.clear();
-    }
+  clearConversations() async {
+    await conversations.clear();
   }
 
-  _startMessagesObserver() async {
+  startMessagesObserver() async {
     final completer = Completer();
     _messagesObserver ??= messagesCollectionRef.snapshots().listen((event) async {
       logService.log('[MSG] messages observer triggered');
@@ -110,7 +107,7 @@ class ConversationService {
   }
 
 
-  _stopMessagesObserver() async {
+  stopMessagesObserver() async {
     if (_messagesObserver != null) {
       await _messagesObserver!.cancel();
       _messagesObserver = null;
@@ -118,8 +115,8 @@ class ConversationService {
   }
 
   resetMessagesObserver() async {
-    await _stopMessagesObserver();
-    await _startMessagesObserver();
+    await stopMessagesObserver();
+    await startMessagesObserver();
   }
 
   navigateToConversationView(PpUser contactUser) async {

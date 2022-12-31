@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
@@ -20,6 +21,7 @@ class ContactsService {
 
   final _firestore = FirebaseFirestore.instance;
   final _popup = getIt.get<Popup>();
+  final _conversationSettingsService = getIt.get<ConversationSettingsService>();
   final logService = getIt.get<LogService>();
 
 
@@ -43,14 +45,19 @@ class ContactsService {
 
   _deleteContact(String uid) async {
     try {
-      final conversation = conversations.getByUid(uid);
       final contactUser = contacts.getByUid(uid)!;
-      if (conversation != null) await conversations.killBoxAndDelete(conversation);
+      await deleteConversationAndSettingsIfExists(contactUid: contactUser.uid);
       await _sendContactDeletedNotification(contactUser);
       contactUids.deleteOne(contactUser.uid);
     } catch (error) {
       logService.error(error.toString());
     }
+  }
+
+  deleteConversationAndSettingsIfExists({required String contactUid}) async {
+    final conversation = conversations.getByUid(contactUid);
+    if (conversation != null) await conversations.killBoxAndDelete(conversation);
+    await _conversationSettingsService.deleteIfExists(contactUid: contactUid);
   }
 
   _sendContactDeletedNotification(PpUser contactUser) async {

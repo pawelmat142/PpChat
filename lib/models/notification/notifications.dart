@@ -3,7 +3,7 @@ import 'package:flutter_chat_app/process/resolve_notifications_process.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
-import 'package:flutter_chat_app/models/interfaces/fs_collection_state.dart';
+import 'package:flutter_chat_app/models/interfaces/fs_collection_model.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:provider/provider.dart';
 

@@ -69,7 +69,6 @@ class ResolveNotificationsProcess extends LogProcess {
             break;
 
           case PpNotificationTypes.contactDeletedNotification:
-            //TODO: CLEAR CONVERSATION WHEN RESOLVE DELETE
             contactDeletedNotifications.add(notification);
             batch.delete(documentReference(notification));
             break;

@@ -41,7 +41,7 @@ class BlankScreen extends StatelessWidget {
                   text: 'log aaaaaa',
                   onPressed: () {
                     final authService = getIt.get<AuthenticationService>();
-                    authService.login(nickname: 'aaaaaa', password: 'aaaaaa');
+                    authService.onLogin(nickname: 'aaaaaa', password: 'aaaaaa');
                   },
               ),
 
@@ -49,7 +49,7 @@ class BlankScreen extends StatelessWidget {
                   text: 'log bbbbbb',
                   onPressed: () {
                     final authService = getIt.get<AuthenticationService>();
-                    authService.login(nickname: 'bbbbbb', password: 'bbbbbb');
+                    authService.onLogin(nickname: 'bbbbbb', password: 'bbbbbb');
                   },
               ),
 

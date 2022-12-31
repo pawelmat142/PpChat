@@ -369,3 +369,5 @@ directories paths refactored
 ### [103] Set read timestamp to PpMessage on ConversationView
 
 ### [104] timeToLive set to sent messages
+
+### [105] login/logout, deleteContact fix 

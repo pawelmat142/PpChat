@@ -22,4 +22,13 @@ class ConversationSettingsService {
     return result;
   }
 
+  deleteIfExists({required String contactUid}) async {
+    print('delete if exists: $contactUid}');
+    final key = ConversationSettings.createKey(contactUid: contactUid);
+    if (await Hive.boxExists(key)) {
+      print('exists');
+      await Hive.box(key).deleteFromDisk();
+    }
+  }
+
 }

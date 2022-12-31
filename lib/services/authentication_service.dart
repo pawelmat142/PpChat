@@ -10,13 +10,11 @@ import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
-import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 
 class AuthenticationService {
   final _fireAuth = FirebaseAuth.instance;
   final _userService = getIt.get<PpUserService>();
-  final _conversationsService = getIt.get<ConversationService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
@@ -31,19 +29,77 @@ class AuthenticationService {
   bool _isRegisterInProgress = false;
   bool _isDeletingAccount = false;
 
+  String get getUid => Uid.get!;
+
   AuthenticationService() {
     _fireAuth.idTokenChanges().listen((user) async {
       if (user == null) {
-        log('[FireAuth] logout');
+        _spinner.stop();
+        log('[FireAuth listener] logout');
         _logoutResult(skipSignOut: true);
-      } else if (_isFirstUserListen) {
-        _loginResult();
+      } else if (!_isRegisterInProgress) {
+        _spinner.stop();
+        log('[FireAuth listener] login');
+        await Navigator.pushNamed(context, HomeScreen.id);
+        // onInit HomeScreen triggers LoginProcess
       }
       _isFirstUserListen = false;
     });
   }
 
-  String get getUid => Uid.get!;
+  void onLogin({required String nickname, required String password}) async {
+    try {
+      log('[START] Login by form process');
+      _spinner.start();
+      await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
+      log('[STOP] Login by form process');
+      _spinner.stop();
+      // await Navigator.pushNamed(context, HomeScreen.id);
+    }
+    on FirebaseAuthException {
+      _spinner.stop();
+      if (_fireAuth.currentUser != null) await _fireAuth.signOut();
+      await _popup.show('Wrong credentials!',
+          text: 'Please try again.',
+          error: true,
+          enableNavigateBack: true
+      );
+    } catch (error) {
+      _spinner.stop();
+      logService.errorHandler(error);
+    }
+  }
+
+  void onLogout() async {
+    try {
+      final process = LogoutProcess();
+      await process.process();
+      _spinner.start();
+      // await logoutServices();
+      await signOut();
+    }
+    catch (error) {
+      logService.errorHandler(error);
+      _errorPopup();
+    }
+  }
+
+  signOut() async {
+    if (_fireAuth.currentUser?.uid != null) {
+      await _fireAuth.signOut();
+    }
+  }
+
+  void _logoutResult({bool skipSignOut = false}) async {
+    if (!_isFirstUserListen && !_isRegisterInProgress && !_isDeletingAccount) {
+      if (!skipSignOut) await signOut();
+      _spinner.stop();
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      await _popup.show('You are logged out!');
+    }
+    _isDeletingAccount = false;
+  }
+
 
   void register({required String nickname, required String password}) async {
     try {
@@ -72,84 +128,6 @@ class AuthenticationService {
     _spinner.stop();
     _isRegisterInProgress = false;
     _popup.show('Nickname already in use!', error: true);
-  }
-
-  //when user login by form
-  void login({required String nickname, required String password}) async {
-    try {
-      log('[START] Login by form process');
-      _spinner.start();
-      await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
-      log('[STOP] Login by form process');
-      _spinner.stop();
-      await Navigator.pushNamed(context, HomeScreen.id);
-    }
-    on FirebaseAuthException {
-      _spinner.stop();
-      if (_fireAuth.currentUser != null) await _fireAuth.signOut();
-      await _popup.show('Wrong credentials!',
-        text: 'Please try again.',
-        error: true,
-        enableNavigateBack: true
-      );
-    } catch (error) {
-      _spinner.stop();
-      logService.errorHandler(error);
-    }
-  }
-
-  void logout() async {
-    try {
-      _spinner.start();
-      await logoutServices();
-      await signOut();
-    }
-    catch (error) {
-      logService.errorHandler(error);
-      _errorPopup();
-    }
-  }
-
-  signOut() async {
-      await _fireAuth.signOut();
-  }
-
-
-  //when user is already logged and start app
-  void _loginResult() async {
-    if (!_isRegisterInProgress) {
-      _spinner.stop();
-      await Navigator.pushNamed(context, HomeScreen.id);
-    }
-  }
-
-  void _logoutResult({bool skipSignOut = false}) async {
-    if (!_isFirstUserListen && !_isRegisterInProgress && !_isDeletingAccount) {
-      await logoutServices(skipSignOut: skipSignOut);
-      _spinner.stop();
-      await _popup.show('You are logged out!');
-      Navigator.of(context).popUntil((route) => route.isFirst);
-    }
-    _isDeletingAccount = false;
-  }
-
-  logoutServices({bool skipSignOut = false}) async {
-    log('[START] logout services - skipSignOut: $skipSignOut');
-    // await _userService.updateLogged(false);
-
-    await _conversationsService.logout();
-    // await _contactsService.logout();
-    // _notificationService.logout();
-
-    final process = LogoutProcess();
-    await process.process();
-
-    // await _userService.logout();
-    if (!skipSignOut) {
-      await signOut();
-    }
-    log('[STOP] logout services');
-    logService.setContext('log outed');
   }
 
   void _errorPopup() {
