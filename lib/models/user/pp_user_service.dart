@@ -60,6 +60,10 @@ class PpUserService {
     batch.delete(documentRef);
     await batch.commit();
   }
+  
+  setLoggedTrue() async {
+    await documentRef.update({PpUserFields.logged : true});
+  }
 
   updateLogged(bool logged) async {
     await documentRef.update({PpUserFields.logged : logged});

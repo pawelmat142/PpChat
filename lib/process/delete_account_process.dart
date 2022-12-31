@@ -14,7 +14,6 @@ import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
-import 'package:hive/hive.dart';
 
 
 class DeleteAccountProcess extends LogProcess {
@@ -113,12 +112,13 @@ class DeleteAccountProcess extends LogProcess {
 
       await _prepareBatch();
 
+      final logoutProcess = LogoutProcess();
+      await logoutProcess.process();
+
       await _batchCommit();
       //after this no access to firestore data anymore
       //only stored here remains like nickname, uid, contactUids
 
-      final logoutProcess = LogoutProcess();
-      await logoutProcess.process();
 
       await save();
 
@@ -135,15 +135,6 @@ class DeleteAccountProcess extends LogProcess {
     final data = {'uid': _myUid, 'nickname': me.nickname};
 
     _batchSet(documentReference: documentReference, data: data);
-  }
-
-
-  _deleteHiveConversationsData() async {
-    for (var conversation in conversations.get) {
-      await conversation.box.clear();
-      log('[DeleteAccountProcess] clear conversation box for ${contacts.getByUid(conversation.contactUid)}');
-    }
-    await Hive.deleteFromDisk();
   }
 
 

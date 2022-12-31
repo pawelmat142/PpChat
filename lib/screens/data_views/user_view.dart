@@ -24,8 +24,6 @@ class UserView extends DataView {
           buttons: [
 
             PpButton(text: 'message', onPressed: () {
-              NavigationService.popToHome();
-              Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
               final conversationService = getIt.get<ConversationService>();
               if (contactsService.contactExists(user.uid)) {
                 conversationService.navigateToConversationView(user);

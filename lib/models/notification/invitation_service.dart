@@ -36,6 +36,7 @@ class InvitationService {
     if (notifications.isNotEmpty) {
       final contactUidsToDelete = notifications.map((n) => n.documentId).toList();
       for (final contactUid in contactUidsToDelete) {
+        print('resolve deleted contact - ${contactUid} delete box');
         await _contactsService.deleteConversationAndSettingsIfExists(contactUid: contactUid);
       }
       final newState = contactUids.get

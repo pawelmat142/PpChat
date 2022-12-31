@@ -371,3 +371,5 @@ directories paths refactored
 ### [104] timeToLive set to sent messages
 
 ### [105] login/logout, deleteContact fix 
+
+### [106] login/logout, deleteContact fix..

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
@@ -67,6 +68,7 @@ class ConversationService {
 
       if (!completer.isCompleted) completer.complete();
     });
+    logService.log('[START] [Messages] firestore collection observer');
     return completer.future;
   }
 
@@ -109,6 +111,7 @@ class ConversationService {
 
   stopMessagesObserver() async {
     if (_messagesObserver != null) {
+      logService.log('[STOP] [Messages] firestore collection observer');
       await _messagesObserver!.cancel();
       _messagesObserver = null;
     }
@@ -201,6 +204,25 @@ class ConversationService {
 
   isConversationLocked(PpUser contactUser) {
     return conversations.getByUid(contactUser.nickname)!.isLocked;
+  }
+
+  deleteConversationBoxIfExists({required String contactUid}) async {
+    print('deleteConversationBoxIfExists');
+    final key = Conversation.hiveKey(contactUid: contactUid);
+    if (await Hive.boxExists(key)) {
+    print('exists');
+      if (!Hive.isBoxOpen(key)) {
+    print('open');
+        await Hive.openBox<PpMessage>(key);
+      }
+    print('box');
+      final box = Hive.box<PpMessage>(key);
+    print('clear');
+      await box.clear();
+    print('deleteFromDisk');
+      await box.deleteFromDisk();
+      logService.log('[ConversationService] conversation box deleted for $contactUid');
+    }
   }
 
   markAsRead(Box<PpMessage> box) {

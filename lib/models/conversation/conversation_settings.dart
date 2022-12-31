@@ -6,9 +6,11 @@ part 'conversation_settings.g.dart';
 @HiveType(typeId: 1)
 class ConversationSettings extends HiveObject {
 
-  static const int timeToLiveInMinutesDefault = 10080;
+  static const int timeToLiveInMinutesDefault = 2;
+  // static const int timeToLiveInMinutesDefault = 10080;
   /// 1 week = 7 x 24 h = 168 h = 10 080 min
-  static const int timeToLiveAfterReadInMinutesDefault = 1440;
+  static const int timeToLiveAfterReadInMinutesDefault = 1;
+  // static const int timeToLiveAfterReadInMinutesDefault = 1440;
   /// 1 day = 24 h = 1440 min
 
   static const int timeToLiveMin = 10;

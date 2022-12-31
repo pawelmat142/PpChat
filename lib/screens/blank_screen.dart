@@ -1,11 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/home_screen.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 
 class BlankScreen extends StatelessWidget {
   const BlankScreen({Key? key}) : super(key: key);
@@ -13,6 +14,12 @@ class BlankScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    if (Uid.get != null) {
+      Future.delayed(Duration.zero, () {
+        Navigator.pushNamed(context, HomeScreen.id);
+      });
+    }
 
     return Scaffold(
 
@@ -24,17 +31,13 @@ class BlankScreen extends StatelessWidget {
             children: [
 
               PpButton(
-                  text: 'GO TO LOGIN SCREEN',
+                  text: 'LOGIN',
                   onPressed: () => Navigator.pushNamed(context, LoginFormScreen.id),
               ),
 
               PpButton(
-                  text: 'GO TO HOME SCREEN',
-                  onPressed: () {
-                    if (FirebaseAuth.instance.currentUser != null) {
-                      Navigator.pushNamed(context, HomeScreen.id);
-                    }
-                  },
+                  text: 'REGISTER',
+                  onPressed: () => Navigator.pushNamed(context, RegisterFormScreen.id),
               ),
 
               PpButton(
@@ -50,6 +53,14 @@ class BlankScreen extends StatelessWidget {
                   onPressed: () {
                     final authService = getIt.get<AuthenticationService>();
                     authService.onLogin(nickname: 'bbbbbb', password: 'bbbbbb');
+                  },
+              ),
+
+              PpButton(
+                  text: 'log cccccc',
+                  onPressed: () {
+                    final authService = getIt.get<AuthenticationService>();
+                    authService.onLogin(nickname: 'cccccc', password: 'cccccc');
                   },
               ),
 

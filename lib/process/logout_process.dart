@@ -22,11 +22,14 @@ class LogoutProcess extends LogProcess {
 
   stopListeners() async {
     await conversationService.stopMessagesObserver();
+
     await Notifications.reference.stopNotificationsListener();
     await Notifications.reference.stopFirestoreObserver();
+
     await Contacts.reference.stopContactUidsListener();
     await ContactUids.reference.stopFirestoreObserver();
     await Contacts.reference.stopFirestoreObserver();
+
     await Me.reference.stopFirestoreObserver();
     log('[LogoutProcess] stopListeners');
   }

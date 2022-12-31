@@ -25,36 +25,27 @@ class AuthenticationService {
 
   get context => NavigationService.context;
 
-  bool _isFirstUserListen = true;
   bool _isRegisterInProgress = false;
   bool _isDeletingAccount = false;
 
   String get getUid => Uid.get!;
 
-  AuthenticationService() {
-    _fireAuth.idTokenChanges().listen((user) async {
-      if (user == null) {
-        _spinner.stop();
-        log('[FireAuth listener] logout');
-        _logoutResult(skipSignOut: true);
-      } else if (!_isRegisterInProgress) {
-        _spinner.stop();
-        log('[FireAuth listener] login');
-        await Navigator.pushNamed(context, HomeScreen.id);
-        // onInit HomeScreen triggers LoginProcess
-      }
-      _isFirstUserListen = false;
-    });
-  }
-
   void onLogin({required String nickname, required String password}) async {
     try {
       log('[START] Login by form process');
       _spinner.start();
-      await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
-      log('[STOP] Login by form process');
+      final userCredential = await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
       _spinner.stop();
-      // await Navigator.pushNamed(context, HomeScreen.id);
+
+      if (userCredential.user != null && !_isRegisterInProgress) {
+        log('[FireAuth listener] login');
+        Navigator.pushNamed(context, HomeScreen.id);
+        // onInit HomeScreen triggers LoginProcess
+      }
+      else {
+        _popup.sww(text: 'login by form: user missing');
+      }
+      log('[STOP] Login by form process');
     }
     on FirebaseAuthException {
       _spinner.stop();
@@ -72,11 +63,12 @@ class AuthenticationService {
 
   void onLogout() async {
     try {
+      _spinner.start();
       final process = LogoutProcess();
       await process.process();
-      _spinner.start();
-      // await logoutServices();
       await signOut();
+      _spinner.stop();
+      _logoutResult(skipSignOut: true);
     }
     catch (error) {
       logService.errorHandler(error);
@@ -91,9 +83,8 @@ class AuthenticationService {
   }
 
   void _logoutResult({bool skipSignOut = false}) async {
-    if (!_isFirstUserListen && !_isRegisterInProgress && !_isDeletingAccount) {
+    if (!_isRegisterInProgress && !_isDeletingAccount) {
       if (!skipSignOut) await signOut();
-      _spinner.stop();
       Navigator.of(context).popUntil((route) => route.isFirst);
       await _popup.show('You are logged out!');
     }

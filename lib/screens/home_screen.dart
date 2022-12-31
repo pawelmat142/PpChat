@@ -39,9 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
 
-      appBar: AppBar(title: Consumer<Me>(
-        builder: (context, me, child) => Text(me.isNotEmpty ? me.nickname : 'xx')
-      )),
+      appBar: AppBar(
+          automaticallyImplyLeading: false,
+          actions: [IconButton(onPressed: authService.onLogout , icon: const Icon(Icons.logout))],
+          title: Consumer<Me>(builder: (context, me, child) => Text(me.isNotEmpty ? me.nickname : 'xx')),
+      ),
 
       body: Padding(
         padding: BASIC_HORIZONTAL_PADDING,

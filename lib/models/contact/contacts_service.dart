@@ -38,8 +38,10 @@ class ContactsService {
         buttons: [PopupButton('Delete', error: true, onPressed: () async {
           NavigationService.popToHome();
           Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-          await _deleteContact(uid);
-          PpFlushbar.contactDeletedNotificationForSender(nickname: contacts.getByUid(uid)!.nickname, delay: 200);
+          Future.delayed(Duration.zero, () async {
+            await _deleteContact(uid);
+            PpFlushbar.contactDeletedNotificationForSender(nickname: contacts.getByUid(uid)!.nickname, delay: 200);
+          });
         })]);
   }
 

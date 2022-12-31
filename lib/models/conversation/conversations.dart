@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +32,8 @@ class Conversations with ChangeNotifier {
     conversation.contactUid == uid);
 
   killBoxAndDelete(Conversation item) async {
-    await item.killBox();
+    final conversationService = getIt.get<ConversationService>();
+    await conversationService.deleteConversationBoxIfExists(contactUid: item.contactUid);
     _deleteByUid(item.contactUid);
   }
 
