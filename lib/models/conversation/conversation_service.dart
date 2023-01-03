@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
@@ -22,17 +21,17 @@ import 'package:hive/hive.dart';
 //TODO: show unread messages on tile
 class ConversationService {
 
-  final _firestore = FirebaseFirestore.instance;
+  static final firestore = FirebaseFirestore.instance;
   final _contactsService = getIt.get<ContactsService>();
   final popup = getIt.get<Popup>();
   final spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
 
-  CollectionReference get messagesCollectionRef => _firestore
+  static CollectionReference get messagesCollectionRef => firestore
       .collection(Collections.PpUser).doc(Uid.get)
       .collection(Collections.Messages);
 
-  CollectionReference contactMessagesCollectionRef({required String contactUid}) => _firestore
+  CollectionReference contactMessagesCollectionRef({required String contactUid}) => firestore
       .collection(Collections.PpUser).doc(contactUid)
       .collection(Collections.Messages);
 
@@ -100,7 +99,7 @@ class ConversationService {
 
   _deleteResolvedMessagesInFs(List<String> documentIds) async {
     if (documentIds.isEmpty) return;
-    final batch = _firestore.batch();
+    final batch = firestore.batch();
     for (var docId in documentIds) {
       batch.delete(messagesCollectionRef.doc(docId));
     }
@@ -180,9 +179,11 @@ class ConversationService {
   onUnlock(String uid) async {
     await Future.delayed(const Duration(milliseconds: 10));
     final contactUser = _contactsService.getByUid(uid: uid)!;
-    popup.show('Unlock conversation?', error: true, buttons: [PopupButton('Unlock', onPressed: () {
-      clearConversation(contactUser);
-    })]);
+    popup.show('Unlock conversation?', error: true,
+        buttons: [PopupButton('Unlock', onPressed: () {
+          clearConversation(contactUser);
+        })]
+    );
   }
 
   onClearConversation(String uid) async {
@@ -194,7 +195,8 @@ class ConversationService {
           spinner.start();
           await clearConversation(contactUser);
           spinner.stop();
-        })]);
+        })]
+    );
   }
 
   onDeleteContact(PpUser contactUser) async {
@@ -204,25 +206,6 @@ class ConversationService {
 
   isConversationLocked(PpUser contactUser) {
     return conversations.getByUid(contactUser.nickname)!.isLocked;
-  }
-
-  deleteConversationBoxIfExists({required String contactUid}) async {
-    print('deleteConversationBoxIfExists');
-    final key = Conversation.hiveKey(contactUid: contactUid);
-    if (await Hive.boxExists(key)) {
-    print('exists');
-      if (!Hive.isBoxOpen(key)) {
-    print('open');
-        await Hive.openBox<PpMessage>(key);
-      }
-    print('box');
-      final box = Hive.box<PpMessage>(key);
-    print('clear');
-      await box.clear();
-    print('deleteFromDisk');
-      await box.deleteFromDisk();
-      logService.log('[ConversationService] conversation box deleted for $contactUid');
-    }
   }
 
   markAsRead(Box<PpMessage> box) {

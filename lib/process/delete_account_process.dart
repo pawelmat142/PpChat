@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/process/log_process.dart';
@@ -20,6 +21,7 @@ class DeleteAccountProcess extends LogProcess {
 
   final _contactsService = getIt.get<ContactsService>();
   final _conversationService = getIt.get<ConversationService>();
+  final _conversationSettingsService = getIt.get<ConversationSettingsService>();
 
   final Me me = Me.reference;
   final Contacts contacts = Contacts.reference;
@@ -104,7 +106,7 @@ class DeleteAccountProcess extends LogProcess {
       await _addDeletedAccountLogBatch();
 
       for (final contact in _contacts) {
-        await _contactsService.deleteConversationAndSettingsIfExists(contactUid: contact.uid);
+        await _conversationSettingsService.fullDeleteConversation(contactUid: contact.uid);
         log('[${contact.nickname}] conversation and settings deleted!');
       }
 
@@ -195,7 +197,7 @@ class DeleteAccountProcess extends LogProcess {
   _prepareBatchDeleteUnreadMessages() async {
     log('[START] Prepare batch - delete messages [Messages]');
     //sent
-    final messages = await _conversationService.messagesCollectionRef.get();
+    final messages = await ConversationService.messagesCollectionRef.get();
     log('${messages.docs.length} messages found to delete.');
     for (var message in messages.docs) {
       await _batchDelete(message.reference);

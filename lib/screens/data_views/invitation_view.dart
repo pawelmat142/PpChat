@@ -6,7 +6,6 @@ import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/process/accept_invitation_process.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
-import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 

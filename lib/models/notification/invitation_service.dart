@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/models/contact/contact_uids.dart';
 import 'package:flutter_chat_app/models/notification/notifications.dart';
@@ -13,6 +14,7 @@ class InvitationService {
   final _firestore = FirebaseFirestore.instance;
 
   final _contactsService = getIt.get<ContactsService>();
+  final _conversationSettingsService = getIt.get<ConversationSettingsService>();
   final logService = getIt.get<LogService>();
 
   final ContactUids contactUids = ContactUids.reference;
@@ -36,8 +38,7 @@ class InvitationService {
     if (notifications.isNotEmpty) {
       final contactUidsToDelete = notifications.map((n) => n.documentId).toList();
       for (final contactUid in contactUidsToDelete) {
-        print('resolve deleted contact - ${contactUid} delete box');
-        await _contactsService.deleteConversationAndSettingsIfExists(contactUid: contactUid);
+        await _conversationSettingsService.fullDeleteConversation(contactUid: contactUid);
       }
       final newState = contactUids.get
           .where((n) => !contactUidsToDelete.contains(n))

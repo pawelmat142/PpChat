@@ -71,7 +71,7 @@ class PpFlushbar {
       duration: const Duration(seconds: 10),
       onTap: () {
         flushbar!.dismiss();
-        Navigator.pop(NavigationService.context);
+        // Navigator.pop(NavigationService.context);
         if (single) {
           NotificationView.navigate(notifications.first);
         } else {

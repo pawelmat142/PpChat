@@ -3,7 +3,6 @@ import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/data_views/data_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';

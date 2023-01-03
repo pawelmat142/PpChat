@@ -15,19 +15,32 @@ class Contacts extends FsCollectionModel<PpUser> {
 
   List<String> get contactUids => contactUidsRef.get;
 
+  bool listenerOn = false;
 
   start() async {
     await _contactUidsListener();
-    contactUidsRef.addListener(_contactUidsListener);
-    log('[Contacts] add listener');
+    _addContactUidsListener();
+  }
+
+  _addContactUidsListener() {
+    if (!listenerOn) {
+      log('[ContactUids] add listener');
+      contactUidsRef.addListener(_contactUidsListener);
+      listenerOn = true;
+    }
   }
 
   stopContactUidsListener() {
-    contactUidsRef.removeListener(_contactUidsListener);
+    if (listenerOn) {
+      contactUidsRef.removeListener(_contactUidsListener);
+      contactUidsRef.removeListener(_contactUidsListener);
+      listenerOn = false;
+      log('[ContactUids] remove listener');
+    }
   }
 
    _contactUidsListener() async {
-    log('[Contacts] listener triggered');
+    log('[ContactUids] listener triggered');
     final contactUids = contactUidsRef.get;
     if (contactUids.isEmpty) {
       clear();
