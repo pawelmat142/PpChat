@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/models/contact/contact_uids.dart';
 import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
-import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
@@ -19,12 +19,6 @@ class InvitationService {
 
   final ContactUids contactUids = ContactUids.reference;
   final Notifications notifications = Notifications.reference;
-
-
-  // onAcceptInvitation(PpNotification notification, {bool pop = true}) async {
-  //   final process = AcceptInvitationProcess(invitation: notification);
-  //   await process.process();
-  // }
 
 
   resolveInvitationAcceptances(Set<PpNotification> invitationAcceptances) async {
@@ -57,7 +51,7 @@ class InvitationService {
       batch.delete(notifications.collectionRef.doc(notification.documentId));
       batch.delete(_contactsService.contactNotificationDocRef(contactUid: notification.documentId));
       await batch.commit();
-      PpFlushbar.invitationDeleted();
+      PpSnackBar.invitationDeleted();
       logService.log('[STOP] [CANCEL SENT INVITATION]');
     } catch (error) {
       logService.errorHandler(error);
@@ -74,7 +68,7 @@ class InvitationService {
       batch.delete(notifications.collectionRef.doc(notification.documentId));
       batch.delete(_contactsService.contactNotificationDocRef(contactUid: notification.documentId));
       await batch.commit();
-      PpFlushbar.invitationDeleted();
+      PpSnackBar.invitationDeleted();
       logService.log('[STOP] [REJECT RECEIVED INVITATION]');
     } catch (error) {
       logService.errorHandler(error);

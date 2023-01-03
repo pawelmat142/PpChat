@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
@@ -99,7 +100,7 @@ class ResolveNotificationsProcess extends LogProcess {
           PpFlushbar.invitationNotification(notification);
           break;
         case PpNotificationTypes.invitationAcceptance:
-          PpFlushbar.invitationAcceptances(notifications: [notification]);
+          PpSnackBar.invitationAcceptances();
           break;
       }
     }

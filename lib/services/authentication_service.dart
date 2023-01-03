@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/process/logout_process.dart';
@@ -86,7 +87,7 @@ class AuthenticationService {
     if (!_isRegisterInProgress && !_isDeletingAccount) {
       if (!skipSignOut) await signOut();
       Navigator.of(context).popUntil((route) => route.isFirst);
-      await _popup.show('You are logged out!');
+      PpSnackBar.logout();
     }
     _isDeletingAccount = false;
   }

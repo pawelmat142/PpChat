@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
-import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
@@ -40,7 +40,7 @@ class InvitationAcceptanceView extends NotificationView {
       PpButton(text: 'remove notification', color: Colors.red, onPressed: () async {
           await notificationService.onRemoveNotification(notification);
           Navigator.pop(NavigationService.context);
-          PpFlushbar.notificationDeleted();
+          PpSnackBar.deleted();
       }),
 
     ];

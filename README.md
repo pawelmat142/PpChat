@@ -375,3 +375,5 @@ directories paths refactored
 ### [106] login/logout, deleteContact fix..
 
 ### [107] login/logout, deleteContact fix..
+
+### [108] SnackBar instead of most notifications

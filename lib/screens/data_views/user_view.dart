@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
-import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/data_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
@@ -27,7 +27,7 @@ class UserView extends DataView {
               if (contactsService.contactExists(user.uid)) {
                 conversationService.navigateToConversationView(user);
               } else {
-                PpFlushbar.contactNotExists();
+                PpSnackBar.contactNotExists();
               }
             }),
 
@@ -35,7 +35,7 @@ class UserView extends DataView {
               if (contactsService.contactExists(user.uid)) {
                 await contactsService.onDeleteContact(user.uid);
               } else {
-                PpFlushbar.contactNotExists();
+                PpSnackBar.contactNotExists();
               }
             })
           ]

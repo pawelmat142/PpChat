@@ -42,8 +42,6 @@ class ConversationSettingsService {
     if (conversation != null) conversations.deleteByUid(contactUid);
   }
 
-  // todo: logout i inne przeszkadzajace flushbary / popup zmienic na dolny bar jakiś
-
   _deleteUnreadMessages({required String contactUid}) async {
     final messages = await ConversationService.messagesCollectionRef
         .where(PpMessageFields.sender, isEqualTo: contactUid).get();
