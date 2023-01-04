@@ -72,12 +72,6 @@ class LoginFormScreen extends StatelessWidget {
                 onSubmit: () => _submitForm(context),
             ),
 
-            PpButton(
-              onPressed: () => Navigator.pushNamed(context, RegisterFormScreen.id),
-              text: 'GO TO REGISTER',
-              color: PRIMARY_COLOR_DARKER,
-            ),
-
           ],
         ),
 

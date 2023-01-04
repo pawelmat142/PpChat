@@ -13,6 +13,7 @@ class UnreadMessages extends StatelessWidget {
 
   Conversations get conversations => Conversations.reference;
 
+  //TODO: MessageCleaner instances should be in state of widget tree not deeper than contact tile
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +26,11 @@ class UnreadMessages extends StatelessWidget {
           builder: (context, snapshot) {
 
             final conversation = snapshot.data;
-            if (conversation != null) {
 
-              return ValueListenableBuilder<Box<PpMessage>>(
+            return conversation == null
+              ? const SizedBox(height: 0)
+
+              : ValueListenableBuilder<Box<PpMessage>>(
                   valueListenable: conversation.box.listenable(),
 
                   builder: (context, box, _) {
@@ -53,11 +56,8 @@ class UnreadMessages extends StatelessWidget {
                     );
                   }
               );
-            }
-            return const SizedBox(height: 0);
-          }
-      ),
 
+      }),
     );
   }
 }

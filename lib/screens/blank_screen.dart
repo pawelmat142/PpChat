@@ -38,6 +38,7 @@ class BlankScreen extends StatelessWidget {
               PpButton(
                   text: 'REGISTER',
                   onPressed: () => Navigator.pushNamed(context, RegisterFormScreen.id),
+                  color: PRIMARY_COLOR_DARKER,
               ),
 
               PpButton(

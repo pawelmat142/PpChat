@@ -16,7 +16,6 @@ import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:hive/hive.dart';
 
-//TODO: show unread messages on tile
 class ConversationService {
 
   static final firestore = FirebaseFirestore.instance;

@@ -51,7 +51,7 @@ class ContactTile extends StatelessWidget {
 
                       Padding(
                         padding: const EdgeInsets.only(right: TILE_PADDING_VERTICAL),
-                        child: Icon(Icons.message,
+                        child: Icon(contactUser.logged ? Icons.person_rounded : Icons.person_off_outlined,
                           size: 35,
                           color: contactUser.logged ? Colors.green : Colors.red,
                         ),

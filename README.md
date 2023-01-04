@@ -382,3 +382,5 @@ directories paths refactored
 
 ### [110] ContactTile shows number of unread messages
 `flutter pub add auto_size_text`
+
+### [111] Little fixes
