@@ -377,3 +377,5 @@ directories paths refactored
 ### [107] login/logout, deleteContact fix..
 
 ### [108] SnackBar instead of most notifications
+
+### [109] MessageCleaner implemented

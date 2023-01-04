@@ -55,18 +55,18 @@ class PpMessage extends HiveObject {
   bool get isMock => timeToLive == -1;
 
 
-  bool get isExpired => _timeToLiveExpired || _timeToLiveAfterReadExpired;
+  bool get isExpired => timeToLiveExpired || timeToLiveAfterReadExpired;
 
-  bool get _timeToLiveExpired => timeToLive > 0
+  bool get timeToLiveExpired => timeToLive > 0
       && timestamp
           .add(Duration(minutes: timeToLive))
-          .compareTo(DateTime.now()) >= 0;
+          .compareTo(DateTime.now()) <= 0;
 
-  bool get _timeToLiveAfterReadExpired => isRead
+  bool get timeToLiveAfterReadExpired => isRead
       && timeToLiveAfterRead > 0
       && readTimestamp
           .add(Duration(minutes: timeToLiveAfterRead))
-          .compareTo(DateTime.now()) >= 0;
+          .compareTo(DateTime.now()) <= 0;
 
 
   static PpMessage fromMap(Map<String, dynamic> messageMap) {

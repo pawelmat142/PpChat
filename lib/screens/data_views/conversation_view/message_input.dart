@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view/message_cleaner.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
@@ -32,10 +33,19 @@ class _MessageInputState extends State<MessageInput> {
         .getSettings(contactUid: widget.contactUser.uid);
   }
 
+  final MessageCleaner messageCleaner = MessageCleaner();
+
   @override
   void initState() {
     super.initState();
     getSettings();
+    messageCleaner.init(contactUid: widget.contactUser.uid);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    messageCleaner.dispose();
   }
 
   @override

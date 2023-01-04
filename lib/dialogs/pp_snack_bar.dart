@@ -13,6 +13,7 @@ abstract class PpSnackBar {
   static invitationSent() => show('Invitation successfully sent!', delay: 100);
   static invitationDeleted() => show('Invitation successfully deleted!');
   static invitationAcceptances() => show('Your invitation has been accepted!');
+
   static contactNotExists() => show('Contact does not exist!');
 
 

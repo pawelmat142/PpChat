@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/notifications_info.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
-import 'package:flutter_chat_app/process/logout_process.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
@@ -28,10 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    PpSnackBar.login();
     Future.delayed(Duration.zero, () async {
         final process = LoginProcess();
         await process.process();
+        PpSnackBar.login();
     });
   }
 

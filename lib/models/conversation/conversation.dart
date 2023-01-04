@@ -14,8 +14,6 @@ class Conversation {
   List<PpMessage> get messages => box.values.toList();
   List<String> get messagesTxt => box.values.map((m) => m.message).toList();
 
-  //TODO: use compact more often
-
 
   open() async {
     await Hive.openBox(hiveKey(contactUid: contactUid));
