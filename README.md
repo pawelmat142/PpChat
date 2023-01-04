@@ -379,3 +379,6 @@ directories paths refactored
 ### [108] SnackBar instead of most notifications
 
 ### [109] MessageCleaner implemented
+
+### [110] ContactTile shows number of unread messages
+`flutter pub add auto_size_text`

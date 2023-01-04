@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/contacts_tile/contact_avatar.dart';
+import 'package:flutter_chat_app/components/contacts_tile/unread_messages.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
@@ -33,6 +34,7 @@ class ContactTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
 
+                  ///LEFT side of tile
                   Row(
                     children: [
                       InkWell(onTap: _navigateToContactView, child: const ContactAvatar()),
@@ -41,12 +43,20 @@ class ContactTile extends StatelessWidget {
                     ],
                   ),
 
-                  Padding(
-                    padding: const EdgeInsets.only(right: TILE_PADDING_VERTICAL),
-                    child: Icon(Icons.message,
-                        size: 35,
-                        color: contactUser.logged ? Colors.green : Colors.red,
+                  ///RIGHT side of tile
+                  Row (
+                    children: [
+
+                      UnreadMessages(contactUid: contactUser.uid),
+
+                      Padding(
+                        padding: const EdgeInsets.only(right: TILE_PADDING_VERTICAL),
+                        child: Icon(Icons.message,
+                          size: 35,
+                          color: contactUser.logged ? Colors.green : Colors.red,
+                        ),
                       ),
+                    ],
                   ),
 
                 ],
