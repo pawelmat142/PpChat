@@ -28,101 +28,6 @@ class PpFlushbar {
     flushbar.show(NavigationService.context);
   }
 
-  static void invitationSent({PpNotification? notification, int? delay}) async {
-    Flushbar? flushbar;
-    flushbar = basic(
-      title: 'Invitation successfully sent!',
-      message: 'Tap to checkout',
-      icon: const Icon(Icons.person_add, size: 30, color: Colors.white),
-      duration: const Duration(seconds: 10),
-      onTap: () {
-        flushbar!.dismiss();
-        if (notification != null) NotificationView.navigate(notification);
-      },
-    );
-    if (delay != null) {
-      await Future.delayed(Duration(milliseconds: delay));
-    }
-    flushbar.show(NavigationService.context);
-  }
-
-  static void invitationDeleted({int? delay}) async {
-    Flushbar? flushbar;
-    flushbar = basic(
-      title: 'Invitation successfully deleted!',
-      message: 'Tap to hide',
-      icon: const Icon(Icons.person_add_disabled, size: 30, color: Colors.white),
-      duration: const Duration(seconds: 10),
-      onTap: () => flushbar!.dismiss(),
-    );
-    if (delay != null) {
-      await Future.delayed(Duration(milliseconds: delay));
-    }
-    flushbar.show(NavigationService.context);
-  }
-
-  static void invitationAcceptances({List<PpNotification>? notifications, int? delay}) async {
-    Flushbar? flushbar;
-    final single = notifications != null && notifications.length == 1;
-    flushbar = basic(
-      title: single ? 'Your invitation has been accepted!' : 'Multiple invitations accepted!',
-      message: 'Tap to checkout',
-      icon: const Icon(Icons.person_add, size: 30, color: Colors.white),
-      duration: const Duration(seconds: 10),
-      onTap: () {
-        flushbar!.dismiss();
-        Navigator.pop(NavigationService.context);
-        if (single) {
-          NotificationView.navigate(notifications.first);
-        } else {
-          Navigator.pushNamed(NavigationService.context, NotificationsScreen.id);
-        }
-      },
-    );
-    if (delay != null) {
-      await Future.delayed(Duration(milliseconds: delay));
-    }
-    flushbar.show(NavigationService.context);
-  }
-
-  static void contactDeletedNotificationForSender({required String nickname, int? delay}) async {
-    Flushbar? flushbar;
-    flushbar = basic(
-      title: 'Contact deleted!',
-      message: nickname,
-      icon: const Icon(Icons.person_add_disabled, size: 30, color: Colors.white),
-      duration: const Duration(seconds: 10),
-      onTap: () => flushbar!.dismiss(),
-    );
-    if (delay != null) {
-      await Future.delayed(Duration(milliseconds: delay));
-    }
-    flushbar.show(NavigationService.context);
-  }
-
-  static void notificationDeleted() {
-    Flushbar? flushbar;
-    flushbar = basic(
-      title: 'Successful!',
-      message: 'Notification deleted',
-      icon: const Icon(Icons.comments_disabled, size: 30, color: Colors.white),
-      duration: const Duration(seconds: 10),
-      onTap: () => flushbar!.dismiss(),
-    );
-    flushbar.show(NavigationService.context);
-  }
-
-  static void notificationsDeleted() async {
-    Flushbar? flushbar;
-    flushbar = basic(
-      title: 'Done!',
-      message: 'All notification are deleted',
-      icon: const Icon(Icons.comments_disabled, size: 30, color: Colors.white),
-      duration: const Duration(seconds: 10),
-      onTap: () => flushbar!.dismiss(),
-    );
-    flushbar.show(NavigationService.context);
-  }
 
   static void multipleNotifications({required int value, int? delay}) async {
     Flushbar? flushbar;
@@ -139,19 +44,6 @@ class PpFlushbar {
     flushbar.show(NavigationService.context);
   }
 
-  static void contactNotExists() {
-    Flushbar? flushbar;
-    flushbar = basic(
-      title: 'Contact does not exist',
-      message: 'Tap to hide',
-      icon: const Icon(Icons.person_add, size: 30, color: Colors.white),
-      duration: const Duration(seconds: 10),
-      onTap: () {
-        flushbar!.dismiss();
-      },
-    );
-    flushbar.show(NavigationService.context);
-  }
 
   static void comingMessages({List<PpMessage>? messages, int? delay}) async {
     final title = messages == null || messages.length == 1

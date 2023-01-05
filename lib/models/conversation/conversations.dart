@@ -29,11 +29,6 @@ class Conversations with ChangeNotifier {
   int indexByUid(String uid) => _state.indexWhere((conversation) =>
     conversation.contactUid == uid);
 
-  killBoxAndDelete(Conversation item) async {
-    await item.killBox();
-    _deleteByUid(item.contactUid);
-  }
-
   clear() async {
     for (var conversation in _state) {
       await conversation.box.compact();
@@ -58,7 +53,7 @@ class Conversations with ChangeNotifier {
     notifyListeners();
   }
 
-  _deleteByUid(String uid) {
+  deleteByUid(String uid) {
     final index = indexByUid(uid);
     if (index != -1) {
       _state.removeAt(index);

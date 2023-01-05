@@ -14,25 +14,21 @@ import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
+import 'package:hive/hive.dart';
 
-//TODO: show time on tap message
-//TODO: sort messages on view by time
-//TODO: implement auto delete
-//TODO: configurable time to live
-//TODO: implement time to live after read
 class ConversationService {
 
-  final _firestore = FirebaseFirestore.instance;
+  static final firestore = FirebaseFirestore.instance;
   final _contactsService = getIt.get<ContactsService>();
   final popup = getIt.get<Popup>();
   final spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
 
-  CollectionReference get messagesCollectionRef => _firestore
+  static CollectionReference get messagesCollectionRef => firestore
       .collection(Collections.PpUser).doc(Uid.get)
       .collection(Collections.Messages);
 
-  CollectionReference contactMessagesCollectionRef({required String contactUid}) => _firestore
+  CollectionReference contactMessagesCollectionRef({required String contactUid}) => firestore
       .collection(Collections.PpUser).doc(contactUid)
       .collection(Collections.Messages);
 
@@ -46,18 +42,15 @@ class ConversationService {
 
   login() async {
     initialized = false;
-    await _startMessagesObserver();
+    await startMessagesObserver();
     initialized = true;
   }
 
-  logout() async {
-    if (initialized) {
-      await _stopMessagesObserver();
-      conversations.clear();
-    }
+  clearConversations() async {
+    await conversations.clear();
   }
 
-  _startMessagesObserver() async {
+  startMessagesObserver() async {
     final completer = Completer();
     _messagesObserver ??= messagesCollectionRef.snapshots().listen((event) async {
       logService.log('[MSG] messages observer triggered');
@@ -71,6 +64,7 @@ class ConversationService {
 
       if (!completer.isCompleted) completer.complete();
     });
+    logService.log('[START] [Messages] firestore collection observer');
     return completer.future;
   }
 
@@ -102,7 +96,7 @@ class ConversationService {
 
   _deleteResolvedMessagesInFs(List<String> documentIds) async {
     if (documentIds.isEmpty) return;
-    final batch = _firestore.batch();
+    final batch = firestore.batch();
     for (var docId in documentIds) {
       batch.delete(messagesCollectionRef.doc(docId));
     }
@@ -111,16 +105,17 @@ class ConversationService {
   }
 
 
-  _stopMessagesObserver() async {
+  stopMessagesObserver() async {
     if (_messagesObserver != null) {
+      logService.log('[STOP] [Messages] firestore collection observer');
       await _messagesObserver!.cancel();
       _messagesObserver = null;
     }
   }
 
   resetMessagesObserver() async {
-    await _stopMessagesObserver();
-    await _startMessagesObserver();
+    await stopMessagesObserver();
+    await startMessagesObserver();
   }
 
   navigateToConversationView(PpUser contactUser) async {
@@ -133,31 +128,29 @@ class ConversationService {
   }
 
 
-  sendMessage({required String message, required PpUser contactUser, bool isMock = false}) async {
-    final msg = PpMessage.create(
-        message: message,
-        sender: Uid.get!,
-        receiver: contactUser.uid,
-        timeToLive: isMock ? -1 : 0
-    );
-    await contactMessagesCollectionRef(contactUid: contactUser.uid).add(msg.asMap);
-    conversations.getByUid(contactUser.uid)?.addMessage(msg);
+  sendMessage(PpMessage message) async {
+    await contactMessagesCollectionRef(contactUid: message.receiver).add(message.asMap);
+    conversations.getByUid(message.receiver)?.addMessage(message);
   }
 
 
   clearConversation(PpUser contactUser) async {
-    sendMessage(
+    sendMessage(PpMessage.create(
         message: MessageMock.TYPE_CLEAR,
-        contactUser: contactUser,
-        isMock: true
+        sender: Uid.get!,
+        receiver: contactUser.uid,
+        timeToLive: -1,
+        timeToLiveAfterRead: -1)
     );
   }
 
   lockConversation(PpUser contactUser) async {
-    sendMessage(
+    sendMessage(PpMessage.create(
         message: MessageMock.TYPE_LOCK,
-        contactUser: contactUser,
-        isMock: true
+        sender: Uid.get!,
+        receiver: contactUser.uid,
+        timeToLive: -1,
+        timeToLiveAfterRead: -1)
     );
   }
 
@@ -183,20 +176,24 @@ class ConversationService {
   onUnlock(String uid) async {
     await Future.delayed(const Duration(milliseconds: 10));
     final contactUser = _contactsService.getByUid(uid: uid)!;
-    popup.show('Unlock conversation?', error: true, buttons: [PopupButton('Unlock', onPressed: () {
-      clearConversation(contactUser);
-    })]);
+    popup.show('Unlock conversation?', error: true,
+        buttons: [PopupButton('Unlock', onPressed: () {
+          clearConversation(contactUser);
+        })]
+    );
   }
 
-  onClearConversation(PpUser contactUser) async {
+  onClearConversation(String uid) async {
     await Future.delayed(const Duration(milliseconds: 100));
+    final contactUser = _contactsService.getByUid(uid: uid)!;
     popup.show('Are you sure?',
         text: 'Messages data will be lost also on the other side!',
         buttons: [PopupButton('Clear', onPressed: () async {
           spinner.start();
           await clearConversation(contactUser);
           spinner.stop();
-        })]);
+        })]
+    );
   }
 
   onDeleteContact(PpUser contactUser) async {
@@ -208,5 +205,25 @@ class ConversationService {
     return conversations.getByUid(contactUser.nickname)!.isLocked;
   }
 
+  markAsRead(Box<PpMessage> box) {
+    Future.delayed(Duration.zero, () {
+      Map<dynamic, PpMessage> result = {};
+      int markedAsRead = 0;
+
+      for (var key in box.keys) {
+        PpMessage? message = box.get(key);
+        if (message != null && !message.isRead) {
+          message.readTimestamp = DateTime.now();
+          markedAsRead++;
+        }
+        result[key] = message!;
+      }
+
+      if (markedAsRead > 0) {
+        box.putAll(result);
+        logService.log('[MSG] $markedAsRead messages marked as read');
+      }
+    });
+  }
 
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/components/message_bubble.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view/message_bubble.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_popup_menu.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/message_input.dart';
@@ -57,17 +57,31 @@ class ConversationView extends StatelessWidget {
 
                 if (isMock(box)) return MessageMock(box.values.first, contactUser);
 
-                return ListView(reverse: true,
+                conversationService.markAsRead(box);
+
+                final interfaces = box.values.map((m) => MessageBubbleInterface(
+                    message: m.message,
+                    my: m.sender == Uid.get,
+                    timestamp: m.timestamp)
+                ).toList();
+
+                interfaces.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+                int dayBefore = 0;
+                for (var i in interfaces.reversed) {
+                  if (i.timestamp.day != dayBefore) {
+                    i.divider = true;
+                    dayBefore = i.timestamp.day;
+                  }
+                }
+
+                return ListView(
+                  reverse: true,
                   padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                  children: box.values.map((m) {
-
-                    return MessageBubble(message: m.message, my: m.sender == Uid.get);
-
-                  }).toList().reversed.toList(),
+                  children: interfaces.map((i) => MessageBubble(interface: i)).toList(),
                 );
               })
           ),
-
 
           MessageInput(contactUser: contactUser),
 

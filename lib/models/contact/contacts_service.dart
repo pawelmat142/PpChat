@@ -1,27 +1,29 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
+import 'package:flutter_chat_app/models/conversation/conversation.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
+import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
-import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/contact/contact_uids.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
-import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
+import 'package:hive/hive.dart';
 
 class ContactsService {
 
   final _firestore = FirebaseFirestore.instance;
   final _popup = getIt.get<Popup>();
+  final _conversationSettingsService = getIt.get<ConversationSettingsService>();
   final logService = getIt.get<LogService>();
-
 
   Me get me => Me.reference;
   Contacts get contacts => Contacts.reference;
@@ -34,18 +36,18 @@ class ContactsService {
     await _popup.show('Are you sure?', error: true,
         text: 'All data will be lost also on the other side!',
         buttons: [PopupButton('Delete', error: true, onPressed: () async {
-          NavigationService.popToHome();
-          Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-          await _deleteContact(uid);
-          PpFlushbar.contactDeletedNotificationForSender(nickname: contacts.getByUid(uid)!.nickname, delay: 200);
+          NavigationService.homeAndContacts();
+          Future.delayed(Duration.zero, () async {
+            await _deleteContact(uid);
+            PpSnackBar.deleted(delay: 200);
+          });
         })]);
   }
 
   _deleteContact(String uid) async {
     try {
-      final conversation = conversations.getByUid(uid);
       final contactUser = contacts.getByUid(uid)!;
-      if (conversation != null) await conversations.killBoxAndDelete(conversation);
+      await _conversationSettingsService.fullDeleteConversation(contactUid: contactUser.uid);
       await _sendContactDeletedNotification(contactUser);
       contactUids.deleteOne(contactUser.uid);
     } catch (error) {
@@ -69,5 +71,19 @@ class ContactsService {
   PpUser? getByUid({required String uid}) => contacts.getByUid(uid);
 
   contactExists(String contactUid) => contactUids.contains(contactUid);
+
+
+  deleteConversationBoxIfExists({required String contactUid}) async {
+    final key = Conversation.hiveKey(contactUid: contactUid);
+    if (await Hive.boxExists(key)) {
+      if (!Hive.isBoxOpen(key)) {
+        await Hive.openBox<PpMessage>(key);
+      }
+      final box = Hive.box<PpMessage>(key);
+      await box.clear();
+      await box.deleteFromDisk();
+      logService.log('[PpMessage] box deleted for $contactUid');
+    }
+  }
 
 }

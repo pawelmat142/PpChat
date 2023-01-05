@@ -349,3 +349,40 @@ directories paths refactored
 ### [095] Directories refactor
 
 ### [096] Make screen widgets const
+
+## chat_features
+
+### [097] DateFormatter - AnimatedContainer
+`flutter pub add intl`
+</br> show time on tap message bubble
+
+### [098] Sort and show time of messages
+
+### [099] Conversation settings view navigation
+
+### [100] Conversation settings data model - hive
+
+### [101] Conversation settings view - form
+
+### [102] Conversation settings service
+
+### [103] Set read timestamp to PpMessage on ConversationView
+
+### [104] timeToLive set to sent messages
+
+### [105] login/logout, deleteContact fix 
+
+### [106] login/logout, deleteContact fix..
+
+### [107] login/logout, deleteContact fix..
+
+### [108] SnackBar instead of most notifications
+
+### [109] MessageCleaner implemented
+
+### [110] ContactTile shows number of unread messages
+`flutter pub add auto_size_text`
+
+### [111] Little fixes
+
+### [112] MessageCleaner works with unread messages number on contactTile

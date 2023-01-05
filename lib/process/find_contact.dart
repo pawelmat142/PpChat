@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
-import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
@@ -115,7 +115,7 @@ class FindContact {
     try {
       _spinner.start();
       await _sendInvitationNotifications();
-      PpFlushbar.invitationSent(delay: 100, notification: selfNotification);
+      PpSnackBar.invitationSent();
     } catch (error) {
       _spinner.stop();
       _popup.show('Something went wrong', error: true, delay: 200);

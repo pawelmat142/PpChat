@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
-import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_submit.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_text_field.dart';
-import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
@@ -26,7 +24,7 @@ class LoginFormScreen extends StatelessWidget {
 
   void _submitForm(BuildContext context) {
     if (form.valid) {
-      _authService.login(
+      _authService.onLogin(
           nickname: form.control(Fields.nickname).value,
           password: form.control(Fields.password).value
       );
@@ -70,12 +68,6 @@ class LoginFormScreen extends StatelessWidget {
             PpFormSubmit(
                 formStatusChanged: form.statusChanged,
                 onSubmit: () => _submitForm(context),
-            ),
-
-            PpButton(
-              onPressed: () => Navigator.pushNamed(context, RegisterFormScreen.id),
-              text: 'GO TO REGISTER',
-              color: PRIMARY_COLOR_DARKER,
             ),
 
           ],

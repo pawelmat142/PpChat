@@ -1,6 +1,6 @@
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
-import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
@@ -44,7 +44,7 @@ class PpNotificationService {
           _spinner.start();
           notifications.clearFirestoreCollection();
           _spinner.stop();
-          PpFlushbar.notificationsDeleted();
+          PpSnackBar.deleted();
         })]);
   }
 

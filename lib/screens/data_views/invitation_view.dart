@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/process/accept_invitation_process.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
-import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 
@@ -46,15 +46,13 @@ class InvitationView extends NotificationView {
 
   _onAcceptInvitation() async {
     try {
+      NavigationService.homeAndContacts();
       spinner.start();
       final process = AcceptInvitationProcess(invitation: notification);
       await process.process();
-      Future.delayed(const Duration(milliseconds: 100), () {
-        NavigationService.popToHome();
-        Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-        // UserView.navigate(contactsService.getUserByNickname(notification.sender));
-      });
       spinner.stop();
+      final user = contactsService.getByUid(uid: notification.documentId);
+      if (user != null) UserView.navigate(user);
     } catch (error) {
       spinner.stop();
       popup.sww(text: 'acceptInvitationForReceiver');

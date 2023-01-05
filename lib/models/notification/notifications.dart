@@ -3,7 +3,7 @@ import 'package:flutter_chat_app/process/resolve_notifications_process.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
-import 'package:flutter_chat_app/models/interfaces/fs_collection_state.dart';
+import 'package:flutter_chat_app/models/interfaces/fs_collection_model.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:provider/provider.dart';
 
@@ -11,26 +11,38 @@ class Notifications extends FsCollectionModel<PpNotification> {
 
   static Notifications get reference => Provider.of<Notifications>(NavigationService.context, listen: false);
 
-  bool initialized = false;
+  bool listenerOn = false;
 
   start() async {
     await startFirestoreObserver();
     final process = ResolveNotificationsProcess(get);
     await process.process();
-    addListener(_notificationsListener);
-    initialized = true;
+    _addListener();
+  }
+
+  _addListener() {
+    if (!listenerOn) {
+      log('[$runtimeType] add listener');
+      addListener(_notificationsListener);
+      listenerOn = true;
+    }
   }
 
   stopNotificationsListener() {
-    removeListener(_notificationsListener);
+    if (listenerOn) {
+      removeListener(_notificationsListener);
+      removeListener(_notificationsListener);
+      listenerOn = false;
+      log('[$runtimeType] remove listener');
+    }
   }
 
+
   _notificationsListener() async {
+    log('[$runtimeType] listener triggered');
     final process = ResolveNotificationsProcess(get);
     await process.process();
   }
-
-
 
 
   @override

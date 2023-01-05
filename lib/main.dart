@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_settings.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_settings_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/firebase_options.dart';
@@ -24,6 +26,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(PpMessageAdapter());
+  Hive.registerAdapter(ConversationSettingsAdapter());
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(
       MultiProvider(providers: [
@@ -37,9 +44,7 @@ void main() async {
     )
   );
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
 
   await initGetIt();
 }
@@ -63,6 +68,7 @@ class MyApp extends StatelessWidget {
         LoginFormScreen.id: (context) => LoginFormScreen(),
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
         ConversationView.id: (context) => const ConversationView(),
+        ConversationSettingsView.id: (context) => const ConversationSettingsView(),
       },
     );
   }

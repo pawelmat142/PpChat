@@ -19,18 +19,22 @@ class PpMessage extends HiveObject {
   final DateTime timestamp;
 
   @HiveField(4)
-  final int timeToLive;
+  DateTime readTimestamp;
 
   @HiveField(5)
-  bool isRead;
+  final int timeToLive;
+
+  @HiveField(6)
+  final int timeToLiveAfterRead;
 
   PpMessage({
     required this.sender,
     required this.receiver,
     required this.message,
     required this.timestamp,
+    required this.readTimestamp,
     required this.timeToLive,
-    required this.isRead,
+    required this.timeToLiveAfterRead,
   });
 
 
@@ -39,11 +43,31 @@ class PpMessage extends HiveObject {
     PpMessageFields.receiver: receiver,
     PpMessageFields.message: message,
     PpMessageFields.timestamp: timestamp,
+    PpMessageFields.readTimestamp: readTimestamp,
     PpMessageFields.timeToLive: timeToLive,
-    PpMessageFields.isRead: isRead,
+    PpMessageFields.timeToLiveAfterRead: timeToLiveAfterRead,
   };
 
+  static const int dateTimeMax = 2222;
+
+  bool get isRead => DateTime.now().compareTo(readTimestamp) > 0;
+
   bool get isMock => timeToLive == -1;
+
+
+  bool get isExpired => timeToLiveExpired || timeToLiveAfterReadExpired;
+
+  bool get timeToLiveExpired => timeToLive > 0
+      && timestamp
+          .add(Duration(minutes: timeToLive))
+          .compareTo(DateTime.now()) <= 0;
+
+  bool get timeToLiveAfterReadExpired => isRead
+      && timeToLiveAfterRead > 0
+      && readTimestamp
+          .add(Duration(minutes: timeToLiveAfterRead))
+          .compareTo(DateTime.now()) <= 0;
+
 
   static PpMessage fromMap(Map<String, dynamic> messageMap) {
     PpMessageFields.validate(messageMap);
@@ -52,8 +76,9 @@ class PpMessage extends HiveObject {
       receiver: messageMap[PpMessageFields.receiver],
       message: messageMap[PpMessageFields.message],
       timestamp: messageMap[PpMessageFields.timestamp].toDate(),
+      readTimestamp: messageMap[PpMessageFields.readTimestamp].toDate(),
       timeToLive: messageMap[PpMessageFields.timeToLive],
-      isRead: messageMap[PpMessageFields.isRead],
+      timeToLiveAfterRead: messageMap[PpMessageFields.timeToLiveAfterRead],
     );
   }
 
@@ -69,15 +94,17 @@ class PpMessage extends HiveObject {
     required String message,
     required String sender,
     required String receiver,
-    int timeToLive = 0
+    required int timeToLive,
+    required int timeToLiveAfterRead
   }) {
     return PpMessage(
       receiver: receiver,
       sender: sender,
       message: message,
       timestamp: DateTime.now(),
+      readTimestamp: DateTime(dateTimeMax),
       timeToLive: timeToLive,
-      isRead: false
+      timeToLiveAfterRead: timeToLiveAfterRead,
     );
   }
 }
@@ -88,8 +115,9 @@ abstract class PpMessageFields {
   static const receiver = 'receiver';
   static const message = 'message';
   static const timestamp = 'timestamp';
+  static const readTimestamp = 'readTimestamp';
   static const timeToLive = 'timeToLive';
-  static const isRead = 'isRead';
+  static const timeToLiveAfterRead = 'timeToLiveAfterRead';
 
   static validate(Map<String, dynamic>? messageMap) {
     if (messageMap!.keys.contains(PpMessageFields.sender)
@@ -100,10 +128,12 @@ abstract class PpMessageFields {
         && messageMap[PpMessageFields.message] is String
         && messageMap.keys.contains(PpMessageFields.timestamp)
         && messageMap[PpMessageFields.timestamp] is Timestamp
+        && messageMap.keys.contains(PpMessageFields.readTimestamp)
+        && messageMap[PpMessageFields.readTimestamp] is Timestamp
         && messageMap.keys.contains(PpMessageFields.timeToLive)
         && messageMap[PpMessageFields.timeToLive] is int
-        && messageMap.keys.contains(PpMessageFields.isRead)
-        && messageMap[PpMessageFields.isRead] is bool
+        && messageMap.keys.contains(PpMessageFields.timeToLiveAfterRead)
+        && messageMap[PpMessageFields.timeToLiveAfterRead] is int
     ) {return;} else {
       throw Exception(["Message MAP ERROR - validate"]);
     }

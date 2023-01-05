@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_settings.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
+import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 
 class MessageInput extends StatefulWidget {
   const MessageInput({required this.contactUser, Key? key}) : super(key: key);
@@ -15,11 +19,33 @@ class MessageInput extends StatefulWidget {
 class _MessageInputState extends State<MessageInput> {
 
   final _conversationService = getIt.get<ConversationService>();
+  final _conversationSettingsService = getIt.get<ConversationSettingsService>();
 
   final _messageInputController = TextEditingController();
   String get message => _messageInputController.value.text;
 
   bool _ready = true;
+
+  late ConversationSettings settings;
+  getSettings() async {
+    settings = await _conversationSettingsService
+        .getSettings(contactUid: widget.contactUser.uid);
+  }
+
+  // final MessageCleaner messageCleaner = MessageCleaner();
+
+  @override
+  void initState() {
+    super.initState();
+    getSettings();
+    // messageCleaner.init(contactUid: widget.contactUser.uid);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // messageCleaner.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,9 +86,12 @@ class _MessageInputState extends State<MessageInput> {
     if (message.isEmpty) return;
     setState((){_ready = false;});
 
-    await _conversationService.sendMessage(
+    await _conversationService.sendMessage(PpMessage.create(
         message: message,
-        contactUser: widget.contactUser);
+        sender: Uid.get!,
+        receiver: widget.contactUser.uid,
+        timeToLive: settings.timeToLiveInMinutes,
+        timeToLiveAfterRead: settings.timeToLiveAfterReadInMinutes));
 
     _messageInputController.clear();
     setState((){_ready = true;});

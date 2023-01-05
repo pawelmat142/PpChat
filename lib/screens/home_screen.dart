@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/notifications_info.dart';
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
+import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
-import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
-import 'package:flutter_chat_app/dialogs/popup.dart';
-import 'package:flutter_chat_app/process/delete_account_process.dart';
 import 'package:flutter_chat_app/process/login_process.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
@@ -29,7 +27,15 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.delayed(Duration.zero, () async {
         final process = LoginProcess();
         await process.process();
+        PpSnackBar.login();
     });
+  }
+
+  @override
+  void dispose() {
+    // final process = LogoutProcess();
+    // process.process();
+    super.dispose();
   }
 
   @override
@@ -39,9 +45,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
 
-      appBar: AppBar(title: Consumer<Me>(
-        builder: (context, me, child) => Text(me.isNotEmpty ? me.nickname : 'xx')
-      )),
+      appBar: AppBar(
+          automaticallyImplyLeading: false,
+          actions: [IconButton(onPressed: authService.onLogout , icon: const Icon(Icons.logout))],
+          title: Consumer<Me>(builder: (context, me, child) => Text(me.isNotEmpty ? me.nickname : 'xx')),
+      ),
 
       body: Padding(
         padding: BASIC_HORIZONTAL_PADDING,
@@ -50,24 +58,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const NotificationInfo(),
 
-              PpButton(text: 'LOGOUT',
-                onPressed: authService.logout,
+              PpButton(text: 'Account',
+                color: PRIMARY_COLOR_LIGHTER,
+                onPressed: () {
+                  UserView.navigate(Me.reference.get);
+                },
               ),
 
-              PpButton(text: 'DELETE ACCOUNT',
-                onPressed: onDeleteAccount,
+              PpButton(text: 'LOGOUT',
+                onPressed: authService.onLogout,
               ),
 
               PpButton(text: 'CONTACTS',
                 onPressed: () => Navigator.pushNamed(context, ContactsScreen.id),
-              ),
-
-              PpButton(text: 'test',
-                onPressed: () {
-                  if (kDebugMode) {
-                    print('test');
-                  }
-                },
+                color: PRIMARY_COLOR_DARKER
               ),
 
           ]
@@ -76,16 +80,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  onDeleteAccount() async {
-    final popup = getIt.get<Popup>();
-
-    popup.show('Are you sure?',
-        text: 'All your data will be lost!',
-        error: true,
-        buttons: [PopupButton('Delete', error: true, onPressed: () {
-          NavigationService.popToBlank();
-          DeleteAccountProcess();
-        })]
-    );
-  }
 }
