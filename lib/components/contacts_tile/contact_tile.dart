@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/components/contacts_tile/contact_avatar.dart';
+import 'package:flutter_chat_app/components/avatar/avatar_service.dart';
+import 'package:flutter_chat_app/components/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/components/contacts_tile/unread_messages.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
@@ -37,7 +38,11 @@ class ContactTile extends StatelessWidget {
                   ///LEFT side of tile
                   Row(
                     children: [
-                      InkWell(onTap: _navigateToContactView, child: const ContactAvatar()),
+                      InkWell(
+                          onTap: _navigateToContactView,
+                          child: AvatarWidget(
+                            model: AvatarService.getRandomAvatar(userNickname: contactUser.nickname),
+                          )),
 
                       Content(nickname: contactUser.nickname, text: contactUser.role),
                     ],

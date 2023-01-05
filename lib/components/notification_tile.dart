@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/components/contacts_tile/contact_avatar.dart';
+import 'package:flutter_chat_app/components/avatar/avatar_service.dart';
+import 'package:flutter_chat_app/components/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
@@ -24,7 +25,9 @@ class NotificationTile extends StatelessWidget {
 
                   Row(
                     children: [
-                      const ContactAvatar(),
+                      //todo: get user nickname
+                      AvatarWidget(model: AvatarService.getRandomAvatar(
+                          userNickname: 'Nickname')),
                       getContent(),
                     ],
                   ),

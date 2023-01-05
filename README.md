@@ -386,3 +386,9 @@ directories paths refactored
 ### [111] Little fixes
 
 ### [112] MessageCleaner works with unread messages number on contactTile
+
+## feature/avatars
+
+### [113] Random avatars preparations
+
+### [114] Random avatars preparations

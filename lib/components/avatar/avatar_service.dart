@@ -1,8 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/components/avatar/avatar_model.dart';
 
 class AvatarService {
+
+  // static const String avatarFont = 'Rubik Spray Paint';
+  // static const String avatarFont = 'Concert One';
+  static const String avatarFont = 'Luckiest Guy';
 
   static const Map<String, Color> colorsPalette = {
     'blue': Color(0xFF2196F3),
@@ -17,38 +22,15 @@ class AvatarService {
   };
 
   static String get randomColorKey => colorsPalette.keys
-      .toList()[Random().nextInt(colorsPalette.length + 1)];
-  
+      .toList()[Random().nextInt(colorsPalette.length)];
+
   static Color get randomColor => colorsPalette[randomColorKey]!;
 
   static Color getColor(String key) => colorsPalette[key]!;
 
-  AvatarModel getRandomAvatar({required String userNickname}) {
+  static AvatarModel getRandomAvatar({required String userNickname}) {
     return AvatarModel(color: randomColorKey, txt: userNickname[0]);
   }
 
-
 }
 
-class AvatarModel {
-  String color;
-  String txt;
-  String? url;
-
-  AvatarModel({
-    required this.color,
-    required this.txt
-  });
-
-  // get asMap {
-  //   final result = {
-  //     'color': color,
-  //     'txt': txt
-  //   };
-  //   if (url != null) {
-  //     result['url'] = url!;
-  //   }
-  //   return result;
-  // }
-
-}
