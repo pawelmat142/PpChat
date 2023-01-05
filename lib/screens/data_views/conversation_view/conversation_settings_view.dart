@@ -147,7 +147,7 @@ class _ConversationSettingsViewState extends State<ConversationSettingsView> {
   }
 
   setStateFromSettings() async {
-    if (_contactUid == null) return;
+    // if (_contactUid == null) return;
     final settings = await conversationSettingsService.getSettings(contactUid: _contactUid);
     setState(() {
       _timeToLiveDays = settings.timeToLiveInMinutes ~/ (60 * 24);

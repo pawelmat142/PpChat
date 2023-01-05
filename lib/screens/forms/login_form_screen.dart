@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
-import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_submit.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_text_field.dart';
-import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 

@@ -4,16 +4,35 @@ import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view/message_cleaner.dart';
 import 'package:hive_flutter/adapters.dart';
 
-class UnreadMessages extends StatelessWidget {
+class UnreadMessages extends StatefulWidget {
   const UnreadMessages({required this.contactUid, Key? key}) : super(key: key);
 
   final String contactUid;
 
+
+  @override
+  State<UnreadMessages> createState() => _UnreadMessagesState();
+}
+
+class _UnreadMessagesState extends State<UnreadMessages> {
   Conversations get conversations => Conversations.reference;
 
-  //TODO: MessageCleaner instances should be in state of widget tree not deeper than contact tile
+  final MessageCleaner messageCleaner = MessageCleaner();
+
+  @override
+  void initState() {
+    super.initState();
+    messageCleaner.init(contactUid: widget.contactUid);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    messageCleaner.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +41,7 @@ class UnreadMessages extends StatelessWidget {
       padding: const EdgeInsets.only(right: 20),
 
       child: FutureBuilder<Conversation>(
-          future: conversations.openOrCreate(contactUid: contactUid),
+          future: conversations.openOrCreate(contactUid: widget.contactUid),
           builder: (context, snapshot) {
 
             final conversation = snapshot.data;

@@ -384,3 +384,5 @@ directories paths refactored
 `flutter pub add auto_size_text`
 
 ### [111] Little fixes
+
+### [112] MessageCleaner works with unread messages number on contactTile

@@ -8,9 +8,9 @@ import 'package:hive/hive.dart';
 
 class MessageCleaner {
 
-
   final conversationService = getIt.get<ConversationService>();
   final logService = getIt.get<LogService>();
+  log(String txt) => logService.log('[MessageCleaner] $contactUid - $txt');
 
   static const timerPeriod = 1;
 
@@ -21,8 +21,8 @@ class MessageCleaner {
   late List<Timer> _messageTimers;
 
   init({required String contactUid}) async {
-    logService.log('[MSG] [MessageCleaner] init for uid: $contactUid');
     this.contactUid = contactUid;
+    log('initialization');
     box = await _getBox();
     await _cleanExpiredMessages();
     _messageTimers = [];
@@ -31,23 +31,23 @@ class MessageCleaner {
   }
 
   dispose() async {
-    logService.log('[MSG] [timer] dispose message cleaner for conversation uid: $contactUid');
+    log('dispose');
     _stopPeriodicTimer();
     _cancelMessageTimers();
   }
 
   _startPeriodicTimer() {
     _periodicTimer = Timer.periodic(const Duration(minutes: timerPeriod), (timer) {
-      logService.log('[MSG] [timer] periodic timer triggered');
+      log('periodic timer triggered');
       _setMessageTimersIfExpiresSoon();
     });
-    logService.log('[MSG] [timer] started - status: ${_periodicTimer.isActive}');
+    log('periodic timer started');
   }
 
   _stopPeriodicTimer() {
     if (_periodicTimer.isActive) {
       _periodicTimer.cancel();
-      logService.log('[MSG] [timer] stopped - status: ${_periodicTimer.isActive}');
+      log('periodic timer stopped - active: ${_periodicTimer.isActive}');
     }
   }
 
@@ -72,7 +72,7 @@ class MessageCleaner {
     final duration = _getShorterDuration(durationOne, durationTwo);
 
     if (duration != null) {
-      logService.log('[MSG] message with key: $key will expire in ${duration.inSeconds} seconds...');
+      log('message with key: $key will expire in ${duration.inSeconds} seconds...');
       final messageTimer = Timer(duration, () => _cleanOne(key));
       _messageTimers.add(messageTimer);
     }
@@ -103,7 +103,7 @@ class MessageCleaner {
           .where((key) => box.get(key)!.isExpired);
       if (expiredMessagesKeys.isNotEmpty) {
         await box.deleteAll(expiredMessagesKeys);
-        logService.log('[MSG] ${expiredMessagesKeys.length} expired messages deleted');
+        log('${expiredMessagesKeys.length} expired messages deleted');
       }
     }
     await box.compact();
@@ -111,7 +111,7 @@ class MessageCleaner {
 
   _cleanOne(msgKey) async {
     box.delete(msgKey);
-    logService.log('[MSG] [timer] message with key: $msgKey deleted now');
+    log('message with key: $msgKey deleted now');
   }
 
   _getBox() async {
