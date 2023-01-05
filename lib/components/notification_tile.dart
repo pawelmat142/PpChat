@@ -26,7 +26,7 @@ class NotificationTile extends StatelessWidget {
                   Row(
                     children: [
                       //todo: get user nickname
-                      AvatarWidget(model: AvatarService.getRandomAvatar(
+                      AvatarWidget(model: AvatarService.createRandom(
                           userNickname: 'Nickname')),
                       getContent(),
                     ],

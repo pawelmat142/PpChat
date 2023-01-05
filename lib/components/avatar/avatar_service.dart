@@ -28,8 +28,12 @@ class AvatarService {
 
   static Color getColor(String key) => colorsPalette[key]!;
 
-  static AvatarModel getRandomAvatar({required String userNickname}) {
-    return AvatarModel(color: randomColorKey, txt: userNickname[0]);
+  static createRandom({required String userNickname}) {
+    return AvatarModel(
+        color: randomColorKey,
+        txt: userNickname[0],
+        imageUrl: ''
+    );
   }
 
 }

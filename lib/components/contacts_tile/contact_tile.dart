@@ -41,7 +41,7 @@ class ContactTile extends StatelessWidget {
                       InkWell(
                           onTap: _navigateToContactView,
                           child: AvatarWidget(
-                            model: AvatarService.getRandomAvatar(userNickname: contactUser.nickname),
+                            model: AvatarService.createRandom(userNickname: contactUser.nickname),
                           )),
 
                       Content(nickname: contactUser.nickname, text: contactUser.role),

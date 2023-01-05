@@ -1,10 +1,13 @@
 class AvatarModel {
   String color;
   String txt;
-  String? url;
+  String imageUrl;
 
   AvatarModel({
     required this.color,
-    required this.txt
+    required this.txt,
+    required this.imageUrl,
   });
+
+  bool get hasImage => imageUrl != '';
 }
