@@ -394,3 +394,5 @@ directories paths refactored
 ### [114] Random avatars preparations
 
 ### [115] Little fix
+
+### [116] Data model connected to with PpUser model
