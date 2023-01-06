@@ -398,3 +398,5 @@ directories paths refactored
 ### [116] Data model connected to PpUser model
 
 ### [117] UserView refactor
+
+### [118] EditAvatarView

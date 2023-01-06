@@ -36,5 +36,10 @@ class AvatarService {
     );
   }
 
+  static saveAvatarEdit(AvatarModel model) {
+
+    print('saving');
+  }
+
 }
 

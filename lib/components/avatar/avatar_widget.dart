@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/avatar/avatar_model.dart';
 import 'package:flutter_chat_app/components/avatar/avatar_service.dart';
@@ -35,7 +36,7 @@ class AvatarWidget extends StatelessWidget {
       child: Center(
           child: Padding(
             padding: EdgeInsets.only(top: size/6),
-            child: Text(model.txt,
+            child: AutoSizeText(model.txt,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: AvatarService.avatarFont,

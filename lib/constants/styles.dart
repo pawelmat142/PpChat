@@ -1,7 +1,8 @@
 // ignore_for_file: constant_identifier_names
 import 'package:flutter/material.dart';
 
-const EdgeInsets BASIC_HORIZONTAL_PADDING = EdgeInsets.symmetric(horizontal: 25);
+const double BASIC_HORIZONTAL_PADDING_VALUE = 25;
+const EdgeInsets BASIC_HORIZONTAL_PADDING = EdgeInsets.symmetric(horizontal: BASIC_HORIZONTAL_PADDING_VALUE);
 
 const Color PRIMARY_COLOR_DARKER = Color(0xFF0a6bbd);
 const Color PRIMARY_COLOR = Color(0xFF2193F3);

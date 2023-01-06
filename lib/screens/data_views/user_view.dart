@@ -8,6 +8,7 @@ import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/process/delete_account_process.dart';
+import 'package:flutter_chat_app/screens/data_views/edit_avatar_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
@@ -119,8 +120,9 @@ class UserView extends StatelessWidget {
               : isMe ?
                 Column(children: [
                   PpButton(text: 'Edit avatar', onPressed: () {
-                    //todo: nav to edit avatar screen
-                    PpSnackBar.show('xd');
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                      return EditAvatarView(user: user);
+                    }));
                   }),
 
                   PpButton(text: 'Logout', color: PRIMARY_COLOR_DARKER, onPressed: () {

@@ -27,6 +27,13 @@ class AvatarModel {
     );
   }
 
+  static AvatarModel copy(AvatarModel input) {
+    return AvatarModel(
+        color: input.color,
+        txt: input.txt,
+        imageUrl: input.imageUrl);
+  }
+
 }
 
 abstract class AvatarModelFields {
