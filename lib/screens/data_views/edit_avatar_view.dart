@@ -37,7 +37,8 @@ class _EditAvatarViewState extends State<EditAvatarView> {
   static const double circleSize = 50;
 
   bool get isAnyChange => currentAvatarModel.txt != widget.user.avatar.txt
-      || currentAvatarModel.color != widget.user.avatar.color;
+      || currentAvatarModel.color != widget.user.avatar.color
+      || currentAvatarModel.imageUrl != widget.user.avatar.imageUrl;
 
   late PpButtonControllable saveButton;
   late PpButtonControllable resetButton;
@@ -159,8 +160,24 @@ class _EditAvatarViewState extends State<EditAvatarView> {
 
               ///BUTTONS
 
-              PpButton(text: 'Upload image', color: PRIMARY_COLOR_DARKER, onPressed: () {
-
+              PpButton(text: currentAvatarModel.hasImage ? 'Remove image' : 'Upload image',
+                  color: PRIMARY_COLOR_DARKER,
+                  onPressed: () async {
+                    if (currentAvatarModel.hasImage) {
+                      setState(() {
+                        currentAvatarModel.imageUrl = '';
+                        _checkChanges();
+                      });
+                      return;
+                    }
+                    _spinner.start();
+                    await AvatarService.uploadAvatar(context: context);
+                    final url = await AvatarService.myAvatarStorageRef.getDownloadURL();
+                    setState(() {
+                      currentAvatarModel.imageUrl = url;
+                      _checkChanges();
+                    });
+                    _spinner.stop();
               }),
 
               saveButton,

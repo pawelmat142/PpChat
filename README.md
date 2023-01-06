@@ -407,3 +407,6 @@ directories paths refactored
 `flutter pub add firebase_storage`
 </br>`flutter pub add cross_file`
 </br>`flutter pub add file_picker`
+
+### [120] Uploading image feature
+

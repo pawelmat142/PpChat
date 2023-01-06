@@ -6,8 +6,10 @@ abstract class PpSnackBar {
   static BuildContext get context => NavigationService.context;
 
   static success({int delay = 0}) => show('Success!', delay: delay);
+
   static error({int delay = 100}) => show('Error!', delay: delay);
   static deleted({int delay = 0}) => show('Deleted successfully!', delay: delay);
+  static noFileSelected({int delay = 0}) => show('No file selected!', delay: delay);
 
   static login() => show('Welcome!');
   static logout() => show('You are logged out');

@@ -1,15 +1,16 @@
+import 'dart:io';
 import 'dart:math';
 
-import 'package:cross_file/cross_file.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/avatar/avatar_model.dart';
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
-import 'package:flutter_chat_app/services/navigation_service.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 
 abstract class AvatarService {
 
@@ -49,6 +50,7 @@ abstract class AvatarService {
     newMe.avatar = model;
     await Me.reference.set(newMe);
     log('new avatar saved!');
+  //  todo: remove image from storage if exists and url = ''
   }
 
   static log(String txt) {
@@ -56,40 +58,41 @@ abstract class AvatarService {
     logService.log('[AvatarService] $txt');
   }
 
-  /// The user selects a file, and the task is added to the list.
-  static Future<UploadTask?> uploadFile(XFile? file) async {
-    if (file == null) {
-      ScaffoldMessenger.of(NavigationService.context).showSnackBar(
-        const SnackBar(
-          content: Text('No file was selected'),
-        ),
-      );
-
-      return null;
+  static Future<void> uploadAvatar({required BuildContext context}) async {
+    try {
+      final filePath = await _pickFile(context: context);
+      if (filePath == null) {
+        PpSnackBar.noFileSelected();
+        return;
+      }
+      await _uploadFile(filePath: filePath);
+      log('file uploaded');
+    } catch (error) {
+      print('ERROR');
     }
-
-    UploadTask uploadTask;
-
-    // Create a Reference to the file
-    Reference ref = FirebaseStorage.instance
-        .ref()
-        .child('flutter-tests')
-        .child('/some-image.jpg');
-
-    final metadata = SettableMetadata(
-      contentType: 'image/jpeg',
-      customMetadata: {'picked-file-path': file.path},
-    );
-
-    if (kIsWeb) {
-      uploadTask = ref.putData(await file.readAsBytes(), metadata);
-    } else {
-      // uploadTask = ref.putFile(io.File(file.path), metadata);
-    }
-
-    // return Future.value(uploadTask);
   }
 
 
+  static Future<String?> _pickFile({required BuildContext context}) async {
+    final results = await FilePicker.platform.pickFiles(
+      allowedExtensions: ['png'],
+      type: FileType.custom,
+      allowMultiple: false,
+    );
+    //todo: valid file size!
+    if (results == null) {
+      PpSnackBar.noFileSelected();
+      return null;
+    }
+    return results.files.single.path!;
+  }
+
+  static Future<void> _uploadFile({required String filePath}) async {
+    final file = File(filePath);
+    await myAvatarStorageRef.putFile(file);
+  }
+
+  static String get myAvatarKey => 'avatars/${Uid.get!}';
+  static Reference get myAvatarStorageRef => FirebaseStorage.instance.ref(myAvatarKey);
 }
 
