@@ -1,13 +1,17 @@
 import 'dart:math';
 
+import 'package:cross_file/cross_file.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/avatar/avatar_model.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
 
-class AvatarService {
+abstract class AvatarService {
 
   // static const String avatarFont = 'Rubik Spray Paint';
   // static const String avatarFont = 'Concert One';
@@ -51,6 +55,41 @@ class AvatarService {
     final logService = getIt.get<LogService>();
     logService.log('[AvatarService] $txt');
   }
+
+  /// The user selects a file, and the task is added to the list.
+  static Future<UploadTask?> uploadFile(XFile? file) async {
+    if (file == null) {
+      ScaffoldMessenger.of(NavigationService.context).showSnackBar(
+        const SnackBar(
+          content: Text('No file was selected'),
+        ),
+      );
+
+      return null;
+    }
+
+    UploadTask uploadTask;
+
+    // Create a Reference to the file
+    Reference ref = FirebaseStorage.instance
+        .ref()
+        .child('flutter-tests')
+        .child('/some-image.jpg');
+
+    final metadata = SettableMetadata(
+      contentType: 'image/jpeg',
+      customMetadata: {'picked-file-path': file.path},
+    );
+
+    if (kIsWeb) {
+      uploadTask = ref.putData(await file.readAsBytes(), metadata);
+    } else {
+      // uploadTask = ref.putFile(io.File(file.path), metadata);
+    }
+
+    // return Future.value(uploadTask);
+  }
+
 
 }
 

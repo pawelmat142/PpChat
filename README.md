@@ -402,3 +402,8 @@ directories paths refactored
 ### [118] EditAvatarView
 
 ### [118] Edit avatar ready
+
+### [119] Firebase storage initialization
+`flutter pub add firebase_storage`
+</br>`flutter pub add cross_file`
+</br>`flutter pub add file_picker`

@@ -8,7 +8,6 @@ import 'package:flutter_chat_app/models/notification/pp_notification_service.dar
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
-import 'package:flutter_chat_app/components/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:get_it/get_it.dart';
 
@@ -35,8 +34,6 @@ Future<void> initGetIt() async {
   getIt.registerLazySingleton(() => LogService());
 
   getIt.registerLazySingleton(() => ConversationSettingsService());
-
-  getIt.registerLazySingleton(() => AvatarService());
 
   getIt.registerSingleton(AuthenticationService());
 }
