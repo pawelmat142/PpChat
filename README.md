@@ -400,3 +400,5 @@ directories paths refactored
 ### [117] UserView refactor
 
 ### [118] EditAvatarView
+
+### [118] Edit avatar ready

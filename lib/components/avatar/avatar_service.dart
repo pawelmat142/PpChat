@@ -2,6 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/avatar/avatar_model.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/services/log_service.dart';
 
 class AvatarService {
 
@@ -36,9 +40,16 @@ class AvatarService {
     );
   }
 
-  static saveAvatarEdit(AvatarModel model) {
+  static Future<void> saveAvatarEdit(AvatarModel model) async {
+    PpUser newMe = Me.reference.get;
+    newMe.avatar = model;
+    await Me.reference.set(newMe);
+    log('new avatar saved!');
+  }
 
-    print('saving');
+  static log(String txt) {
+    final logService = getIt.get<LogService>();
+    logService.log('[AvatarService] $txt');
   }
 
 }

@@ -9,7 +9,7 @@ class PpUser {
   final String signature;
   final String nickname;
   final String role;
-  final AvatarModel avatar;
+  AvatarModel avatar;
   bool logged;
 
   PpUser({

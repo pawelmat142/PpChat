@@ -27,19 +27,19 @@ abstract class FsDocumentModel<T> with ChangeNotifier {
   T get get => _state!;
   bool get isNotEmpty => _state != null;
 
-  set(T item) async {
+  Future<void> set(T item) async {
     _state = item;
     await documentRef.set(stateAsMap);
     log('[set] [$runtimeType]');
   }
 
-  clear() async {
+  Future<void> clear() async {
     _state = null;
     notifyListeners();
     log('[clear] [$runtimeType]');
   }
 
-  clearFirestoreDocument() async {
+  Future<void> clearFirestoreDocument() async {
     _state = null;
     await documentRef.set(stateAsMap);
     log('[clearFirestoreDocument] [$runtimeType]');
@@ -54,6 +54,7 @@ abstract class FsDocumentModel<T> with ChangeNotifier {
     log('[START] [$runtimeType] firestore document observer');
     var completer = Completer();
     _firestoreDocumentObserver = documentRef.snapshots().listen((documentSnapshot) {
+      log('[$runtimeType] document observer triggered');
 
       _state = documentSnapshot.exists ? stateFromSnapshot(documentSnapshot) : null;
       notifyListeners();

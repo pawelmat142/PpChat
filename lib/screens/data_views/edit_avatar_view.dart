@@ -1,11 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/avatar/avatar_model.dart';
 import 'package:flutter_chat_app/components/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/components/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
+import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
+import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button_controllable.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
 
 class EditAvatarView extends StatefulWidget {
   final PpUser user;
@@ -19,6 +27,8 @@ class EditAvatarView extends StatefulWidget {
 }
 
 class _EditAvatarViewState extends State<EditAvatarView> {
+
+  final _spinner = getIt.get<PpSpinner>();
 
   final List<String> colorKeys = AvatarService.colorsPalette.keys.toList();
 
@@ -107,7 +117,6 @@ class _EditAvatarViewState extends State<EditAvatarView> {
                 child: SizedBox(
                   width: 100,
                   child: TextField(
-
                     maxLength: 3,
                     textAlign: TextAlign.center,
                     controller: _textFieldController,
@@ -165,7 +174,20 @@ class _EditAvatarViewState extends State<EditAvatarView> {
 
   initButtons() {
     saveButton = PpButtonControllable(text: 'SAVE', active: false,
-        onPressed: () => AvatarService.saveAvatarEdit(currentAvatarModel));
+        onPressed: () async {
+          try {
+            _spinner.start();
+            await AvatarService.saveAvatarEdit(currentAvatarModel);
+            _spinner.stop();
+            await Future.delayed(const Duration(milliseconds: 100));
+            NavigationService.popToHome();
+            UserView.navigate(user: Me.reference.get);
+            PpSnackBar.success();
+          } catch (error) {
+            _spinner.stop();
+            PpSnackBar.error();
+          }
+        });
 
     resetButton = PpButtonControllable(text: 'Reset changes', active: false,
         color: PRIMARY_COLOR_LIGHTER,

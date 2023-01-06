@@ -5,6 +5,8 @@ abstract class PpSnackBar {
 
   static BuildContext get context => NavigationService.context;
 
+  static success({int delay = 0}) => show('Success!', delay: delay);
+  static error({int delay = 100}) => show('Error!', delay: delay);
   static deleted({int delay = 0}) => show('Deleted successfully!', delay: delay);
 
   static login() => show('Welcome!');

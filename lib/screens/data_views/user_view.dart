@@ -34,6 +34,7 @@ class UserView extends StatelessWidget {
 
     final user = ModalRoute.of(context)!.settings.arguments as PpUser;
     final bool isMe = Uid.get == user.uid;
+
     final bool isContact = Contacts.reference.getByNickname(user.nickname) != null;
 
     return Scaffold(
@@ -146,7 +147,7 @@ class UserView extends StatelessWidget {
 
               /// else
               : PpButton(text: 'Invite', onPressed: () {
-              //  todo invitation
+              //  todo invitation refactor
               }),
 
             ],
