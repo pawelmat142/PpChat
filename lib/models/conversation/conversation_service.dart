@@ -226,4 +226,8 @@ class ConversationService {
     });
   }
 
+  contactExists(String contactUid) {
+    return _contactsService.contactExists(contactUid);
+  }
+
 }

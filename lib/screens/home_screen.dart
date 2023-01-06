@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
               PpButton(text: 'Account',
                 color: PRIMARY_COLOR_LIGHTER,
                 onPressed: () {
-                  UserView.navigate(Me.reference.get);
+                  UserView.navigate(user: Me.reference.get);
                 },
               ),
 

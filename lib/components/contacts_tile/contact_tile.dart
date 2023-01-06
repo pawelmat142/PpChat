@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/components/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/components/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/components/contacts_tile/unread_messages.dart';
+import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 
 class ContactTile extends StatelessWidget {
@@ -19,7 +18,7 @@ class ContactTile extends StatelessWidget {
   }
 
   _navigateToContactView() {
-    UserView.navigate(contactUser);
+    UserView.navigate(user: contactUser);
   }
 
   @override
@@ -41,7 +40,7 @@ class ContactTile extends StatelessWidget {
                       InkWell(
                           onTap: _navigateToContactView,
                           child: AvatarWidget(
-                            model: AvatarService.createRandom(userNickname: contactUser.nickname),
+                            model: contactUser.avatar,
                           )),
 
                       Content(nickname: contactUser.nickname, text: contactUser.role),

@@ -395,4 +395,6 @@ directories paths refactored
 
 ### [115] Little fix
 
-### [116] Data model connected to with PpUser model
+### [116] Data model connected to PpUser model
+
+### [117] UserView refactor

@@ -1,67 +1,158 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/components/avatar/avatar_widget.dart';
+import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
-import 'package:flutter_chat_app/services/get_it.dart';
-import 'package:flutter_chat_app/services/navigation_service.dart';
-import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/screens/data_views/data_view.dart';
-import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
+import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
-import 'package:flutter_chat_app/services/uid.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/process/delete_account_process.dart';
+import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
+import 'package:flutter_chat_app/services/uid.dart';
+import 'package:flutter_chat_app/services/authentication_service.dart';
 
-class UserView extends DataView {
-  const UserView({required super.interface,  super.key});
 
-  static navigate(PpUser user) async {
-    final contactsService = getIt.get<ContactsService>();
+class UserView extends StatelessWidget {
+  const UserView({Key? key}) : super(key: key);
 
-    await Navigator.push(
+  static const String id = 'user_view';
+
+  static void navigate({required PpUser user}) {
+    Navigator.pushNamed(
         NavigationService.context,
-        MaterialPageRoute(builder: (context) => UserView(interface: DataViewInterface(
-          title: 'CONTACT VIEW',
-          textOne: user.nickname,
-          textTwo: user.logged ? 'Active' : 'Inactive',
-          buttons: [
-
-            PpButton(text: 'message', onPressed: () {
-              final conversationService = getIt.get<ConversationService>();
-              if (contactsService.contactExists(user.uid)) {
-                conversationService.navigateToConversationView(user);
-              } else {
-                PpSnackBar.contactNotExists();
-              }
-            }),
-
-            PpButton(text: user.uid == Uid.get ? 'DELETE YOUR ACCOUNT' : 'delete',
-                color: Colors.red, onPressed: () async {
-              if (contactsService.contactExists(user.uid)) {
-                await contactsService.onDeleteContact(user.uid);
-              }
-              else if (user.uid == Uid.get) {
-                onDeleteAccount();
-              }
-              else {
-                PpSnackBar.contactNotExists();
-              }
-            })
-          ]
-        )))
+        UserView.id,
+        arguments: user
     );
   }
 
-  static onDeleteAccount() async {
-    final popup = getIt.get<Popup>();
+  @override
+  Widget build(BuildContext context) {
 
-    popup.show('Are you sure?',
-        text: 'All your data will be lost!',
-        error: true,
-        buttons: [PopupButton('Delete', error: true, onPressed: () {
-          NavigationService.popToBlank();
-          DeleteAccountProcess();
-        })]
+    final user = ModalRoute.of(context)!.settings.arguments as PpUser;
+    final bool isMe = Uid.get == user.uid;
+    final bool isContact = Contacts.reference.getByNickname(user.nickname) != null;
+
+    return Scaffold(
+
+        appBar: AppBar(title: Text(isMe ?  'My account' : isContact ? 'Contact view' : '??')),
+
+        body: Padding(
+          padding: BASIC_HORIZONTAL_PADDING,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+
+              /// AVATAR
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 30),
+                child: AvatarWidget(
+                  size: 150,
+                  model: user.avatar
+                ),
+              ),
+
+              /// Name
+              Text(user.nickname,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 30,
+                  color: PRIMARY_COLOR_DARKER,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 1.5,
+                ),
+              ),
+
+
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(user.logged ? 'Active' : 'Inactive',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+
+              //  Padding(
+              //   padding: const EdgeInsets.only(top: 30, bottom: 20),
+              //   child: RichText(text: const TextSpan(children: [
+              //     TextSpan(text: 'xd ',
+              //         style: TextStyle(fontSize: 16, color: PRIMARY_COLOR_LIGHTER)),
+              //     TextSpan(text: 'lol',
+              //         style: TextStyle(fontSize: 16, color: Colors.black87)),
+              //   ])),
+              // ),
+
+              ///BUTTONS
+              ///
+              /// contact
+              isContact ?
+                Column(children: [
+                  PpButton(text: 'Conversation', onPressed: () {
+                    final conversationService = getIt.get<ConversationService>();
+                    if (conversationService.contactExists(user.uid)) {
+                      conversationService.navigateToConversationView(user);
+                    } else {
+                      PpSnackBar.contactNotExists();
+                    }
+                  }),
+
+                  PpButton(text: 'Delete contact',
+                      color: Colors.red, onPressed: () async {
+                        final contactsService = getIt.get<ContactsService>();
+                        if (contactsService.contactExists(user.uid)) {
+                          await contactsService.onDeleteContact(user.uid);
+                        } else {
+                          PpSnackBar.contactNotExists();
+                        }
+                      }),
+                ])
+
+              /// me
+              : isMe ?
+                Column(children: [
+                  PpButton(text: 'Edit avatar', onPressed: () {
+                    //todo: nav to edit avatar screen
+                    PpSnackBar.show('xd');
+                  }),
+
+                  PpButton(text: 'Logout', color: PRIMARY_COLOR_DARKER, onPressed: () {
+                    final authService = getIt.get<AuthenticationService>();
+                    authService.onLogout();
+                  }),
+
+                  PpButton(text: 'Delete my account',
+                      color: Colors.red, onPressed: () async {
+                        final popup = getIt.get<Popup>();
+                        popup.show('Are you sure?',
+                            text: 'All your data will be lost!',
+                            error: true,
+                            buttons: [PopupButton('Delete', error: true, onPressed: () {
+                              NavigationService.popToBlank();
+                              DeleteAccountProcess();
+                            })]
+                        );
+                    }),
+                ])
+
+              /// else
+              : PpButton(text: 'Invite', onPressed: () {
+              //  todo invitation
+              }),
+
+            ],
+          ),
+        )
+
     );
   }
+
 
 }

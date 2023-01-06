@@ -18,20 +18,28 @@ class AvatarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: CONTACTS_AVATAR_SIZE,
-      width: CONTACTS_AVATAR_SIZE,
+      height: size,
+      width: size,
       decoration: BoxDecoration(
           color: colorFromModel,
-          shape: BoxShape.circle
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: colorFromModel.withOpacity(0.5),
+              spreadRadius: size/50,
+              blurRadius: size/30,
+              offset: Offset(0, size/50),
+            )
+          ]
       ),
       child: Center(
           child: Padding(
-            padding: const EdgeInsets.only(top: CONTACTS_AVATAR_SIZE/6),
+            padding: EdgeInsets.only(top: size/6),
             child: Text(model.txt,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: AvatarService.avatarFont,
-                  fontSize: CONTACTS_AVATAR_SIZE/3*2,
+                  fontSize: size/3*2,
                   color: WHITE_COLOR,
                 ),
             ),
