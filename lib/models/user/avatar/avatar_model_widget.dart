@@ -4,8 +4,8 @@ import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_model.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
 
-class AvatarFromModel extends StatelessWidget {
-  const AvatarFromModel(this.model, {
+class AvatarModelWidget extends StatelessWidget {
+  const AvatarModelWidget(this.model, {
     required this.size,
     Key? key
   }) : super(key: key);

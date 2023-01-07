@@ -38,4 +38,20 @@ class AvatarHiveImage extends HiveObject {
     return await Hive.openBox<AvatarHiveImage>(avatarsBoxKey);
   }
 
+  static Future<bool> exists({required String uid}) async {
+    final box = await _getOpenBox();
+    return box.containsKey(uid);
+  }
+
+  static Future<void> deletePath({required String uid}) async {
+    final box = await _getOpenBox();
+    await box.delete(uid);
+    box.compact();
+  }
+
+  static Future<void> cleanBox() async {
+    final box = await _getOpenBox();
+    await box.clear();
+  }
+
 }

@@ -212,8 +212,8 @@ class _EditAvatarViewState extends State<EditAvatarView> {
 
       if (pickedImageFile == null) {
         if (isRemovingFile) {
-          //  todo: remove file from fs
-          //  todo: remove file from hive and device
+          await AvatarService.deleteFileFromFs(uid: widget.user.uid);
+          await AvatarService.deleteIfExistsInDevice(uid: widget.user.uid);
         }
       } else {
         final url = await AvatarService.uploadFileToFs(file: pickedImageFile!);

@@ -15,6 +15,8 @@ import 'package:path_provider/path_provider.dart';
 
 abstract class AvatarService {
 
+  //TODO: delete one on delete contact
+
   // static const String avatarFont = 'Rubik Spray Paint';
   // static const String avatarFont = 'Concert One';
   static const String avatarFont = 'Luckiest Guy';
@@ -51,7 +53,6 @@ abstract class AvatarService {
     newMe.avatar = model;
     await Me.reference.set(newMe);
     log('new avatar saved!');
-  //  todo: remove image from storage if exists and url = ''
   }
 
   static log(String txt) {
@@ -89,7 +90,7 @@ abstract class AvatarService {
 
   static Future<File> _getAvatarFileFromDevice({required String uid}) async {
     final path = await _userAvatarPathInDevice(uid: uid);
-    log('get file from device');
+    log('get file from device - uid: $uid');
     return File(path);
   }
 
@@ -111,15 +112,40 @@ abstract class AvatarService {
     final hiveImage = AvatarHiveImage(
         uid: uid,
         imageUrl: model.imageUrl,
-        devicePath: newPath);
+        devicePath: newPath
+    );
     await hiveImage.saveIt();
 
-    log('get file from firebase storage');
+    log('get file from firebase storage - uid: $uid');
     return resultFile;
   }
 
   static Reference _userAvatarFsStorageRefByUid(String uid) {
     return FirebaseStorage.instance.ref('avatars/$uid');
+  }
+
+
+  /// DELETE
+
+  static Future<void> deleteFileFromFs({required String uid}) async {
+    await _userAvatarFsStorageRefByUid(uid).delete();
+  }
+
+  static Future<void> deleteIfExistsInDevice({required String uid}) async {
+    if (await AvatarHiveImage.exists(uid: uid)) {
+      final hiveImage = await AvatarHiveImage.getByUid(uid: uid);
+      File(hiveImage!.devicePath).deleteSync(recursive: true);
+      await AvatarHiveImage.deletePath(uid: uid);
+      log('deleted avatar from device - uid: $uid');
+    }
+  }
+
+  static Future<void> deleteAllAvatarsFromDeviceAndHive() async {
+    final appDirectory = await getApplicationDocumentsDirectory();
+    final avatarsDirectory = Directory('${appDirectory.path}/avatars');
+    avatarsDirectory.deleteSync(recursive: true);
+    await AvatarHiveImage.cleanBox();
+    log('deleted all avatar files and hive box clean');
   }
 
 }

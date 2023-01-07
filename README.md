@@ -422,4 +422,6 @@ directories paths refactored
 </br> AvatarWidget refactored - auto detect if image in device(Hive)
 </br> if not download one and store in Hive/device
 
+### [124] Delete avatar feature
+
 

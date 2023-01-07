@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/process/log_process.dart';
@@ -104,6 +105,8 @@ class DeleteAccountProcess extends LogProcess {
       log('${_contactUids.length} contacts found');
 
       await _addDeletedAccountLogBatch();
+
+      await AvatarService.deleteAllAvatarsFromDeviceAndHive();
 
       for (final contact in _contacts) {
         await _conversationSettingsService.fullDeleteConversation(contactUid: contact.uid);

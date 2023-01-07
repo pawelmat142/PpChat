@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/models/user/avatar/avatar_from_model.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_model_widget.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_image_widget.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_model.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
@@ -36,11 +36,11 @@ class AvatarWidget extends StatelessWidget {
               final imageFile = snapshot.data;
 
               return imageFile == null
-                ? AvatarFromModel(model, size: size)
+                ? AvatarModelWidget(model, size: size)
                 : AvatarImageWidget(size: size, file: imageFile);
             }
           )
-        : AvatarFromModel(model, size: size);
+        : AvatarModelWidget(model, size: size);
 
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
@@ -46,6 +47,7 @@ class ContactsService {
 
   _deleteContact(String uid) async {
     try {
+      await AvatarService.deleteIfExistsInDevice(uid: uid);
       final contactUser = contacts.getByUid(uid)!;
       await _conversationSettingsService.fullDeleteConversation(contactUid: contactUser.uid);
       await _sendContactDeletedNotification(contactUser);
