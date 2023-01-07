@@ -162,23 +162,10 @@ class _EditAvatarViewState extends State<EditAvatarView> {
 
               PpButton(text: currentAvatarModel.hasImage ? 'Remove image' : 'Upload image',
                   color: PRIMARY_COLOR_DARKER,
-                  onPressed: () async {
-                    if (currentAvatarModel.hasImage) {
-                      setState(() {
-                        currentAvatarModel.imageUrl = '';
-                        _checkChanges();
-                      });
-                      return;
-                    }
-                    _spinner.start();
-                    await AvatarService.uploadAvatar(context: context);
-                    final url = await AvatarService.myAvatarStorageRef.getDownloadURL();
-                    setState(() {
-                      currentAvatarModel.imageUrl = url;
-                      _checkChanges();
-                    });
-                    _spinner.stop();
-              }),
+                  onPressed: () => currentAvatarModel.hasImage
+                      ? _onRemoveFile()
+                      : _onFileUpload(context),
+              ),
 
               saveButton,
               resetButton,
@@ -213,6 +200,20 @@ class _EditAvatarViewState extends State<EditAvatarView> {
           _textFieldController.text = widget.user.avatar.txt;
           _checkChanges();
         }));
+  }
+
+  _onFileUpload(BuildContext context) async {
+    _spinner.start();
+    await AvatarService.uploadAvatar(context: context);
+    final url = await AvatarService.myAvatarStorageRef.getDownloadURL();
+    setState(() => currentAvatarModel.imageUrl = url);
+    _spinner.stop();
+    _checkChanges();
+  }
+
+  _onRemoveFile() {
+    setState(() => currentAvatarModel.imageUrl = '');
+    _checkChanges();
   }
 
 }

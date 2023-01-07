@@ -11,6 +11,7 @@ import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class AvatarService {
 
@@ -60,7 +61,8 @@ abstract class AvatarService {
 
   static Future<void> uploadAvatar({required BuildContext context}) async {
     try {
-      final filePath = await _pickFile(context: context);
+      // final filePath = await _pickFile(context: context);
+      final filePath = await _pickImage();
       log('file picked');
       if (filePath == null) {
         PpSnackBar.noFileSelected();
@@ -69,8 +71,21 @@ abstract class AvatarService {
       await _uploadFile(filePath: filePath);
       log('file uploaded');
     } catch (error) {
+      PpSnackBar.error();
       print('ERROR');
     }
+  }
+
+  static Future<String?> _pickImage() async {
+    final picker = ImagePicker();
+    print('picker');
+    final result = await picker.pickImage(source: ImageSource.gallery);
+    print('result');
+    if (result == null) {
+      PpSnackBar.noFileSelected();
+      return null;
+    }
+    return result.path;
   }
 
 
@@ -93,7 +108,7 @@ abstract class AvatarService {
     await myAvatarStorageRef.putFile(file);
   }
 
-  static String get myAvatarKey => 'avatars/${Uid.get!}';
-  static Reference get myAvatarStorageRef => FirebaseStorage.instance.ref(myAvatarKey);
+  static Reference get myAvatarStorageRef => FirebaseStorage.instance.ref(myAvatarPath);
+  static String get myAvatarPath => 'avatars/${Uid.get!}';
 }
 

@@ -412,3 +412,6 @@ directories paths refactored
 
 ### [121] Directories refactor
 
+### [122] FilePicker changed to ImagePicker
+`flutter pub add image_picker`
+
