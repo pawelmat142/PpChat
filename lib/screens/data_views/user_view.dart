@@ -51,6 +51,7 @@ class UserView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 30),
                 child: AvatarWidget(
+                  uid: user.uid,
                   size: 150,
                   model: user.avatar
                 ),

@@ -415,3 +415,11 @@ directories paths refactored
 ### [122] FilePicker changed to ImagePicker
 `flutter pub add image_picker`
 
+### [123] Avatar images stored in device and it's path in Hive
+`flutter pub add image_picker`
+</br> AvatarHiveImage model
+</br> `flutter pub run build_runner build --delete-conflicting-outputs`
+</br> AvatarWidget refactored - auto detect if image in device(Hive)
+</br> if not download one and store in Hive/device
+
+

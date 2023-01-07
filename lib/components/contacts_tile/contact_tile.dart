@@ -40,6 +40,7 @@ class ContactTile extends StatelessWidget {
                       InkWell(
                           onTap: _navigateToContactView,
                           child: AvatarWidget(
+                            uid: contactUser.uid,
                             model: contactUser.avatar,
                           )),
 

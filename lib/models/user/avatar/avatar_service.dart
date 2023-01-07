@@ -1,17 +1,17 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_model.dart';
-import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_hive_image.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 abstract class AvatarService {
 
@@ -59,56 +59,68 @@ abstract class AvatarService {
     logService.log('[AvatarService] $txt');
   }
 
-  static Future<void> uploadAvatar({required BuildContext context}) async {
-    try {
-      // final filePath = await _pickFile(context: context);
-      final filePath = await _pickImage();
-      log('file picked');
-      if (filePath == null) {
-        PpSnackBar.noFileSelected();
-        return;
-      }
-      await _uploadFile(filePath: filePath);
-      log('file uploaded');
-    } catch (error) {
-      PpSnackBar.error();
-      print('ERROR');
-    }
+  ///SAVE
+
+  static Future<String> uploadFileToFs({required File file}) async {
+    final Reference storageRef = _userAvatarFsStorageRefByUid(Uid.get!);
+    await storageRef.putFile(file);
+    return await storageRef.getDownloadURL();
   }
 
-  static Future<String?> _pickImage() async {
+  static Future<File?> pickImage() async {
     final picker = ImagePicker();
-    print('picker');
     final result = await picker.pickImage(source: ImageSource.gallery);
-    print('result');
-    if (result == null) {
-      PpSnackBar.noFileSelected();
-      return null;
+    if (result == null) return null;
+    return File(result.path);
+  }
+
+
+  ///GET
+
+  static Future<File?> getImageFile({required String uid, required AvatarModel model}) async {
+    final hiveImage = await AvatarHiveImage.getByUid(uid: uid);
+
+    if (hiveImage != null && hiveImage.imageUrl == model.imageUrl) {
+      return await _getAvatarFileFromDevice(uid: uid);
+    } else {
+      return await _getAvatarFileFromFsAndSaveToDevice(model: model, uid: uid);
     }
-    return result.path;
   }
 
-
-  static Future<String?> _pickFile({required BuildContext context}) async {
-    final results = await FilePicker.platform.pickFiles(
-      allowedExtensions: ['png'],
-      type: FileType.custom,
-      allowMultiple: false,
-    );
-    //todo: valid file size!
-    if (results == null) {
-      PpSnackBar.noFileSelected();
-      return null;
-    }
-    return results.files.single.path!;
+  static Future<File> _getAvatarFileFromDevice({required String uid}) async {
+    final path = await _userAvatarPathInDevice(uid: uid);
+    log('get file from device');
+    return File(path);
   }
 
-  static Future<void> _uploadFile({required String filePath}) async {
-    final file = File(filePath);
-    await myAvatarStorageRef.putFile(file);
+  static Future<String> _userAvatarPathInDevice({required String uid}) async {
+    final appDirectory = await getApplicationDocumentsDirectory();
+    return '${appDirectory.path}/avatars/$uid';
   }
 
-  static Reference get myAvatarStorageRef => FirebaseStorage.instance.ref(myAvatarPath);
-  static String get myAvatarPath => 'avatars/${Uid.get!}';
+  static Future<File?> _getAvatarFileFromFsAndSaveToDevice({required AvatarModel model, required String uid}) async {
+    final storageRef = FirebaseStorage.instance.refFromURL(model.imageUrl);
+
+    final bytes =  await storageRef.getData();
+    if (bytes == null) return null;
+
+    final newPath = await _userAvatarPathInDevice(uid: uid);
+    final newFile = await File(newPath).create(recursive: true);
+    final resultFile = await newFile.writeAsBytes(bytes);
+
+    final hiveImage = AvatarHiveImage(
+        uid: uid,
+        imageUrl: model.imageUrl,
+        devicePath: newPath);
+    await hiveImage.saveIt();
+
+    log('get file from firebase storage');
+    return resultFile;
+  }
+
+  static Reference _userAvatarFsStorageRefByUid(String uid) {
+    return FirebaseStorage.instance.ref('avatars/$uid');
+  }
+
 }
 

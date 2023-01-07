@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_hive_image.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_settings_view.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
@@ -28,6 +29,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(PpMessageAdapter());
   Hive.registerAdapter(ConversationSettingsAdapter());
+  Hive.registerAdapter(AvatarHiveImageAdapter());
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

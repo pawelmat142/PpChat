@@ -5,6 +5,7 @@ import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 
 class NotificationTile extends StatelessWidget {
   final PpNotification notification;
@@ -26,8 +27,11 @@ class NotificationTile extends StatelessWidget {
                   Row(
                     children: [
                       //todo: get user nickname
-                      AvatarWidget(model: AvatarService.createRandom(
-                          userNickname: 'Nickname')),
+                      //todo: get user uid
+                      AvatarWidget(
+                          model: AvatarService.createRandom(userNickname: 'Nickname'),
+                          uid: Uid.get!,
+                      ),
                       getContent(),
                     ],
                   ),

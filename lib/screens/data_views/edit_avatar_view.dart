@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_model.dart';
@@ -13,7 +14,9 @@ import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button_controllable.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 
 class EditAvatarView extends StatefulWidget {
   final PpUser user;
@@ -29,6 +32,7 @@ class EditAvatarView extends StatefulWidget {
 class _EditAvatarViewState extends State<EditAvatarView> {
 
   final _spinner = getIt.get<PpSpinner>();
+  final logService = getIt.get<LogService>();
 
   final List<String> colorKeys = AvatarService.colorsPalette.keys.toList();
 
@@ -38,13 +42,19 @@ class _EditAvatarViewState extends State<EditAvatarView> {
 
   bool get isAnyChange => currentAvatarModel.txt != widget.user.avatar.txt
       || currentAvatarModel.color != widget.user.avatar.color
-      || currentAvatarModel.imageUrl != widget.user.avatar.imageUrl;
+      || currentAvatarModel.imageUrl != widget.user.avatar.imageUrl
+      || pickedImageFile != null;
 
   late PpButtonControllable saveButton;
   late PpButtonControllable resetButton;
 
   final TextEditingController _textFieldController = TextEditingController();
   bool _textFieldInvalid = false;
+
+  File? pickedImageFile;
+  bool get isAnyImage => currentAvatarModel.hasImage || pickedImageFile != null;
+
+  bool get isRemovingFile => widget.user.avatar.imageUrl != '' && currentAvatarModel.imageUrl == '';
 
   @override
   void initState() {
@@ -71,7 +81,7 @@ class _EditAvatarViewState extends State<EditAvatarView> {
         currentAvatarModel.txt = _textFieldController.text;
       }
     });
-    _checkChanges();
+    _updateButtons();
   }
 
 
@@ -79,10 +89,10 @@ class _EditAvatarViewState extends State<EditAvatarView> {
   _onColorTap(String colorKey) => setState((){
     FocusScope.of(context).unfocus();
     currentAvatarModel.color = colorKey;
-    _checkChanges();
+    _updateButtons();
   });
 
-  _checkChanges() {
+  _updateButtons() {
     if (isAnyChange) {
       saveButton.activation();
       resetButton.activation();
@@ -109,6 +119,8 @@ class _EditAvatarViewState extends State<EditAvatarView> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 30),
                 child: AvatarWidget(
+                    uid: Uid.get!,
+                    pickedImageFile: pickedImageFile,
                     size: 150,
                     model: currentAvatarModel
                 ),
@@ -134,40 +146,44 @@ class _EditAvatarViewState extends State<EditAvatarView> {
               /// COLORS
 
               Row(mainAxisAlignment: MainAxisAlignment.center,
-                children: colorKeys.getRange(0, 4).map((c) => ColorCircle(
+                children: colorKeys.getRange(0, 4)
+                    .map((c) => ColorCircle(
                       onTap: _onColorTap,
                       size: circleSize,
                       colorKey: c,
-                    )).toList()
+                  )).toList()
               ),
 
               Row(mainAxisAlignment: MainAxisAlignment.center,
-                children: colorKeys.getRange(4, 8).map((c) => ColorCircle(
-                        onTap: _onColorTap,
-                        size: circleSize,
-                        colorKey: c,
-                      )).toList()
+                children: colorKeys.getRange(4, 8)
+                    .map((c) => ColorCircle(
+                      onTap: _onColorTap,
+                      size: circleSize,
+                      colorKey: c,
+                  )).toList()
               ),
 
               Row(mainAxisAlignment: MainAxisAlignment.center,
-                children: colorKeys.getRange(8, colorKeys.length).map((c) => ColorCircle(
-                        onTap: _onColorTap,
-                        size: circleSize,
-                        colorKey: c,
-                      )).toList()
+                children: colorKeys.getRange(8, colorKeys.length)
+                    .map((c) => ColorCircle(
+                      onTap: _onColorTap,
+                      size: circleSize,
+                      colorKey: c,
+                  )).toList()
               ),
 
 
               ///BUTTONS
 
-              PpButton(text: currentAvatarModel.hasImage ? 'Remove image' : 'Upload image',
+              PpButton(text: isAnyImage ? 'Remove image' : 'Upload image',
                   color: PRIMARY_COLOR_DARKER,
-                  onPressed: () => currentAvatarModel.hasImage
+                  onPressed: () => isAnyImage
                       ? _onRemoveFile()
                       : _onFileUpload(context),
               ),
 
               saveButton,
+
               resetButton,
             ],
           ),
@@ -177,43 +193,65 @@ class _EditAvatarViewState extends State<EditAvatarView> {
   }
 
   initButtons() {
-    saveButton = PpButtonControllable(text: 'SAVE', active: false,
-        onPressed: () async {
-          try {
-            _spinner.start();
-            await AvatarService.saveAvatarEdit(currentAvatarModel);
-            _spinner.stop();
-            await Future.delayed(const Duration(milliseconds: 100));
-            NavigationService.popToHome();
-            UserView.navigate(user: Me.reference.get);
-            PpSnackBar.success();
-          } catch (error) {
-            _spinner.stop();
-            PpSnackBar.error();
-          }
-        });
+    saveButton = PpButtonControllable(text: 'SAVE',
+        active: false, onPressed: _onSave);
 
     resetButton = PpButtonControllable(text: 'Reset changes', active: false,
         color: PRIMARY_COLOR_LIGHTER,
-        onPressed: () => setState((){
+        onPressed: () => setState(() {
           currentAvatarModel = AvatarModel.copy(widget.user.avatar);
           _textFieldController.text = widget.user.avatar.txt;
-          _checkChanges();
+          pickedImageFile = null;
+          _updateButtons();
         }));
+  }
+
+  _onSave() async {
+    try {
+      _spinner.start();
+
+      if (pickedImageFile == null) {
+        if (isRemovingFile) {
+          //  todo: remove file from fs
+          //  todo: remove file from hive and device
+        }
+      } else {
+        final url = await AvatarService.uploadFileToFs(file: pickedImageFile!);
+        currentAvatarModel.imageUrl = url;
+      }
+
+      await AvatarService.saveAvatarEdit(currentAvatarModel);
+      _spinner.stop();
+      await Future.delayed(const Duration(milliseconds: 100));
+      NavigationService.popToHome();
+      UserView.navigate(user: Me.reference.get);
+      PpSnackBar.success();
+    } catch (error) {
+      _spinner.stop();
+      PpSnackBar.error();
+    }
   }
 
   _onFileUpload(BuildContext context) async {
     _spinner.start();
-    await AvatarService.uploadAvatar(context: context);
-    final url = await AvatarService.myAvatarStorageRef.getDownloadURL();
-    setState(() => currentAvatarModel.imageUrl = url);
+    final pickedImage = await AvatarService.pickImage();
     _spinner.stop();
-    _checkChanges();
+
+    if (pickedImage != null) {
+      setState(() => pickedImageFile = pickedImage);
+      _updateButtons();
+      PpSnackBar.success();
+    } else {
+      PpSnackBar.noFileSelected();
+    }
   }
 
   _onRemoveFile() {
-    setState(() => currentAvatarModel.imageUrl = '');
-    _checkChanges();
+    setState(() {
+      currentAvatarModel.imageUrl = '';
+      pickedImageFile = null;
+    });
+    _updateButtons();
   }
 
 }
