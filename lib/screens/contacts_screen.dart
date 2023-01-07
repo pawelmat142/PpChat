@@ -3,19 +3,38 @@ import 'package:flutter_chat_app/components/contacts_tile/contact_tile.dart';
 import 'package:flutter_chat_app/components/notifications_info.dart';
 import 'package:flutter_chat_app/components/tile_divider.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/process/find_contact.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
+import 'package:flutter_chat_app/process/login_process.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
+import 'package:flutter_chat_app/services/authentication_service.dart';
+import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:provider/provider.dart';
 
-class ContactsScreen extends StatelessWidget {
+class ContactsScreen extends StatefulWidget {
   const ContactsScreen({Key? key}) : super(key: key);
   static const String id = 'contacts_screen';
 
+  @override
+  State<ContactsScreen> createState() => _ContactsScreenState();
+}
+
+class _ContactsScreenState extends State<ContactsScreen> {
   PpUser get me => Me.reference.get;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      final process = LoginProcess();
+      await process.process();
+      PpSnackBar.login();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +42,24 @@ class ContactsScreen extends StatelessWidget {
     return Scaffold(
 
       appBar: AppBar(
+          leading: IconButton(icon: const Icon(Icons.logout),
+            onPressed: () {
+              final authService = getIt.get<AuthenticationService>();
+              authService.onLogout();
+            },
+          ),
           actions: [
             IconButton(
                 onPressed: () => UserView.navigate(user: me),
-                icon: AvatarWidget(
-                  uid: me.uid,
-                  model: Me.reference.get.avatar,
-                  size: 50,
+                icon: Consumer<Me>(
+                builder: (context, me, child) => me.isNotEmpty ?
+                  AvatarWidget(
+                    uid: me.uid,
+                    model: me.get.avatar,
+                    size: 50)
+                  : const SizedBox(height: 0)
                 ),
-            )
+            ),
           ],
           title: const Text('CONTACTS')
       ),
@@ -67,5 +95,4 @@ class ContactsScreen extends StatelessWidget {
   nothingHereWidget() {
     return const Center(child: Text('Nothing here'));
   }
-
 }

@@ -428,4 +428,6 @@ directories paths refactored
 
 ### [126] more little fixes
 
+### [127] ContactScreen refactored to be 'HomeScreen'
+
 

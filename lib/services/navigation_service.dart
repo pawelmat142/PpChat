@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
-import 'package:flutter_chat_app/screens/home_screen.dart';
 import 'package:navigation_history_observer/navigation_history_observer.dart';
 
 class NavigationService {
@@ -27,7 +26,7 @@ class NavigationService {
   }
 
   static popToHome() {
-    Navigator.popUntil(context, ModalRoute.withName(HomeScreen.id));
+    Navigator.popUntil(context, ModalRoute.withName(ContactsScreen.id));
   }
 
   static popToBlank() {
@@ -35,7 +34,8 @@ class NavigationService {
   }
 
   static homeAndContacts() {
-    Navigator.pushNamedAndRemoveUntil(NavigationService.context, ContactsScreen.id, ModalRoute.withName(HomeScreen.id));
+    popToHome();
+    // Navigator.pushNamedAndRemoveUntil(NavigationService.context, ContactsScreen.id, ModalRoute.withName(HomeScreen.id));
   }
 
 }

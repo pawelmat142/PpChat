@@ -18,7 +18,6 @@ import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
-import 'package:flutter_chat_app/screens/home_screen.dart';
 import 'package:flutter_chat_app/screens/notifications_screen.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:navigation_history_observer/navigation_history_observer.dart';
@@ -63,7 +62,6 @@ class MyApp extends StatelessWidget {
       initialRoute: BlankScreen.id,
       routes: {
         BlankScreen.id: (context) => const BlankScreen(),
-        HomeScreen.id: (context) => const HomeScreen(),
 
         LoginFormScreen.id: (context) => LoginFormScreen(),
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
