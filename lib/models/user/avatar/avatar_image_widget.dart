@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
+// TODO: colors pallette on edit view as slider!
 class AvatarImageWidget extends StatelessWidget {
   const AvatarImageWidget({
     required this.size,
@@ -16,6 +16,8 @@ class AvatarImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         boxShadow: [BoxShadow(

@@ -68,7 +68,7 @@ class NotificationView extends StatelessWidget {
 
               /// AVATAR
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 30),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: AvatarWidget.createFromNotification(notification,
                     size: AVATAR_SIZE_BIG),
               ),

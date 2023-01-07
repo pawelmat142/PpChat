@@ -10,6 +10,7 @@ import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/process/delete_account_process.dart';
 import 'package:flutter_chat_app/screens/data_views/edit_avatar_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
+import 'package:flutter_chat_app/screens/notifications_screen.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
@@ -132,10 +133,16 @@ class UserView extends StatelessWidget {
               /// me
               : isMe ?
                 Column(children: [
-                  PpButton(text: 'Edit avatar', onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                      return EditAvatarView(user: user);
-                    }));
+                  PpButton(text: 'Edit avatar',
+                    color: PRIMARY_COLOR_LIGHTER,
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                        return EditAvatarView(user: user);
+                      }));
+                  }),
+
+                  PpButton(text: 'Notifications', onPressed: () {
+                    Navigator.pushNamed(context, NotificationsScreen.id);
                   }),
 
                   PpButton(text: 'Logout', color: PRIMARY_COLOR_DARKER, onPressed: () {

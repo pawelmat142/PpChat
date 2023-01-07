@@ -114,10 +114,11 @@ class _EditAvatarViewState extends State<EditAvatarView> {
         child: GestureDetector(
           onTap: FocusScope.of(context).unfocus,
           child: ListView(
+            padding: const EdgeInsets.symmetric(vertical: BASIC_TOP_PADDING_VALUE),
             children: [
 
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 30),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: AvatarWidget(
                     uid: Uid.get!,
                     pickedImageFile: pickedImageFile,

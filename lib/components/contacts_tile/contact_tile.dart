@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/components/tile_divider.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/components/contacts_tile/unread_messages.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
@@ -69,12 +70,8 @@ class ContactTile extends StatelessWidget {
               ),
             ),
 
-            const Divider(
-              thickness: 1,
-              color: Colors.grey,
-              endIndent: TILE_PADDING_HORIZONTAL,
-              indent: TILE_PADDING_HORIZONTAL * 3 + AVATAR_SIZE,
-            ),
+            const TileDivider(),
+
           ]
 
       ),
