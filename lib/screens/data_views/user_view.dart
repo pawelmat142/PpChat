@@ -21,6 +21,17 @@ class UserView extends StatelessWidget {
 
   static const String id = 'user_view';
 
+  static popAndNavigate({required PpUser user, int? delay}) async {
+    if (delay != null) {
+      await Future.delayed(Duration(milliseconds: delay));
+    }
+    Navigator.popAndPushNamed(
+        NavigationService.context,
+        UserView.id,
+        arguments: user
+    );
+  }
+
   static void navigate({required PpUser user}) {
     Navigator.pushNamed(
         NavigationService.context,
@@ -52,7 +63,7 @@ class UserView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 30),
                 child: AvatarWidget(
                   uid: user.uid,
-                  size: 150,
+                  size: AVATAR_SIZE_BIG,
                   model: user.avatar
                 ),
               ),

@@ -424,4 +424,6 @@ directories paths refactored
 
 ### [124] Delete avatar feature
 
+### [125] little fixes
+
 

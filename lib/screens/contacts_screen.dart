@@ -17,7 +17,7 @@ class ContactsScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('CONTACTS')),
 
       body: ListView(
-        padding: const EdgeInsets.only(top: TILE_PADDING_VERTICAL*2),
+        padding: const EdgeInsets.only(top: BASIC_TOP_PADDING_VALUE),
         children: [
 
           Consumer<Contacts>(builder: (context, contacts, child) {

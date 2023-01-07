@@ -15,8 +15,6 @@ import 'package:path_provider/path_provider.dart';
 
 abstract class AvatarService {
 
-  //TODO: delete one on delete contact
-
   // static const String avatarFont = 'Rubik Spray Paint';
   // static const String avatarFont = 'Concert One';
   static const String avatarFont = 'Luckiest Guy';

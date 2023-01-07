@@ -41,7 +41,7 @@ class AvatarModelWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: AvatarService.avatarFont,
-                fontSize: size/3*2,
+                fontSize: size/7*4,
                 color: WHITE_COLOR,
               ),
             ),

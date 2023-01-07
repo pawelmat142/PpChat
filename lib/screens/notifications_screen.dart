@@ -28,7 +28,7 @@ class NotificationsScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('NOTIFICATIONS')),
 
       body: ListView(
-        padding: const EdgeInsets.only(top: TILE_PADDING_VERTICAL*2),
+        padding: const EdgeInsets.only(top: BASIC_TOP_PADDING_VALUE),
         children: [
           Consumer<Notifications>(builder: (context, notifications, child) {
             return notifications.isNotEmpty

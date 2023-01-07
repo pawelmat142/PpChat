@@ -39,7 +39,11 @@ class ConversationView extends StatelessWidget {
     return Scaffold(
 
       appBar: AppBar(
-          title: Text(contactUser.nickname),
+          title: Row(children: [
+            // AvatarWidget(model: contactUser.avatar, uid: contactUser.uid, size: 50),
+            // const SizedBox(width: 20),
+            Text(contactUser.nickname)
+          ]),
           actions: [
             ConversationPopupMenu(conversation: conversation),
           ]

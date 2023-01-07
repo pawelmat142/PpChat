@@ -12,16 +12,29 @@ class AvatarImageWidget extends StatelessWidget {
   final double size;
   final File file;
 
+
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: size/2,
-      backgroundColor: Colors.transparent,
-      child: ClipOval(child: Image.file(file,
-          fit: BoxFit.cover,
-          width: size,
-          height: size
-      )),
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [BoxShadow(
+            color: Colors.black87.withOpacity(0.5),
+            spreadRadius: size/50,
+            blurRadius: size/30,
+            offset: Offset(0, size/50))],
+      ),
+      child: CircleAvatar(
+        radius: size/2,
+        backgroundColor: Colors.transparent,
+        child: ClipOval(child: Image.file(file,
+            fit: BoxFit.cover,
+            width: size,
+            height: size,
+        )),
+      ),
     );
+
+
   }
 }

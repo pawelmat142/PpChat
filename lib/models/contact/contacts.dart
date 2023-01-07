@@ -85,7 +85,7 @@ class Contacts extends FsCollectionModel<PpUser> {
     return index != -1 ? get[index] : null;
   }
 
-  getByUid(String uid) {
+  PpUser? getByUid(String uid) {
     final index = get.indexWhere((c) => c.uid == uid);
     return index != -1 ? get[index] : null;
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
@@ -25,17 +24,14 @@ class NotificationTile extends StatelessWidget {
 
                   Row(
                     children: [
-                      AvatarWidget(
-                          model: AvatarService.createRandom(userNickname: notification.sender),
-                          uid: notification.documentId,
-                      ),
+                      AvatarWidget.createFromNotification(notification, size: AVATAR_SIZE),
                       getContent(),
                     ],
                   ),
 
                   Padding(
                     padding: const EdgeInsets.only(right: TILE_PADDING_VERTICAL),
-                    child: Icon(Icons.message,
+                    child: Icon(Icons.note,
                       color: notification.isRead ? Colors.green : Colors.red,
                       size: 35,
                     ),
@@ -49,7 +45,7 @@ class NotificationTile extends StatelessWidget {
               thickness: 1,
               color: Colors.grey,
               endIndent: TILE_PADDING_HORIZONTAL,
-              indent: TILE_PADDING_HORIZONTAL * 3 + CONTACTS_AVATAR_SIZE,
+              indent: TILE_PADDING_HORIZONTAL * 3 + AVATAR_SIZE,
             ),
           ]
 

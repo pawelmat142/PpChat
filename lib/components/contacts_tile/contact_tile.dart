@@ -25,6 +25,7 @@ class ContactTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: _navigateToConversationView,
+
       child: Column(
           children: [
             Padding(
@@ -55,7 +56,7 @@ class ContactTile extends StatelessWidget {
                       UnreadMessages(contactUid: contactUser.uid),
 
                       Padding(
-                        padding: const EdgeInsets.only(right: TILE_PADDING_VERTICAL),
+                        padding: const EdgeInsets.only(right: TILE_PADDING_HORIZONTAL),
                         child: Icon(contactUser.logged ? Icons.person_rounded : Icons.person_off_outlined,
                           size: 35,
                           color: contactUser.logged ? Colors.green : Colors.red,
@@ -72,7 +73,7 @@ class ContactTile extends StatelessWidget {
               thickness: 1,
               color: Colors.grey,
               endIndent: TILE_PADDING_HORIZONTAL,
-              indent: TILE_PADDING_HORIZONTAL * 3 + CONTACTS_AVATAR_SIZE,
+              indent: TILE_PADDING_HORIZONTAL * 3 + AVATAR_SIZE,
             ),
           ]
 

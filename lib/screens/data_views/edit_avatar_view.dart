@@ -121,7 +121,7 @@ class _EditAvatarViewState extends State<EditAvatarView> {
                 child: AvatarWidget(
                     uid: Uid.get!,
                     pickedImageFile: pickedImageFile,
-                    size: 150,
+                    size: AVATAR_SIZE_BIG,
                     model: currentAvatarModel
                 ),
               ),
