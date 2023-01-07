@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_chat_app/components/avatar/avatar_model.dart';
-import 'package:flutter_chat_app/components/avatar/avatar_service.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_model.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
 import 'package:flutter_chat_app/models/user/pp_user_roles.dart';
 

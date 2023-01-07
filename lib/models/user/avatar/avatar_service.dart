@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/components/avatar/avatar_model.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_model.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
@@ -61,6 +61,7 @@ abstract class AvatarService {
   static Future<void> uploadAvatar({required BuildContext context}) async {
     try {
       final filePath = await _pickFile(context: context);
+      log('file picked');
       if (filePath == null) {
         PpSnackBar.noFileSelected();
         return;

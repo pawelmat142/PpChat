@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/components/avatar/avatar_widget.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';

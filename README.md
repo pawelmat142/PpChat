@@ -410,3 +410,5 @@ directories paths refactored
 
 ### [120] Uploading image feature
 
+### [121] Directories refactor
+

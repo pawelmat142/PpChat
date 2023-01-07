@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/components/avatar/avatar_widget.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/components/contacts_tile/unread_messages.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';

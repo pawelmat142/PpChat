@@ -31,7 +31,8 @@ class AvatarModel {
     return AvatarModel(
         color: input.color,
         txt: input.txt,
-        imageUrl: input.imageUrl);
+        imageUrl: input.imageUrl
+    );
   }
 
 }
