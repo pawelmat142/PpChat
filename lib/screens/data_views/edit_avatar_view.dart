@@ -38,7 +38,7 @@ class _EditAvatarViewState extends State<EditAvatarView> {
 
   late AvatarModel currentAvatarModel;
 
-  static const double circleSize = 50;
+  static const double circleSize = 70;
 
   bool get isAnyChange => currentAvatarModel.txt != widget.user.avatar.txt
       || currentAvatarModel.color != widget.user.avatar.color
@@ -109,85 +109,72 @@ class _EditAvatarViewState extends State<EditAvatarView> {
 
       appBar: AppBar(title: const Text('Edit my avatar')),
 
-      body: Padding(
-        padding: BASIC_HORIZONTAL_PADDING,
-        child: GestureDetector(
-          onTap: FocusScope.of(context).unfocus,
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: BASIC_TOP_PADDING_VALUE),
-            children: [
+      body: GestureDetector(
+        onTap: FocusScope.of(context).unfocus,
+        child: ListView(
+          children: [
 
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: AvatarWidget(
-                    uid: Uid.get!,
-                    pickedImageFile: pickedImageFile,
-                    size: AVATAR_SIZE_BIG,
-                    model: currentAvatarModel
-                ),
+            ///AVATAR
+            ///
+            Padding(
+              padding: const EdgeInsets.only(top: BASIC_TOP_PADDING_VALUE + 20),
+              child: AvatarWidget(
+                  uid: Uid.get!,
+                  pickedImageFile: pickedImageFile,
+                  size: AVATAR_SIZE_BIG,
+                  model: currentAvatarModel
               ),
+            ),
 
-              Center(
-                child: SizedBox(
-                  width: 100,
-                  child: TextField(
-                    maxLength: 3,
-                    textAlign: TextAlign.center,
-                    controller: _textFieldController,
-                    decoration: InputDecoration(
-                      labelText: 'LETTERS',
-                      errorText: _textFieldInvalid ? 'min one!' : null,
-                    ),
+            Center(
+              child: SizedBox(
+                width: 100,
+                child: TextField(
+                  maxLength: 3,
+                  textAlign: TextAlign.center,
+                  controller: _textFieldController,
+                  decoration: InputDecoration(
+                    labelText: 'LETTERS',
+                    errorText: _textFieldInvalid ? 'min one!' : null,
                   ),
                 ),
               ),
+            ),
 
-              const SizedBox(height: 15),
-
-              /// COLORS
-
-              Row(mainAxisAlignment: MainAxisAlignment.center,
-                children: colorKeys.getRange(0, 4)
-                    .map((c) => ColorCircle(
+            ///COLORS
+            ///
+            SizedBox(
+              height: 120,
+              child: ListView(
+                padding: const EdgeInsets.only(top: 15, bottom: 15),
+                scrollDirection: Axis.horizontal,
+                children: colorKeys.map((c) => ColorCircle(
                       onTap: _onColorTap,
                       size: circleSize,
                       colorKey: c,
                   )).toList()
               ),
+            ),
 
-              Row(mainAxisAlignment: MainAxisAlignment.center,
-                children: colorKeys.getRange(4, 8)
-                    .map((c) => ColorCircle(
-                      onTap: _onColorTap,
-                      size: circleSize,
-                      colorKey: c,
-                  )).toList()
-              ),
+            ///BUTTONS
+            ///
+            Padding(
+              padding: BASIC_HORIZONTAL_PADDING,
+              child: Column(children: [
 
-              Row(mainAxisAlignment: MainAxisAlignment.center,
-                children: colorKeys.getRange(8, colorKeys.length)
-                    .map((c) => ColorCircle(
-                      onTap: _onColorTap,
-                      size: circleSize,
-                      colorKey: c,
-                  )).toList()
-              ),
-
-
-              ///BUTTONS
-
-              PpButton(text: isAnyImage ? 'Remove image' : 'Upload image',
+                PpButton(text: isAnyImage ? 'Remove image' : 'Upload image',
                   color: PRIMARY_COLOR_DARKER,
                   onPressed: () => isAnyImage
                       ? _onRemoveFile()
                       : _onFileUpload(context),
-              ),
+                ),
 
-              saveButton,
+                saveButton,
 
-              resetButton,
-            ],
-          ),
+                resetButton,
+              ]),
+            ),
+          ],
         ),
       ),
     );

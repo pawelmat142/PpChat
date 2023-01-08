@@ -432,4 +432,7 @@ directories paths refactored
 
 ### [128] Avatars as Hero animations
 
+### [129] EditAvatarView
+color selection refactored to horizontal ListView
+
 

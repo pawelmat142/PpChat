@@ -27,10 +27,8 @@ class InvitationService {
     contactUids.addMany(newContactUids);
   }
     //todo: to not flush message notification if on conversation view
-    //todo: BUG (device) app crashes - EditAvatarView when change txt and try to save
 
   resolveContactDeletedNotifications(Set<PpNotification> notifications) async {
-    //todo: if on contact / conversation view - navigate to home/contacts and show popup
     if (notifications.isNotEmpty) {
       final contactUidsToDelete = notifications.map((n) => n.documentId).toList();
       for (final contactUid in contactUidsToDelete) {
