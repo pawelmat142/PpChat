@@ -34,6 +34,8 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  //TODO: DEVICE NOTIFICATIONOS FEATURE
+
   runApp(
       MultiProvider(providers: [
         ChangeNotifierProvider(create: (_) => Me()),

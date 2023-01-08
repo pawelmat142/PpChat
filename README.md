@@ -442,3 +442,5 @@ MessageCleaner instance moved to Conversation object
 </br> MessageCleaner disposed when contact deleted
 
 ### [132] Prevent flushbar if not needed
+
+### [133] little fix

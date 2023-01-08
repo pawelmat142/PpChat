@@ -30,7 +30,6 @@ class AvatarWidget extends StatelessWidget {
     );
   }
 
-  //todo: zrobic cos zeby kazdy pojedynczy widget mial jedna instancje caly czas i zeby sie nie rerenderował
   @override
   Widget build(BuildContext context) {
 
