@@ -28,7 +28,7 @@ class NotificationInfo extends StatelessWidget {
                   PpNotification.getUnread(notifications.get).length.toString();
               final totalNotifications = notifications.get.length.toString();
               return Text(
-                  'NOTIFICATIONS: $totalNotifications,      UNREAD: $unreadNotifications.',
+                  'NOTIFICATIONS: $totalNotifications      UNREAD: $unreadNotifications',
                 style: const TextStyle(
                     color: WHITE_COLOR,
                     letterSpacing: 1,

@@ -437,3 +437,7 @@ color selection refactored to horizontal ListView
 
 ### [130] Little fixes
 
+### [131] Prevent double instantiate of Conversation
+MessageCleaner instance moved to Conversation object
+</br> MessageCleaner disposed when contact deleted
+

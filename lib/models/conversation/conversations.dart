@@ -10,15 +10,21 @@ class Conversations with ChangeNotifier {
   List<Conversation> _state = [];
   List<Conversation> get get => _state;
 
+  bool pending = false;
+
   Future<Conversation> openOrCreate({required String contactUid}) async {
     final conversation = getByUid(contactUid);
     if (conversation == null) {
-      _addOne(await Conversation.create(contactUid: contactUid));
+      final newConversation = Conversation.create(contactUid: contactUid);
+      _addOne(newConversation);
+      await newConversation.open();
+      return newConversation;
     }
     else if (!conversation.isOpen) {
       await conversation.open();
     }
-    return getByUid(contactUid)!;
+    final result = getByUid(contactUid)!;
+    return result;
   }
 
   Conversation? getByUid(String contactUid) {
@@ -31,7 +37,8 @@ class Conversations with ChangeNotifier {
 
   clear() async {
     for (var conversation in _state) {
-      await conversation.box.compact();
+      await conversation.box!.compact();
+      conversation.messageCleaner.dispose();
     }
     _state = [];
     notifyListeners();
@@ -39,8 +46,8 @@ class Conversations with ChangeNotifier {
 
   clearBoxes() async {
     for (var conversation in _state) {
-      await conversation.box.compact();
-      await conversation.box.clear();
+      await conversation.box!.compact();
+      await conversation.box!.clear();
     }
     _state = [];
     notifyListeners();

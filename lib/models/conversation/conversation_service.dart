@@ -42,6 +42,9 @@ class ConversationService {
 
   login() async {
     initialized = false;
+    for (final contact in contacts.get) {
+      conversations.openOrCreate(contactUid: contact.uid);
+    }
     await startMessagesObserver();
     initialized = true;
   }
@@ -59,7 +62,6 @@ class ConversationService {
       for (var doc in event.docs) {
         messages[doc.id] = PpMessage.fromDB(doc);
       }
-
       if (messages.isNotEmpty) await _resolveMessages(messages);
 
       if (!completer.isCompleted) completer.complete();

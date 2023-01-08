@@ -54,7 +54,7 @@ class ConversationView extends StatelessWidget {
 
           //MESSAGES AREA
           Expanded(child: ValueListenableBuilder<Box<PpMessage>>(
-              valueListenable: conversation.box.listenable(),
+              valueListenable: conversation.box!.listenable(),
               builder: (context, box, _) {
 
                 if (box.values.isEmpty) return const Center(child: Text('empty!'));

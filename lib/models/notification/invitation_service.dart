@@ -8,7 +8,6 @@ import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
-import 'package:flutter_chat_app/services/uid.dart';
 
 class InvitationService {
 
@@ -28,7 +27,8 @@ class InvitationService {
     contactUids.addMany(newContactUids);
   }
     //todo: to not flush message notification if on conversation view
-  //  todo: BUG: stop periodic cleaner on delete contact
+    //todo: stop flushbar before start next
+    //  todo: BUG: stop periodic cleaner on delete contact
 
   resolveContactDeletedNotifications(Set<PpNotification> notifications) async {
     //todo: if on contact / conversation view - navigate to home/contacts and show popup
