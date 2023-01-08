@@ -14,6 +14,7 @@ class PpFlushbar {
   static String get route => NavigationService.route;
 
   static void invitationNotification(PpNotification notification) {
+    if (NavigationService.isFlushbarOpen()) return;
     Flushbar? flushbar;
     flushbar = basic(
       title: 'New contacts invitation',
@@ -30,6 +31,7 @@ class PpFlushbar {
 
 
   static void multipleNotifications({required int value, int? delay}) async {
+    if (NavigationService.isFlushbarOpen()) return;
     Flushbar? flushbar;
     flushbar = basic(
       title: 'You have $value notifications!',
@@ -45,13 +47,14 @@ class PpFlushbar {
   }
 
 
-  static void comingMessages({List<PpMessage>? messages, int? delay}) async {
-    final title = messages == null || messages.length == 1
+  static void comingMessages({required List<PpMessage> messages, int? delay}) async {
+    if (NavigationService.isConversationOpen(uid: messages[0].sender)) return;
+    if (NavigationService.isFlushbarOpen()) return;
+
+    final title = messages.length == 1
       ? 'You have new message'
       : 'You have ${messages.length} new messages';
-    final contactsLength = messages != null
-        ? messages.map((m) => m.sender).toSet().length
-        : 0;
+    final contactsLength = messages.map((m) => m.sender).toSet().length;
     Flushbar? flushbar;
     flushbar = basic(
       title: title,
@@ -62,7 +65,7 @@ class PpFlushbar {
         flushbar!.dismiss();
         if (contactsLength == 1) {
           final conversationService = getIt.get<ConversationService>();
-          final contactUser = conversationService.getContactUserByNickname(messages!.first.sender);
+          final contactUser = conversationService.getContactUserByUid(messages.first.sender);
           if (contactUser != null) {
             conversationService.navigateToConversationView(contactUser);
           }

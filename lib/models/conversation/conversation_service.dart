@@ -125,10 +125,9 @@ class ConversationService {
     ConversationView.navigate(contactUser);
   }
 
-  PpUser? getContactUserByNickname(String contactNickname) {
-    return _contactsService.getByNickname(nickname: contactNickname);
+  PpUser? getContactUserByUid(String contactUid) {
+    return _contactsService.getByUid(uid: contactUid);
   }
-
 
   sendMessage(PpMessage message) async {
     await contactMessagesCollectionRef(contactUid: message.receiver).add(message.asMap);
