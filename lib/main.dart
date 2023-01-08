@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
 
         ContactsScreen.id: (context) => const ContactsScreen(),
-        UserView.id: (context) => const UserView(),
+        UserView.id: (context) => UserView(),
 
         ConversationView.id: (context) => const ConversationView(),
         ConversationSettingsView.id: (context) => const ConversationSettingsView(),

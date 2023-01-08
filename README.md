@@ -435,4 +435,5 @@ directories paths refactored
 ### [129] EditAvatarView
 color selection refactored to horizontal ListView
 
+### [130] Little fixes
 

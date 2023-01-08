@@ -17,7 +17,11 @@ service cloud.firestore {
 
     	function isOwner() { return UID == request.auth.uid; }
 
-      function isSender() {	return request.resource.data.documentId == request.auth.uid; }
+      function isSender() { return
+      	request.auth.uid == resource.data.documentId
+        || request.auth.uid == request.data.documentId
+        || request.auth.uid == request.resource.data.documentId;
+      }
 
       function isContact(contactUid) { return request.auth.uid in getContactsUids(contactUid); }
 
@@ -37,18 +41,19 @@ service cloud.firestore {
 
 
       match /NOTIFICATIONS/{docId} {
-      	allow read, write: if isOwner();
-        allow create: if logged(); //send invitation
-        allow update, delete: if isSender(); //accept, delete invitation, overwrite any notification
+      	allow read, write: if isOwner() || isSender();
       }
 
 
       match /Messages/{messageDocId} {
-      	allow read, write: if isOwner();
-        allow create, delete: if isContact(UID) || isInvitationAccepted(UID);
+      	allow read, write: if isOwner() || isContact(UID) || isInvitationAccepted(UID);
       }
 
 
+    }
+
+    match /DELETED_ACCOUNTS/{nickname} {
+    	allow write: if true;
     }
 
 

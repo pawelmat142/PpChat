@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/constants/collections.dart';
+import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
@@ -7,6 +11,7 @@ import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
+import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/process/delete_account_process.dart';
 import 'package:flutter_chat_app/screens/data_views/edit_avatar_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
@@ -18,7 +23,7 @@ import 'package:flutter_chat_app/services/authentication_service.dart';
 
 
 class UserView extends StatelessWidget {
-  const UserView({Key? key}) : super(key: key);
+  UserView({Key? key}) : super(key: key);
 
   static const String id = 'user_view';
 
@@ -41,6 +46,8 @@ class UserView extends StatelessWidget {
     );
   }
 
+  String? message;
+
   @override
   Widget build(BuildContext context) {
 
@@ -49,14 +56,20 @@ class UserView extends StatelessWidget {
 
     final bool isContact = Contacts.reference.getByNickname(user.nickname) != null;
 
+    final bool isFoundUser = !isMe && !isContact;
+
     return Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(title: Text(
+            isMe ?  'My account'
+                : isContact ? 'Contact view'
+                  : isFoundUser ? 'You have found user' : '')
+        ),
 
-        appBar: AppBar(title: Text(isMe ?  'My account' : isContact ? 'Contact view' : '??')),
-
-        body: Padding(
-          padding: BASIC_HORIZONTAL_PADDING,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        body: GestureDetector(
+          onTap: FocusScope.of(context).unfocus,
+          child: ListView(
+            padding: BASIC_HORIZONTAL_PADDING,
             children: [
 
               /// AVATAR
@@ -155,15 +168,86 @@ class UserView extends StatelessWidget {
                 ])
 
               /// else
-              : PpButton(text: 'Invite', onPressed: () {
-              //  todo invitation refactor
-              }),
+              : Padding(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 200),
+                child: Column(
+                  children: [
+
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: TextField(
+                        // scrollPadding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 200),
+                        onChanged: (x) => message = x,
+                        decoration: const InputDecoration(
+                          labelText: 'FIRST MESSAGE',
+                          floatingLabelAlignment: FloatingLabelAlignment.center,
+                          floatingLabelBehavior: FloatingLabelBehavior.auto,
+                        ),
+                      ),
+                    ),
+
+                    PpButton(text: 'Invite', onPressed: () {
+                      _onInvite(user, context: context);
+                    })
+
+                  ],
+                ),
+              ),
 
             ],
           ),
         )
 
     );
+  }
+
+  _onInvite(PpUser foundUser, {required BuildContext context}) async {
+    final spinner = getIt.get<PpSpinner>();
+    final popup = getIt.get<Popup>();
+    try {
+      spinner.start();
+      await _sendInvitationNotifications(foundUser);
+      PpSnackBar.invitationSent();
+    } catch (error) {
+      spinner.stop();
+      popup.show('Something went wrong', error: true, delay: 200);
+    }
+    spinner.stop();
+    _goToNotifications(context: context);
+  }
+
+  _goToNotifications({required BuildContext context}) {
+    Navigator.popAndPushNamed(context, NotificationsScreen.id);
+  }
+
+  _sendInvitationNotifications(PpUser foundUser) async {
+    final userService = getIt.get<PpUserService>();
+
+    final firestore = FirebaseFirestore.instance;
+    final batch = firestore.batch();
+
+    final receiverNotificationsRef = firestore
+        .collection(Collections.PpUser).doc(foundUser.uid)
+        .collection(Collections.NOTIFICATIONS).doc(Uid.get);
+    //contact's notification docId = my uid so any next notification from me will overwrite it
+    batch.set(receiverNotificationsRef, PpNotification.createInvitation(
+        sender: userService.nickname,
+        receiver: foundUser.nickname,
+        text: message ?? '').asMap);
+
+    final myNotificationsRef = firestore
+        .collection(Collections.PpUser).doc(Uid.get)
+        .collection(Collections.NOTIFICATIONS).doc(foundUser.uid);
+    //my self notification docId = contact's uid so any notification from contact will overwrite it
+    PpNotification selfNotification = PpNotification.createInvitationSelfNotification(
+      documentId: foundUser.uid,
+      sender: userService.nickname,
+      receiver: foundUser.nickname,
+      text: message ?? '',
+    );
+    batch.set(myNotificationsRef, selfNotification.asMap);
+
+    await batch.commit();
   }
 
 
