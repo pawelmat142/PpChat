@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/contacts_tile/contact_tile.dart';
 import 'package:flutter_chat_app/components/notifications_info.dart';
-import 'package:flutter_chat_app/components/tile_divider.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
@@ -42,12 +41,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
     return Scaffold(
 
       appBar: AppBar(
+
           leading: IconButton(icon: const Icon(Icons.logout),
             onPressed: () {
               final authService = getIt.get<AuthenticationService>();
               authService.onLogout();
             },
           ),
+          title: const Text('CONTACTS'),
           actions: [
             IconButton(
                 onPressed: () => UserView.navigate(user: me),
@@ -61,25 +62,26 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 ),
             ),
           ],
-          title: const Text('CONTACTS')
+
+          bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(36),
+            child: NotificationInfo()
+          ),
       ),
 
       body: ListView(
         children: [
 
-          const Padding(
-            padding: BASIC_HORIZONTAL_PADDING,
-            child: NotificationInfo()
-          ),
-          const TileDivider(),
+          Padding(
+            padding: const EdgeInsets.only(top: BASIC_TOP_PADDING_VALUE),
+            child: Consumer<Contacts>(builder: (context, contacts, child) {
+              return contacts.isNotEmpty
 
-          Consumer<Contacts>(builder: (context, contacts, child) {
-            return contacts.isNotEmpty
+                  ? Column(children: contacts.get.map((u) => ContactTile(u)).toList())
 
-                ? Column(children: contacts.get.map((u) => ContactTile(u)).toList())
-
-                : nothingHereWidget();
-          })
+                  : nothingHereWidget();
+            }),
+          )
         ],
       ),
 

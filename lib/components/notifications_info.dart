@@ -12,15 +12,14 @@ class NotificationInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: primaryButtonPadding,
+      padding: const EdgeInsets.only(bottom: 0, left: 5, right: 5),
       child: InkWell(
         onTap: () => Navigator.pushNamed(context, NotificationsScreen.id),
         child: Container(
           decoration: BoxDecoration(
-            color: PRIMARY_COLOR_LIGHTER.withOpacity(0.2),
+            color: PRIMARY_COLOR_LIGHTER.withOpacity(0.5),
             shape: BoxShape.rectangle,
-            border: Border.all(width: 1, color: PRIMARY_COLOR_LIGHTER),
-            borderRadius: BorderRadius.circular(primaryButtonBorderRadius),
+            borderRadius: const BorderRadius.all(Radius.circular(primaryButtonBorderRadius))
           ),
           padding: const EdgeInsets.all(10),
           child: Center(child: Consumer<Notifications>(
@@ -29,7 +28,12 @@ class NotificationInfo extends StatelessWidget {
                   PpNotification.getUnread(notifications.get).length.toString();
               final totalNotifications = notifications.get.length.toString();
               return Text(
-                  'You have $unreadNotifications unread notifications, $totalNotifications in total.');
+                  'NOTIFICATIONS: $totalNotifications,      UNREAD: $unreadNotifications.',
+                style: const TextStyle(
+                    color: WHITE_COLOR,
+                    letterSpacing: 1,
+                ),
+              );
             }),
           ),
         ),

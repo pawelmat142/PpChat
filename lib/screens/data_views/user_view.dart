@@ -94,17 +94,6 @@ class UserView extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-
-              //  Padding(
-              //   padding: const EdgeInsets.only(top: 30, bottom: 20),
-              //   child: RichText(text: const TextSpan(children: [
-              //     TextSpan(text: 'xd ',
-              //         style: TextStyle(fontSize: 16, color: PRIMARY_COLOR_LIGHTER)),
-              //     TextSpan(text: 'lol',
-              //         style: TextStyle(fontSize: 16, color: Colors.black87)),
-              //   ])),
-              // ),
-
               ///BUTTONS
               ///
               /// contact
@@ -130,6 +119,7 @@ class UserView extends StatelessWidget {
                       }),
                 ])
 
+              ///
               /// me
               : isMe ?
                 Column(children: [

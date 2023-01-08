@@ -30,26 +30,30 @@ class AvatarWidget extends StatelessWidget {
     );
   }
 
+  //todo: zrobic cos zeby kazdy pojedynczy widget mial jedna instancje caly czas i zeby sie nie rerenderował
   @override
   Widget build(BuildContext context) {
 
-    return pickedImageFile != null
+    return Hero(
+      tag: 'tag_$uid',
+      child: pickedImageFile != null
 
-      ? AvatarImageWidget(size: size!, file: pickedImageFile!)
+          ? AvatarImageWidget(size: size!, file: pickedImageFile!)
 
-      : model.hasImage
+          : model.hasImage
 
-        ? FutureBuilder<File?>(
-            future: AvatarService.getImageFile(uid: uid, model: model),
-            builder: (context, snapshot) {
-              final imageFile = snapshot.data;
+          ? FutureBuilder<File?>(
+          future: AvatarService.getImageFile(uid: uid, model: model),
+          builder: (context, snapshot) {
+            final imageFile = snapshot.data;
 
-              return imageFile == null
+            return imageFile == null
                 ? AvatarModelWidget(model, size: size!)
                 : AvatarImageWidget(size: size!, file: imageFile);
-            }
-          )
-        : AvatarModelWidget(model, size: size!);
+          }
+      )
+          : AvatarModelWidget(model, size: size!),
+    );
 
   }
 }

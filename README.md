@@ -430,4 +430,6 @@ directories paths refactored
 
 ### [127] ContactScreen refactored to be 'HomeScreen'
 
+### [128] Avatars as Hero animations
+
 
