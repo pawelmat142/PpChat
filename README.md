@@ -386,3 +386,61 @@ directories paths refactored
 ### [111] Little fixes
 
 ### [112] MessageCleaner works with unread messages number on contactTile
+
+## feature/avatars
+
+### [113] Random avatars preparations
+
+### [114] Random avatars preparations
+
+### [115] Little fix
+
+### [116] Data model connected to PpUser model
+
+### [117] UserView refactor
+
+### [118] EditAvatarView
+
+### [118] Edit avatar ready
+
+### [119] Firebase storage initialization
+`flutter pub add firebase_storage`
+</br>`flutter pub add cross_file`
+</br>`flutter pub add file_picker`
+
+### [120] Uploading image feature
+
+### [121] Directories refactor
+
+### [122] FilePicker changed to ImagePicker
+`flutter pub add image_picker`
+
+### [123] Avatar images stored in device and it's path in Hive
+`flutter pub add image_picker`
+</br> AvatarHiveImage model
+</br> `flutter pub run build_runner build --delete-conflicting-outputs`
+</br> AvatarWidget refactored - auto detect if image in device(Hive)
+</br> if not download one and store in Hive/device
+
+### [124] Delete avatar feature
+
+### [125] little fixes
+
+### [126] more little fixes
+
+### [127] ContactScreen refactored to be 'HomeScreen'
+
+### [128] Avatars as Hero animations
+
+### [129] EditAvatarView
+color selection refactored to horizontal ListView
+
+### [130] Little fixes
+
+### [131] Prevent double instantiate of Conversation
+MessageCleaner instance moved to Conversation object
+</br> MessageCleaner disposed when contact deleted
+
+### [132] Prevent flushbar if not needed
+
+### [133] little fix - first test release ready flutterVersionCode=1

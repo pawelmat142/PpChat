@@ -42,6 +42,9 @@ class ConversationService {
 
   login() async {
     initialized = false;
+    for (final contact in contacts.get) {
+      conversations.openOrCreate(contactUid: contact.uid);
+    }
     await startMessagesObserver();
     initialized = true;
   }
@@ -59,7 +62,6 @@ class ConversationService {
       for (var doc in event.docs) {
         messages[doc.id] = PpMessage.fromDB(doc);
       }
-
       if (messages.isNotEmpty) await _resolveMessages(messages);
 
       if (!completer.isCompleted) completer.complete();
@@ -123,10 +125,9 @@ class ConversationService {
     ConversationView.navigate(contactUser);
   }
 
-  PpUser? getContactUserByNickname(String contactNickname) {
-    return _contactsService.getByNickname(nickname: contactNickname);
+  PpUser? getContactUserByUid(String contactUid) {
+    return _contactsService.getByUid(uid: contactUid);
   }
-
 
   sendMessage(PpMessage message) async {
     await contactMessagesCollectionRef(contactUid: message.receiver).add(message.asMap);
@@ -224,6 +225,10 @@ class ConversationService {
         logService.log('[MSG] $markedAsRead messages marked as read');
       }
     });
+  }
+
+  contactExists(String contactUid) {
+    return _contactsService.contactExists(contactUid);
   }
 
 }

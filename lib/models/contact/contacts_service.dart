@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
-import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
-import 'package:flutter_chat_app/models/conversation/pp_message.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
@@ -16,7 +15,6 @@ import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
-import 'package:hive/hive.dart';
 
 class ContactsService {
 
@@ -46,6 +44,7 @@ class ContactsService {
 
   _deleteContact(String uid) async {
     try {
+      await AvatarService.deleteIfExistsInDevice(uid: uid);
       final contactUser = contacts.getByUid(uid)!;
       await _conversationSettingsService.fullDeleteConversation(contactUid: contactUser.uid);
       await _sendContactDeletedNotification(contactUser);
@@ -71,19 +70,5 @@ class ContactsService {
   PpUser? getByUid({required String uid}) => contacts.getByUid(uid);
 
   contactExists(String contactUid) => contactUids.contains(contactUid);
-
-
-  deleteConversationBoxIfExists({required String contactUid}) async {
-    final key = Conversation.hiveKey(contactUid: contactUid);
-    if (await Hive.boxExists(key)) {
-      if (!Hive.isBoxOpen(key)) {
-        await Hive.openBox<PpMessage>(key);
-      }
-      final box = Hive.box<PpMessage>(key);
-      await box.clear();
-      await box.deleteFromDisk();
-      logService.log('[PpMessage] box deleted for $contactUid');
-    }
-  }
 
 }

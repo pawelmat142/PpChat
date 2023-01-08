@@ -32,19 +32,16 @@ class _MessageInputState extends State<MessageInput> {
         .getSettings(contactUid: widget.contactUser.uid);
   }
 
-  // final MessageCleaner messageCleaner = MessageCleaner();
 
   @override
   void initState() {
     super.initState();
     getSettings();
-    // messageCleaner.init(contactUid: widget.contactUser.uid);
   }
 
   @override
   void dispose() {
     super.dispose();
-    // messageCleaner.dispose();
   }
 
   @override

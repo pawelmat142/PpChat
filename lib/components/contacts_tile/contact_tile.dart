@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/components/contacts_tile/contact_avatar.dart';
+import 'package:flutter_chat_app/components/tile_divider.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/components/contacts_tile/unread_messages.dart';
+import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 
 class ContactTile extends StatelessWidget {
@@ -18,13 +19,14 @@ class ContactTile extends StatelessWidget {
   }
 
   _navigateToContactView() {
-    UserView.navigate(contactUser);
+    UserView.navigate(user: contactUser);
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: _navigateToConversationView,
+
       child: Column(
           children: [
             Padding(
@@ -37,7 +39,12 @@ class ContactTile extends StatelessWidget {
                   ///LEFT side of tile
                   Row(
                     children: [
-                      InkWell(onTap: _navigateToContactView, child: const ContactAvatar()),
+                      InkWell(
+                          onTap: _navigateToContactView,
+                          child: AvatarWidget(
+                            uid: contactUser.uid,
+                            model: contactUser.avatar,
+                          )),
 
                       Content(nickname: contactUser.nickname, text: contactUser.role),
                     ],
@@ -50,7 +57,7 @@ class ContactTile extends StatelessWidget {
                       UnreadMessages(contactUid: contactUser.uid),
 
                       Padding(
-                        padding: const EdgeInsets.only(right: TILE_PADDING_VERTICAL),
+                        padding: const EdgeInsets.only(right: TILE_PADDING_HORIZONTAL),
                         child: Icon(contactUser.logged ? Icons.person_rounded : Icons.person_off_outlined,
                           size: 35,
                           color: contactUser.logged ? Colors.green : Colors.red,
@@ -63,12 +70,8 @@ class ContactTile extends StatelessWidget {
               ),
             ),
 
-            const Divider(
-              thickness: 1,
-              color: Colors.grey,
-              endIndent: TILE_PADDING_HORIZONTAL,
-              indent: TILE_PADDING_HORIZONTAL * 3 + CONTACTS_AVATAR_SIZE,
-            ),
+            const TileDivider(),
+
           ]
 
       ),

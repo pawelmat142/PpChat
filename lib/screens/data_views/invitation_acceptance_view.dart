@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
+import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
-import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 
@@ -28,7 +28,7 @@ class InvitationAcceptanceView extends NotificationView {
       PpButton(text: 'show user', onPressed: () async {
         NavigationService.homeAndContacts();
         final user = super.contactsService.getByNickname(nickname: notification.sender);
-        if (user != null) UserView.navigate(user);
+        if (user != null) UserView.navigate(user: user);
       }),
 
       PpButton(text: 'Write message', onPressed: () async {

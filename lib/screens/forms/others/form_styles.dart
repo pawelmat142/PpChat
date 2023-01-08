@@ -5,7 +5,7 @@ import 'package:flutter_chat_app/constants/styles.dart';
 ///PRIMARY BUTTON
 //sizes
 const double primaryButtonHeight = 38;
-const EdgeInsets primaryButtonPadding = EdgeInsets.only(top: 25);
+const EdgeInsets primaryButtonPadding = EdgeInsets.only(top: 15, bottom: 5);
 //border
 const double primaryButtonBorderRadius = 5;
 const double primaryButtonBorderWidth = 2;

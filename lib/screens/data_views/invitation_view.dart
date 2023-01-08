@@ -52,7 +52,7 @@ class InvitationView extends NotificationView {
       await process.process();
       spinner.stop();
       final user = contactsService.getByUid(uid: notification.documentId);
-      if (user != null) UserView.navigate(user);
+      if (user != null) UserView.navigate(user: user);
     } catch (error) {
       spinner.stop();
       popup.sww(text: 'acceptInvitationForReceiver');

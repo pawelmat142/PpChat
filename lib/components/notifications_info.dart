@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/screens/forms/others/form_styles.dart';
@@ -11,24 +12,28 @@ class NotificationInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: primaryButtonPadding,
+      padding: const EdgeInsets.only(bottom: 0, left: 5, right: 5),
       child: InkWell(
         onTap: () => Navigator.pushNamed(context, NotificationsScreen.id),
         child: Container(
           decoration: BoxDecoration(
+            color: PRIMARY_COLOR_LIGHTER.withOpacity(0.5),
             shape: BoxShape.rectangle,
-            border: Border.all(width: 2, color: Colors.grey),
-            borderRadius: BorderRadius.circular(primaryButtonBorderRadius),
+            borderRadius: const BorderRadius.all(Radius.circular(primaryButtonBorderRadius))
           ),
           padding: const EdgeInsets.all(10),
-          child: Center(
-            child: Consumer<Notifications>(
-                builder: (context, notifications, child) {
+          child: Center(child: Consumer<Notifications>(
+            builder: (context, notifications, child) {
               final unreadNotifications =
                   PpNotification.getUnread(notifications.get).length.toString();
               final totalNotifications = notifications.get.length.toString();
               return Text(
-                  'You have $unreadNotifications unread notifications, $totalNotifications in total.');
+                  'NOTIFICATIONS: $totalNotifications      UNREAD: $unreadNotifications',
+                style: const TextStyle(
+                    color: WHITE_COLOR,
+                    letterSpacing: 1,
+                ),
+              );
             }),
           ),
         ),

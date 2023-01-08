@@ -39,7 +39,11 @@ class ConversationView extends StatelessWidget {
     return Scaffold(
 
       appBar: AppBar(
-          title: Text(contactUser.nickname),
+          title: Row(children: [
+            // AvatarWidget(model: contactUser.avatar, uid: contactUser.uid, size: 50),
+            // const SizedBox(width: 20),
+            Text(contactUser.nickname)
+          ]),
           actions: [
             ConversationPopupMenu(conversation: conversation),
           ]
@@ -50,7 +54,7 @@ class ConversationView extends StatelessWidget {
 
           //MESSAGES AREA
           Expanded(child: ValueListenableBuilder<Box<PpMessage>>(
-              valueListenable: conversation.box.listenable(),
+              valueListenable: conversation.box!.listenable(),
               builder: (context, box, _) {
 
                 if (box.values.isEmpty) return const Center(child: Text('empty!'));

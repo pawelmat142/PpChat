@@ -4,7 +4,6 @@ import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
-import 'package:flutter_chat_app/screens/data_views/conversation_view/message_cleaner.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class UnreadMessages extends StatefulWidget {
@@ -20,18 +19,37 @@ class UnreadMessages extends StatefulWidget {
 class _UnreadMessagesState extends State<UnreadMessages> {
   Conversations get conversations => Conversations.reference;
 
-  final MessageCleaner messageCleaner = MessageCleaner();
+  late Conversation conversation;
+
+  bool isReady = false;
+
+  late Future future;
+
 
   @override
   void initState() {
     super.initState();
-    messageCleaner.init(contactUid: widget.contactUid);
+    tryBuild();
+  }
+
+  tryBuild() {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      final conversation = conversations.getByUid(widget.contactUid);
+      if (conversation != null && conversation.isOpen && !isReady) {
+        setState(() {
+          this.conversation = conversation;
+          isReady = true;
+        });
+      } else {
+        tryBuild();
+      }
+    });
   }
 
   @override
   void dispose() {
+    isReady = true; //to prevent triggering tryBuild anymore;
     super.dispose();
-    messageCleaner.dispose();
   }
 
   @override
@@ -40,43 +58,36 @@ class _UnreadMessagesState extends State<UnreadMessages> {
     return Padding(
       padding: const EdgeInsets.only(right: 20),
 
-      child: FutureBuilder<Conversation>(
-          future: conversations.openOrCreate(contactUid: widget.contactUid),
-          builder: (context, snapshot) {
+      child: !isReady ? const SizedBox(height: 0) :
 
-            final conversation = snapshot.data;
+      ValueListenableBuilder<Box<PpMessage>>(
+          valueListenable: conversation.box!.listenable(),
 
-            return conversation == null
-              ? const SizedBox(height: 0)
+          builder: (context, box, _) {
 
-              : ValueListenableBuilder<Box<PpMessage>>(
-                  valueListenable: conversation.box.listenable(),
+            if (!box.isOpen) return const SizedBox(height: 0);
+            final unreadMessages = box.values.where((message) => !message.isRead);
+            if (unreadMessages.isEmpty) return const SizedBox(height: 0);
 
-                  builder: (context, box, _) {
-                    final unreadMessages = box.values.where((message) => !message.isRead);
+            return Container(
+              padding: const EdgeInsets.all(2),
+              decoration: const BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle
+              ),
+              height: 25,
+              width: 25,
+              child: AutoSizeText(unreadMessages.length.toString(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: WHITE_COLOR,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  )),
+            );
+          }
+      ),
 
-                    if (unreadMessages.isEmpty) return const SizedBox(height: 0);
-
-                    return Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle
-                      ),
-                      height: 25,
-                      width: 25,
-                      child: AutoSizeText(unreadMessages.length.toString(),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: WHITE_COLOR,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          )),
-                    );
-                  }
-              );
-
-      }),
     );
   }
 }

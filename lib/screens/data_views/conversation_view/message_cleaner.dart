@@ -20,7 +20,10 @@ class MessageCleaner {
   late Timer _periodicTimer;
   late List<Timer> _messageTimers;
 
+  bool initialized = false;
+
   init({required String contactUid}) async {
+    if (initialized) return;
     this.contactUid = contactUid;
     log('initialization');
     box = await _getBox();
@@ -28,12 +31,15 @@ class MessageCleaner {
     _messageTimers = [];
     _setMessageTimersIfExpiresSoon();
     _startPeriodicTimer();
+    initialized = true;
   }
 
   dispose() async {
+    if (!initialized) return;
     log('dispose');
     _stopPeriodicTimer();
     _cancelMessageTimers();
+    initialized = false;
   }
 
   _startPeriodicTimer() {
@@ -114,9 +120,8 @@ class MessageCleaner {
     log('message with key: $msgKey deleted now');
   }
 
-  _getBox() async {
-    final conversation = await conversationService.conversations.openOrCreate(contactUid: contactUid);
-    return conversation.box;
+  _getBox() {
+    return conversationService.conversations.getByUid(contactUid)!.box;
   }
 
 }

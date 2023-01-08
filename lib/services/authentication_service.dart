@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
+import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/process/logout_process.dart';
@@ -10,7 +11,6 @@ import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
-import 'package:flutter_chat_app/screens/home_screen.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 
 class AuthenticationService {
@@ -40,7 +40,7 @@ class AuthenticationService {
 
       if (userCredential.user != null && !_isRegisterInProgress) {
         log('[FireAuth listener] login');
-        Navigator.pushNamed(context, HomeScreen.id);
+        Navigator.pushNamed(context, ContactsScreen.id);
         // onInit HomeScreen triggers LoginProcess
       }
       else {

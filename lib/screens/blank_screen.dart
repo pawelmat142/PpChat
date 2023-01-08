@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
-import 'package:flutter_chat_app/screens/home_screen.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 
@@ -17,7 +17,7 @@ class BlankScreen extends StatelessWidget {
 
     if (Uid.get != null) {
       Future.delayed(Duration.zero, () {
-        Navigator.pushNamed(context, HomeScreen.id);
+        Navigator.pushNamed(context, ContactsScreen.id);
       });
     }
 

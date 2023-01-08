@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_hive_image.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_settings_view.dart';
+import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/firebase_options.dart';
@@ -16,7 +18,6 @@ import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
-import 'package:flutter_chat_app/screens/home_screen.dart';
 import 'package:flutter_chat_app/screens/notifications_screen.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:navigation_history_observer/navigation_history_observer.dart';
@@ -27,10 +28,13 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(PpMessageAdapter());
   Hive.registerAdapter(ConversationSettingsAdapter());
+  Hive.registerAdapter(AvatarHiveImageAdapter());
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  //TODO: DEVICE NOTIFICATIONOS FEATURE
 
   runApp(
       MultiProvider(providers: [
@@ -43,8 +47,6 @@ void main() async {
       child: const MyApp(),
     )
   );
-
-
 
   await initGetIt();
 }
@@ -62,13 +64,17 @@ class MyApp extends StatelessWidget {
       initialRoute: BlankScreen.id,
       routes: {
         BlankScreen.id: (context) => const BlankScreen(),
-        HomeScreen.id: (context) => const HomeScreen(),
-        ContactsScreen.id: (context) => const ContactsScreen(),
-        NotificationsScreen.id: (context) => const NotificationsScreen(),
+
         LoginFormScreen.id: (context) => LoginFormScreen(),
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
+
+        ContactsScreen.id: (context) => const ContactsScreen(),
+        UserView.id: (context) => UserView(),
+
         ConversationView.id: (context) => const ConversationView(),
         ConversationSettingsView.id: (context) => const ConversationSettingsView(),
+
+        NotificationsScreen.id: (context) => const NotificationsScreen(),
       },
     );
   }

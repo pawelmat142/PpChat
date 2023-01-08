@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
@@ -61,24 +62,18 @@ class NotificationView extends StatelessWidget {
 
       body: Padding(
         padding: BASIC_HORIZONTAL_PADDING,
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: ListView(
+            // crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
 
-              //AVATAR
+              /// AVATAR
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 30),
-                child: Container(
-                  height: 150,
-                  width: 150,
-                  decoration: const BoxDecoration(
-                      color: Colors.grey,
-                      shape: BoxShape.circle
-                  ),
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: AvatarWidget.createFromNotification(notification,
+                    size: AVATAR_SIZE_BIG),
               ),
 
-              //NICKNAME
+              /// NICKNAME
               Text(nickname,
                 textAlign: TextAlign.center,
                 style: const TextStyle(

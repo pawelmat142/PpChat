@@ -35,9 +35,10 @@ class ConversationSettingsService {
 
 
   fullDeleteConversation({required String contactUid}) async {
+    final conversation = conversations.getByUid(contactUid);
+    if (conversation != null) conversation.messageCleaner.dispose();
     await _deleteConversationBoxIfExists(contactUid: contactUid);
     await _deleteSettingsBoxIfExists(contactUid: contactUid);
-    final conversation = conversations.getByUid(contactUid);
     await _deleteUnreadMessages(contactUid: contactUid);
     if (conversation != null) conversations.deleteByUid(contactUid);
   }
