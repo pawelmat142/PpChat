@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings.dart';
+import 'package:flutter_chat_app/models/crypto/hive_rsa_pair.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_hive_image.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_settings_view.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
@@ -29,12 +30,19 @@ void main() async {
   Hive.registerAdapter(PpMessageAdapter());
   Hive.registerAdapter(ConversationSettingsAdapter());
   Hive.registerAdapter(AvatarHiveImageAdapter());
+  Hive.registerAdapter(HiveRsaPairAdapter());
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //TODO: DEVICE NOTIFICATIONOS FEATURE
+  //TODO: DEVICE NOTIFICATIONOS FEATURE flutter_local_notifications
+
+  //TODO: filter empty string in conversation
+
+  //TODO: encypt messages rsa_encrypt
+
+  //TODO: icon and unread messages counter on it
 
   runApp(
       MultiProvider(providers: [

@@ -444,3 +444,9 @@ MessageCleaner instance moved to Conversation object
 ### [132] Prevent flushbar if not needed
 
 ### [133] little fix - first test release ready flutterVersionCode=1
+
+## feature/encrypt
+
+### [134] service and hive data model object prepared
+`flutter pub add pointycastle`
+`flutter pub add rsa_encrypt`
