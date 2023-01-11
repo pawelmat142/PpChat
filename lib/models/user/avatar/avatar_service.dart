@@ -148,5 +148,13 @@ abstract class AvatarService {
     log('deleted all avatar files and hive box clean');
   }
 
+  static Future<void> deleteMyAvatarImageInFsStorage() async {
+    final myImageUrl = Me.reference.get.avatar.imageUrl;
+    if (myImageUrl == '') return;
+    final imageRef = FirebaseStorage.instance.refFromURL(myImageUrl);
+    await imageRef.delete();
+    log('deleted image in storage');
+  }
+
 }
 

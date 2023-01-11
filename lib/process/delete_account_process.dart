@@ -107,6 +107,7 @@ class DeleteAccountProcess extends LogProcess {
       await _addDeletedAccountLogBatch();
 
       await AvatarService.deleteAllAvatarsFromDeviceAndHive();
+      await AvatarService.deleteMyAvatarImageInFsStorage();
 
       for (final contact in _contacts) {
         await _conversationSettingsService.fullDeleteConversation(contactUid: contact.uid);

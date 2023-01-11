@@ -80,7 +80,7 @@ class _ConversationViewState extends State<ConversationView> {
                 conversationService.markAsRead(box);
 
                 final interfaces = box.values
-                    .where((m) => m.message != '')
+                    .where((m) => m.message != '' && !m.isMock)
                     .map((m) => MessageBubbleInterface(
                       message: m.receiver == Uid.get
                           ? decrypt(m.message, myPrivateKey)

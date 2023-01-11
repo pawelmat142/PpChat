@@ -147,12 +147,14 @@ class ConversationService {
         })]);
   }
 
-  onUnlock(String uid) async {
+  onUnlock(String contactUid) async {
+    final conversation = Conversations.reference.getByUid(contactUid)!;
+    final mockMessage = conversation.box!.values.first;
+    if (mockMessage.sender != Uid.get!) return;
     await Future.delayed(const Duration(milliseconds: 10));
     popup.show('Unlock conversation?', error: true,
         buttons: [PopupButton('Unlock', onPressed: () async {
           spinner.start();
-          final conversation = Conversations.reference.getByUid(uid)!;
           await conversation.clearMock();
           spinner.stop();
         })]

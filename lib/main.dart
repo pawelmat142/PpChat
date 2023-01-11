@@ -39,13 +39,9 @@ void main() async {
 
   //TODO: DEVICE NOTIFICATIONOS FEATURE flutter_local_notifications
 
-  //TODO: filter empty string in conversation
-
   //TODO: icon and unread messages counter on it
 
   //TODO: delete avatar image ondeleteaccount
-
-  // TODO: bug: clear mockMessage not deleted after override by normal message
 
   runApp(
       MultiProvider(providers: [
@@ -73,13 +69,16 @@ class MyApp extends StatelessWidget {
       navigatorKey: NavigationService.navigatorKey,
       navigatorObservers: [NavigationHistoryObserver()],
       initialRoute: BlankScreen.id,
+
       onGenerateRoute: (RouteSettings settings) {
         final routes = <String, WidgetBuilder> {
           ConversationView.id: (context) => ConversationView(contactUser: settings.arguments as PpUser),
+          UserView.id: (context) => UserView(user: settings.arguments as PpUser),
         };
         WidgetBuilder builder = routes[settings.name]!;
         return MaterialPageRoute(builder: (ctx) => builder(ctx));
       },
+
       routes: {
         BlankScreen.id: (context) => const BlankScreen(),
 
@@ -87,9 +86,7 @@ class MyApp extends StatelessWidget {
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
 
         ContactsScreen.id: (context) => const ContactsScreen(),
-        UserView.id: (context) => UserView(),
 
-        // ConversationView.id: (context) => const ConversationView(),
         ConversationSettingsView.id: (context) => const ConversationSettingsView(),
 
         NotificationsScreen.id: (context) => const NotificationsScreen(),

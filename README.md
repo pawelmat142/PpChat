@@ -461,3 +461,8 @@ if not exists or doesn't match (new device)
 
 ### [137] Filter empty string in conversation
 and spinner bug fixed
+
+### [138] Bugfixing
+delete image in storage on delete account
+</br> lock mock fixed to be removable only for sender
+</br> UserView as constant
