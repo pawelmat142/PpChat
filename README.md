@@ -458,3 +458,6 @@ PpUser data model refactor - stores public key
 
 ### [136] Generates new key pair
 if not exists or doesn't match (new device)
+
+### [137] Filter empty string in conversation
+and spinner bug fixed

@@ -66,8 +66,6 @@ class _ConversationViewState extends State<ConversationView> {
       body: SafeArea(
         child: Column(children: [
 
-          // !initialized ? const Center(child: Text('empty!')) :
-
           //MESSAGES AREA
           Expanded(child: ValueListenableBuilder<Box<PpMessage>>(
               valueListenable: conversation.box!.listenable(),
@@ -81,13 +79,15 @@ class _ConversationViewState extends State<ConversationView> {
 
                 conversationService.markAsRead(box);
 
-                final interfaces = box.values.map((m) => MessageBubbleInterface(
-                    message: m.receiver == Uid.get
-                        ? decrypt(m.message, myPrivateKey)
-                        : m.message,
-                    my: m.sender == Uid.get,
-                    timestamp: m.timestamp)
-                ).toList();
+                final interfaces = box.values
+                    .where((m) => m.message != '')
+                    .map((m) => MessageBubbleInterface(
+                      message: m.receiver == Uid.get
+                          ? decrypt(m.message, myPrivateKey)
+                          : m.message,
+                      my: m.sender == Uid.get,
+                      timestamp: m.timestamp)
+                  ).toList();
 
                 interfaces.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 

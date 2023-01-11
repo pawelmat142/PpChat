@@ -32,10 +32,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
-      spinner.start();
+      spinner.start(context: context);
       final process = LoginProcess();
       await process.process();
-      spinner.stop();
+      spinner.stop(context: context);
       Future.delayed(Duration.zero, ()  {
         PpSnackBar.login();
       });
