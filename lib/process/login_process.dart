@@ -24,6 +24,7 @@ class LoginProcess extends LogProcess {
     }
 
     await Me.reference.startFirestoreObserver();
+    await Me.reference.initPrivateKey();
     log('[LoginProcess] [Me] initialized');
 
     await ContactUids.reference.startFirestoreObserver();

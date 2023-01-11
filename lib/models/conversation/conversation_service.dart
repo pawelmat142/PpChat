@@ -7,7 +7,6 @@ import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
@@ -85,7 +84,7 @@ class ConversationService {
 
         final conversation = await conversations.openOrCreate(contactUid: contactUid);
         final msg = messages[documentId]!;
-        conversation.addMessage(msg);
+        conversation.addMessageToHive(msg);
         resolvedMessages[documentId] = msg;
       }
       else {
@@ -129,32 +128,6 @@ class ConversationService {
     return _contactsService.getByUid(uid: contactUid);
   }
 
-  sendMessage(PpMessage message) async {
-    await contactMessagesCollectionRef(contactUid: message.receiver).add(message.asMap);
-    conversations.getByUid(message.receiver)?.addMessage(message);
-  }
-
-
-  clearConversation(PpUser contactUser) async {
-    sendMessage(PpMessage.create(
-        message: MessageMock.TYPE_CLEAR,
-        sender: Uid.get!,
-        receiver: contactUser.uid,
-        timeToLive: -1,
-        timeToLiveAfterRead: -1)
-    );
-  }
-
-  lockConversation(PpUser contactUser) async {
-    sendMessage(PpMessage.create(
-        message: MessageMock.TYPE_LOCK,
-        sender: Uid.get!,
-        receiver: contactUser.uid,
-        timeToLive: -1,
-        timeToLiveAfterRead: -1)
-    );
-  }
-
   resolveUnresolvedMessages() {
     if (unresolvedMessages.isNotEmpty) {
       logService.log('[resolveUnresolvedMessages] messages: ${unresolvedMessages.length}');
@@ -164,34 +137,36 @@ class ConversationService {
 
   onLockConversation(String uid) async {
     await Future.delayed(const Duration(milliseconds: 10));
-    final contactUser = _contactsService.getByUid(uid: uid)!;
     popup.show('Are you sure?',
         text: 'Messages data will be lost also on the other side!',
         buttons: [PopupButton('Clear and lock', onPressed: () async {
           spinner.start();
-          await lockConversation(contactUser);
+          final conversation = Conversations.reference.getByUid(uid)!;
+          await conversation.lockMock();
           spinner.stop();
         })]);
   }
 
   onUnlock(String uid) async {
     await Future.delayed(const Duration(milliseconds: 10));
-    final contactUser = _contactsService.getByUid(uid: uid)!;
     popup.show('Unlock conversation?', error: true,
-        buttons: [PopupButton('Unlock', onPressed: () {
-          clearConversation(contactUser);
+        buttons: [PopupButton('Unlock', onPressed: () async {
+          spinner.start();
+          final conversation = Conversations.reference.getByUid(uid)!;
+          await conversation.clearMock();
+          spinner.stop();
         })]
     );
   }
 
   onClearConversation(String uid) async {
     await Future.delayed(const Duration(milliseconds: 100));
-    final contactUser = _contactsService.getByUid(uid: uid)!;
     popup.show('Are you sure?',
         text: 'Messages data will be lost also on the other side!',
         buttons: [PopupButton('Clear', onPressed: () async {
           spinner.start();
-          await clearConversation(contactUser);
+          final conversation = Conversations.reference.getByUid(uid)!;
+          await conversation.clearMock();
           spinner.stop();
         })]
     );

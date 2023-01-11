@@ -139,9 +139,13 @@ abstract class AvatarService {
   }
 
   static Future<void> deleteAllAvatarsFromDeviceAndHive() async {
+    print('deleteAllAvatarsFromDeviceAndHive');
     final appDirectory = await getApplicationDocumentsDirectory();
+    print('appDirectory');
     final avatarsDirectory = Directory('${appDirectory.path}/avatars');
+    print('avatarsDirectory');
     avatarsDirectory.deleteSync(recursive: true);
+    print('avatarsDirectory.deleteSync');
     await AvatarHiveImage.cleanBox();
     log('deleted all avatar files and hive box clean');
   }

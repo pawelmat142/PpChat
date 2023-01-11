@@ -450,3 +450,8 @@ MessageCleaner instance moved to Conversation object
 ### [134] service and hive data model object prepared
 `flutter pub add pointycastle`
 `flutter pub add rsa_encrypt`
+
+### [135] Encrypt/decrypt messages
+PpUser data model refactor - stores public key
+</br> send messages refactor
+</br> receive messages refactor
