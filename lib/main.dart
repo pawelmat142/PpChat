@@ -41,8 +41,6 @@ void main() async {
 
   //TODO: icon and unread messages counter on it
 
-  //TODO: delete avatar image ondeleteaccount
-
   runApp(
       MultiProvider(providers: [
         ChangeNotifierProvider(create: (_) => Me()),

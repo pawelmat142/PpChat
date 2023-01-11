@@ -466,3 +466,6 @@ and spinner bug fixed
 delete image in storage on delete account
 </br> lock mock fixed to be removable only for sender
 </br> UserView as constant
+
+### [139] Turn on logs on non debug mode
+i want to receive online logs to firebase for testing
