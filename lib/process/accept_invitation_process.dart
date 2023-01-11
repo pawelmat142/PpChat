@@ -1,31 +1,38 @@
-import 'package:flutter_chat_app/models/conversation/conversation_settings.dart';
-import 'package:flutter_chat_app/services/get_it.dart';
-import 'package:flutter_chat_app/models/conversation/pp_message.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_chat_app/models/conversation/conversation.dart';
+import 'package:flutter_chat_app/models/crypto/hive_rsa_pair.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/contact/contact_uids.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
-import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
+import 'package:pointycastle/asymmetric/api.dart';
 
 class AcceptInvitationProcess extends LogProcess {
 
-  final _conversationService = getIt.get<ConversationService>();
-
+  final PpNotification invitation;
   final ContactUids contactUids = ContactUids.reference;
   final Me me = Me.reference;
 
-
-  final PpNotification invitation;
-
   AcceptInvitationProcess({required this.invitation});
+
+  late String contactUid;
+  late DocumentReference<Map<String, dynamic>> contactPpUserDocRef;
+
 
   process() async {
     log('[START] [AcceptInvitationProcess]');
     final batch = firestore.batch();
 
-    final contactUid = invitation.documentId;
+    contactUid = invitation.documentId;
+
+    contactPpUserDocRef = firestore
+        .collection(Collections.PpUser).doc(contactUid);
+
+    final contactNotificationDocRef = contactPpUserDocRef
+        .collection(Collections.NOTIFICATIONS).doc(Uid.get);
 
     // delete invitation
     final invitationRef = firestore
@@ -33,11 +40,8 @@ class AcceptInvitationProcess extends LogProcess {
         .collection(Collections.NOTIFICATIONS).doc(contactUid);
     batch.delete(invitationRef);
 
-    // update sender invitationSelfNotification to invitation acceptance
-    final contactNotificationDocRef = firestore
-        .collection(Collections.PpUser).doc(contactUid)
-        .collection(Collections.NOTIFICATIONS).doc(Uid.get);
 
+    // update sender invitationSelfNotification to invitation acceptance
     final document = PpNotification.createInvitationAcceptance(
         text: invitation.text,
         sender: invitation.receiver,
@@ -55,24 +59,28 @@ class AcceptInvitationProcess extends LogProcess {
     log('[STOP] [AcceptInvitationProcess]');
   }
 
-  _resolveFirstMessage(PpNotification invitation) {
+  _resolveFirstMessage(PpNotification invitation) async {
     log('[AcceptInvitationProcess] _resolveFirstMessage');
 
-    final message = PpMessage.create(
-        message: invitation.text,
-        sender: invitation.sender == me.nickname
-            ? Uid.get!
-            : invitation.documentId,
-        receiver: invitation.receiver == me.nickname
-            ? Uid.get!
-            : invitation.documentId,
-        timeToLive: ConversationSettings.timeToLiveInMinutesDefault,
-        timeToLiveAfterRead: ConversationSettings.timeToLiveAfterReadInMinutesDefault,
-    );
+    final publicKey = await _getContactPublicKey();
+    if (publicKey == null) throw Exception('Public key not found for contactUid: $contactUid');
 
-    ConversationService.messagesCollectionRef.add(message.asMap);
-    _conversationService.contactMessagesCollectionRef(contactUid: invitation.documentId)
-        .add(message.asMap);
+    final temporaryConversationObject = Conversation(contactUid: contactUid);
+    await temporaryConversationObject.open(temporary: true);
+    temporaryConversationObject.contactPublicKey = publicKey;
+
+    temporaryConversationObject.sendMessage(invitation.text);
+  }
+
+  Future<RSAPublicKey?> _getContactPublicKey() async {
+    final user = await _getPpUserObjectByUid();
+    return user == null ? null : HiveRsaPair.stringToRsaPublic(user.publicKeyAsString);
+  }
+
+  Future<PpUser?> _getPpUserObjectByUid() async {
+    final result = await contactPpUserDocRef.get();
+    final data = result.data();
+    return data == null ? null : PpUser.fromMap(data);
   }
 
 }

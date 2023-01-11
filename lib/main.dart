@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings.dart';
+import 'package:flutter_chat_app/models/crypto/hive_rsa_pair.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_hive_image.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_settings_view.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
@@ -29,12 +31,15 @@ void main() async {
   Hive.registerAdapter(PpMessageAdapter());
   Hive.registerAdapter(ConversationSettingsAdapter());
   Hive.registerAdapter(AvatarHiveImageAdapter());
+  Hive.registerAdapter(HiveRsaPairAdapter());
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //TODO: DEVICE NOTIFICATIONOS FEATURE
+  //TODO: DEVICE NOTIFICATIONOS FEATURE flutter_local_notifications
+
+  //TODO: icon and unread messages counter on it
 
   runApp(
       MultiProvider(providers: [
@@ -62,6 +67,16 @@ class MyApp extends StatelessWidget {
       navigatorKey: NavigationService.navigatorKey,
       navigatorObservers: [NavigationHistoryObserver()],
       initialRoute: BlankScreen.id,
+
+      onGenerateRoute: (RouteSettings settings) {
+        final routes = <String, WidgetBuilder> {
+          ConversationView.id: (context) => ConversationView(contactUser: settings.arguments as PpUser),
+          UserView.id: (context) => UserView(user: settings.arguments as PpUser),
+        };
+        WidgetBuilder builder = routes[settings.name]!;
+        return MaterialPageRoute(builder: (ctx) => builder(ctx));
+      },
+
       routes: {
         BlankScreen.id: (context) => const BlankScreen(),
 
@@ -69,9 +84,7 @@ class MyApp extends StatelessWidget {
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
 
         ContactsScreen.id: (context) => const ContactsScreen(),
-        UserView.id: (context) => UserView(),
 
-        ConversationView.id: (context) => const ConversationView(),
         ConversationSettingsView.id: (context) => const ConversationSettingsView(),
 
         NotificationsScreen.id: (context) => const NotificationsScreen(),

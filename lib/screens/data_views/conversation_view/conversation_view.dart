@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/models/conversation/conversation.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/message_bubble.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_popup_menu.dart';
@@ -10,11 +12,14 @@ import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:pointycastle/asymmetric/api.dart';
+import 'package:rsa_encrypt/rsa_encrypt.dart';
 
-class ConversationView extends StatelessWidget {
-  const ConversationView({super.key});
+class ConversationView extends StatefulWidget {
+  const ConversationView({required this.contactUser, super.key});
   static const id = 'conversation_view';
 
+  final PpUser contactUser;
 
   static navigate(PpUser contact) {
     Navigator.pushNamed(
@@ -24,26 +29,35 @@ class ConversationView extends StatelessWidget {
     );
   }
 
+  @override
+  State<ConversationView> createState() => _ConversationViewState();
+}
+
+class _ConversationViewState extends State<ConversationView> {
+
+  final conversationService = getIt.get<ConversationService>();
+
+  bool isMock(Box<PpMessage> box) => box.values.length == 1 && box.values.first.isMock;
+
+  PpUser get contactUser => widget.contactUser;
+  late Conversation conversation;
+  late RSAPrivateKey myPrivateKey;
+
+  @override
+  void initState() {
+    conversation = conversationService.conversations.getByUid(contactUser.uid)!;
+    super.initState();
+    conversationService.resolveUnresolvedMessages();
+    myPrivateKey = Me.reference.myPrivateKey;
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    final contactUser = ModalRoute.of(context)!.settings.arguments as PpUser;
-    final conversationService = getIt.get<ConversationService>();
-    final conversation = conversationService.conversations.getByUid(contactUser.uid)!;
-
-    bool isMock(Box<PpMessage> box) => box.values.length == 1 && box.values.first.isMock;
-
-    conversationService.resolveUnresolvedMessages();
-
     return Scaffold(
 
       appBar: AppBar(
-          title: Row(children: [
-            // AvatarWidget(model: contactUser.avatar, uid: contactUser.uid, size: 50),
-            // const SizedBox(width: 20),
-            Text(contactUser.nickname)
-          ]),
+          title: Text(contactUser.nickname),
           actions: [
             ConversationPopupMenu(conversation: conversation),
           ]
@@ -59,23 +73,29 @@ class ConversationView extends StatelessWidget {
 
                 if (box.values.isEmpty) return const Center(child: Text('empty!'));
 
+                ///MOCK MESSAGES
+                ///are not encrypted!
                 if (isMock(box)) return MessageMock(box.values.first, contactUser);
 
                 conversationService.markAsRead(box);
 
-                final interfaces = box.values.map((m) => MessageBubbleInterface(
-                    message: m.message,
-                    my: m.sender == Uid.get,
-                    timestamp: m.timestamp)
-                ).toList();
+                final interfaces = box.values
+                    .where((m) => m.message != '' && !m.isMock)
+                    .map((m) => MessageBubbleInterface(
+                      message: m.receiver == Uid.get
+                          ? decrypt(m.message, myPrivateKey)
+                          : m.message,
+                      my: m.sender == Uid.get,
+                      timestamp: m.timestamp)
+                  ).toList();
 
                 interfaces.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
                 int dayBefore = 0;
-                for (var i in interfaces.reversed) {
-                  if (i.timestamp.day != dayBefore) {
-                    i.divider = true;
-                    dayBefore = i.timestamp.day;
+                for (var message in interfaces.reversed) {
+                  if (message.timestamp.day != dayBefore) {
+                    message.divider = true;
+                    dayBefore = message.timestamp.day;
                   }
                 }
 
@@ -87,11 +107,10 @@ class ConversationView extends StatelessWidget {
               })
           ),
 
-          MessageInput(contactUser: contactUser),
+          MessageInput(conversation: conversation),
 
         ]),
       ),
     );
   }
-
 }

@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/models/conversation/conversation_settings.dart';
-import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
-import 'package:flutter_chat_app/models/conversation/pp_message.dart';
-import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
-import 'package:flutter_chat_app/models/user/pp_user.dart';
-import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
-import 'package:flutter_chat_app/services/uid.dart';
 
 class MessageInput extends StatefulWidget {
-  const MessageInput({required this.contactUser, Key? key}) : super(key: key);
-  final PpUser contactUser;
+  const MessageInput({required this.conversation, required, Key? key}) : super(key: key);
+  final Conversation conversation;
 
   @override
   State<MessageInput> createState() => _MessageInputState();
@@ -18,31 +12,13 @@ class MessageInput extends StatefulWidget {
 
 class _MessageInputState extends State<MessageInput> {
 
-  final _conversationService = getIt.get<ConversationService>();
-  final _conversationSettingsService = getIt.get<ConversationSettingsService>();
-
   final _messageInputController = TextEditingController();
   String get message => _messageInputController.value.text;
 
   bool _ready = true;
+  pendingOn() => setState(() => _ready = false);
+  pendingOff() => setState(() =>_ready = true);
 
-  late ConversationSettings settings;
-  getSettings() async {
-    settings = await _conversationSettingsService
-        .getSettings(contactUid: widget.contactUser.uid);
-  }
-
-
-  @override
-  void initState() {
-    super.initState();
-    getSettings();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,18 +57,12 @@ class _MessageInputState extends State<MessageInput> {
 
   _onSend() async {
     if (message.isEmpty) return;
-    setState((){_ready = false;});
+    pendingOn();
 
-    await _conversationService.sendMessage(PpMessage.create(
-        message: message,
-        sender: Uid.get!,
-        receiver: widget.contactUser.uid,
-        timeToLive: settings.timeToLiveInMinutes,
-        timeToLiveAfterRead: settings.timeToLiveAfterReadInMinutes));
-
+    await widget.conversation.sendMessage(message);
     _messageInputController.clear();
-    setState((){_ready = true;});
-  }
 
+    pendingOff();
+  }
 
 }

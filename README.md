@@ -444,3 +444,28 @@ MessageCleaner instance moved to Conversation object
 ### [132] Prevent flushbar if not needed
 
 ### [133] little fix - first test release ready flutterVersionCode=1
+
+## feature/encrypt
+
+### [134] service and hive data model object prepared
+`flutter pub add pointycastle`
+`flutter pub add rsa_encrypt`
+
+### [135] Encrypt/decrypt messages
+PpUser data model refactor - stores public key
+</br> send messages refactor
+</br> receive messages refactor
+
+### [136] Generates new key pair
+if not exists or doesn't match (new device)
+
+### [137] Filter empty string in conversation
+and spinner bug fixed
+
+### [138] Bugfixing
+delete image in storage on delete account
+</br> lock mock fixed to be removable only for sender
+</br> UserView as constant
+
+### [139] Turn on logs on non debug mode
+i want to receive online logs to firebase for testing

@@ -23,9 +23,10 @@ import 'package:flutter_chat_app/services/authentication_service.dart';
 
 
 class UserView extends StatelessWidget {
-  UserView({Key? key}) : super(key: key);
-
+  const UserView({required this.user, Key? key}) : super(key: key);
   static const String id = 'user_view';
+
+  final PpUser user;
 
   static popAndNavigate({required PpUser user, int? delay}) async {
     if (delay != null) {
@@ -46,17 +47,14 @@ class UserView extends StatelessWidget {
     );
   }
 
-  String? message;
+  bool get isMe => Uid.get == user.uid;
+  bool get isContact => Contacts.reference.getByNickname(user.nickname) != null;
+  bool get isFoundUser => !isMe && !isContact;
 
   @override
   Widget build(BuildContext context) {
 
-    final user = ModalRoute.of(context)!.settings.arguments as PpUser;
-    final bool isMe = Uid.get == user.uid;
-
-    final bool isContact = Contacts.reference.getByNickname(user.nickname) != null;
-
-    final bool isFoundUser = !isMe && !isContact;
+    String message = '';
 
     return Scaffold(
         resizeToAvoidBottomInset: true,
@@ -187,7 +185,7 @@ class UserView extends StatelessWidget {
                     ),
 
                     PpButton(text: 'Invite', onPressed: () {
-                      _onInvite(user, context: context);
+                      _onInvite(user, context: context, message: message);
                     })
 
                   ],
@@ -201,12 +199,14 @@ class UserView extends StatelessWidget {
     );
   }
 
-  _onInvite(PpUser foundUser, {required BuildContext context}) async {
+  _onInvite(PpUser foundUser, {required BuildContext context, required String message}) async {
     final spinner = getIt.get<PpSpinner>();
     final popup = getIt.get<Popup>();
+    print('message');
+    print(message);
     try {
       spinner.start();
-      await _sendInvitationNotifications(foundUser);
+      await _sendInvitationNotifications(foundUser: foundUser, message: message);
       PpSnackBar.invitationSent();
     } catch (error) {
       spinner.stop();
@@ -220,7 +220,7 @@ class UserView extends StatelessWidget {
     Navigator.popAndPushNamed(context, NotificationsScreen.id);
   }
 
-  _sendInvitationNotifications(PpUser foundUser) async {
+  _sendInvitationNotifications({required PpUser foundUser, required String message}) async {
     final userService = getIt.get<PpUserService>();
 
     final firestore = FirebaseFirestore.instance;
@@ -233,7 +233,7 @@ class UserView extends StatelessWidget {
     batch.set(receiverNotificationsRef, PpNotification.createInvitation(
         sender: userService.nickname,
         receiver: foundUser.nickname,
-        text: message ?? '').asMap);
+        text: message).asMap);
 
     final myNotificationsRef = firestore
         .collection(Collections.PpUser).doc(Uid.get)
@@ -243,7 +243,7 @@ class UserView extends StatelessWidget {
       documentId: foundUser.uid,
       sender: userService.nickname,
       receiver: foundUser.nickname,
-      text: message ?? '',
+      text: message,
     );
     batch.set(myNotificationsRef, selfNotification.asMap);
 

@@ -141,9 +141,19 @@ abstract class AvatarService {
   static Future<void> deleteAllAvatarsFromDeviceAndHive() async {
     final appDirectory = await getApplicationDocumentsDirectory();
     final avatarsDirectory = Directory('${appDirectory.path}/avatars');
-    avatarsDirectory.deleteSync(recursive: true);
+    if (avatarsDirectory.existsSync()) {
+      avatarsDirectory.deleteSync(recursive: true);
+    }
     await AvatarHiveImage.cleanBox();
     log('deleted all avatar files and hive box clean');
+  }
+
+  static Future<void> deleteMyAvatarImageInFsStorage() async {
+    final myImageUrl = Me.reference.get.avatar.imageUrl;
+    if (myImageUrl == '') return;
+    final imageRef = FirebaseStorage.instance.refFromURL(myImageUrl);
+    await imageRef.delete();
+    log('deleted image in storage');
   }
 
 }

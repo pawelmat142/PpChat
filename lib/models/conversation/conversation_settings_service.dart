@@ -39,13 +39,17 @@ class ConversationSettingsService {
     if (conversation != null) conversation.messageCleaner.dispose();
     await _deleteConversationBoxIfExists(contactUid: contactUid);
     await _deleteSettingsBoxIfExists(contactUid: contactUid);
-    await _deleteUnreadMessages(contactUid: contactUid);
+    await deleteUnreadMessages(contactUid: contactUid);
     if (conversation != null) conversations.deleteByUid(contactUid);
   }
 
-  _deleteUnreadMessages({required String contactUid}) async {
-    final messages = await ConversationService.messagesCollectionRef
-        .where(PpMessageFields.sender, isEqualTo: contactUid).get();
+  Future<int> deleteUnreadMessages({String? contactUid}) async {
+    final collectionRef = contactUid == null
+        ? ConversationService.messagesCollectionRef
+        : ConversationService.messagesCollectionRef
+            .where(PpMessageFields.sender, isEqualTo: contactUid);
+
+    final messages = await collectionRef.get();
 
     if (messages.docs.isNotEmpty) {
       final batch = FirebaseFirestore.instance.batch();
@@ -55,6 +59,7 @@ class ConversationSettingsService {
       await batch.commit();
       logService.log('${messages.docs.length} unread messages deleted fot $contactUid.');
     }
+    return messages.docs.length;
   }
 
 

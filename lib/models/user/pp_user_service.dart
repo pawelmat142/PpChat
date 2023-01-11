@@ -37,19 +37,8 @@ class PpUserService {
       : null;
   }
 
-  Future<PpUser?> findBySignature(String signature) async {
-    final querySnapshot = await _collection
-        .where(PpUserFields.signature, isEqualTo: signature)
-        .get();
-    return querySnapshot.size > 0
-      ? PpUser.fromDB(querySnapshot.docs.first)
-      : null;
-  }
-
-
   Future<void> createNewUser({required String nickname}) async {
-    final signature = _collection.doc().id;
-    final newUser = PpUser.create(nickname: nickname, uid: Uid.get!, signature: signature);
+    final newUser = await PpUser.create(nickname: nickname, uid: Uid.get!);
     await documentRef.set(newUser.asMap);
   }
 
