@@ -41,8 +41,6 @@ void main() async {
 
   //TODO: filter empty string in conversation
 
-  //TODO: encypt messages rsa_encrypt
-
   //TODO: icon and unread messages counter on it
 
   //TODO: delete avatar image ondeleteaccount

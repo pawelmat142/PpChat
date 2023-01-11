@@ -3,6 +3,7 @@ import 'package:flutter_chat_app/components/contacts_tile/contact_tile.dart';
 import 'package:flutter_chat_app/components/notifications_info.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
+import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
@@ -25,13 +26,19 @@ class ContactsScreen extends StatefulWidget {
 class _ContactsScreenState extends State<ContactsScreen> {
   PpUser get me => Me.reference.get;
 
+  final spinner = getIt.get<PpSpinner>();
+
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
+      spinner.start();
       final process = LoginProcess();
       await process.process();
-      PpSnackBar.login();
+      spinner.stop();
+      Future.delayed(Duration.zero, ()  {
+        PpSnackBar.login();
+      });
     });
   }
 

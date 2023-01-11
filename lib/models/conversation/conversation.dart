@@ -42,12 +42,12 @@ class Conversation {
 
   open({bool temporary = false}) async {
     box = await Hive.openBox(hiveKey(contactUid: contactUid));
-    messageCleaner.init(contactUid: contactUid);
     if (!temporary) {
       _initializeContactPublicKey();
     }
     await _initializeSettings();
     contactMessagesCollectionRef = conversationService.contactMessagesCollectionRef(contactUid: contactUid);
+    await messageCleaner.init(contactUid: contactUid);
   }
 
   _initializeContactPublicKey() {

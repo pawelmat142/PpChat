@@ -71,8 +71,8 @@ class HiveRsaPair extends HiveObject {
   static Future<RSAPrivateKey?> getMyPrivateKey() async {
     final box = await _openOrCreate();
     final hiveRsaPair = box.get(Uid.get);
-    return hiveRsaPair == null ? null :
-    RsaKeyHelper().parsePrivateKeyFromPem(hiveRsaPair.privateAsString);
+    return hiveRsaPair == null ? null
+        : RsaKeyHelper().parsePrivateKeyFromPem(hiveRsaPair.privateAsString);
   }
 
   static Future<RSAPublicKey?> getMyPublicKey() async {

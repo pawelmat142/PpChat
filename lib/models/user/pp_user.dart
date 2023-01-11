@@ -64,5 +64,16 @@ class PpUser {
       publicKeyAsString: await HiveRsaPair.generatePairAndSaveToHive()
   );}
 
+
+  PpUser copyWithNewPublicKey(String newPublicKeyAsString) {
+    return PpUser(
+        uid: uid,
+        nickname: nickname,
+        role: role,
+        avatar: avatar,
+        logged: logged,
+        publicKeyAsString: newPublicKeyAsString
+    );
+  }
 }
 

@@ -455,3 +455,6 @@ MessageCleaner instance moved to Conversation object
 PpUser data model refactor - stores public key
 </br> send messages refactor
 </br> receive messages refactor
+
+### [136] Generates new key pair
+if not exists or doesn't match (new device)
