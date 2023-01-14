@@ -23,10 +23,8 @@ import 'package:flutter_chat_app/services/authentication_service.dart';
 
 
 class UserView extends StatelessWidget {
-  const UserView({required this.user, Key? key}) : super(key: key);
+  const UserView({Key? key}) : super(key: key);
   static const String id = 'user_view';
-
-  final PpUser user;
 
   static popAndNavigate({required PpUser user, int? delay}) async {
     if (delay != null) {
@@ -34,7 +32,7 @@ class UserView extends StatelessWidget {
     }
     Navigator.popAndPushNamed(
         NavigationService.context,
-        UserView.id,
+        id,
         arguments: user
     );
   }
@@ -47,9 +45,11 @@ class UserView extends StatelessWidget {
     );
   }
 
-  bool get isMe => Uid.get == user.uid;
-  bool get isContact => Contacts.reference.getByNickname(user.nickname) != null;
-  bool get isFoundUser => !isMe && !isContact;
+  PpUser user(BuildContext context) => ModalRoute.of(context)!.settings.arguments as PpUser;
+
+  bool isMe(BuildContext context) => Uid.get == user(context).uid;
+  bool isContact(BuildContext context) => Contacts.reference.getByNickname(user(context).nickname) != null;
+  bool isFoundUser(BuildContext context) => !isMe(context) && !isContact(context);
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +59,9 @@ class UserView extends StatelessWidget {
     return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(title: Text(
-            isMe ?  'My account'
-                : isContact ? 'Contact view'
-                  : isFoundUser ? 'You have found user' : '')
+            isMe(context) ?  'My account'
+                : isContact(context) ? 'Contact view'
+                  : isFoundUser(context) ? 'You have found user' : '')
         ),
 
         body: GestureDetector(
@@ -74,14 +74,14 @@ class UserView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 30),
                 child: AvatarWidget(
-                  uid: user.uid,
+                  uid: user(context).uid,
                   size: AVATAR_SIZE_BIG,
-                  model: user.avatar
+                  model: user(context).avatar
                 ),
               ),
 
               /// Name
-              Text(user.nickname,
+              Text(user(context).nickname,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 30,
@@ -94,7 +94,7 @@ class UserView extends StatelessWidget {
 
               Padding(
                 padding: const EdgeInsets.only(top: 12),
-                child: Text(user.logged ? 'Active' : 'Inactive',
+                child: Text(user(context).logged ? 'Active' : 'Inactive',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 22,
@@ -108,12 +108,12 @@ class UserView extends StatelessWidget {
               ///BUTTONS
               ///
               /// contact
-              isContact ?
+              isContact(context) ?
                 Column(children: [
                   PpButton(text: 'Conversation', onPressed: () {
                     final conversationService = getIt.get<ConversationService>();
-                    if (conversationService.contactExists(user.uid)) {
-                      conversationService.navigateToConversationView(user);
+                    if (conversationService.contactExists(user(context).uid)) {
+                      conversationService.navigateToConversationView(user(context));
                     } else {
                       PpSnackBar.contactNotExists();
                     }
@@ -122,8 +122,8 @@ class UserView extends StatelessWidget {
                   PpButton(text: 'Delete contact',
                       color: Colors.red, onPressed: () async {
                         final contactsService = getIt.get<ContactsService>();
-                        if (contactsService.contactExists(user.uid)) {
-                          await contactsService.onDeleteContact(user.uid);
+                        if (contactsService.contactExists(user(context).uid)) {
+                          await contactsService.onDeleteContact(user(context).uid);
                         } else {
                           PpSnackBar.contactNotExists();
                         }
@@ -132,13 +132,13 @@ class UserView extends StatelessWidget {
 
               ///
               /// me
-              : isMe ?
+              : isMe(context) ?
                 Column(children: [
                   PpButton(text: 'Edit avatar',
                     color: PRIMARY_COLOR_LIGHTER,
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                        return EditAvatarView(user: user);
+                        return EditAvatarView(user: user(context));
                       }));
                   }),
 
@@ -185,7 +185,7 @@ class UserView extends StatelessWidget {
                     ),
 
                     PpButton(text: 'Invite', onPressed: () {
-                      _onInvite(user, context: context, message: message);
+                      _onInvite(user(context), context: context, message: message);
                     })
 
                   ],

@@ -16,10 +16,8 @@ import 'package:pointycastle/asymmetric/api.dart';
 import 'package:rsa_encrypt/rsa_encrypt.dart';
 
 class ConversationView extends StatefulWidget {
-  const ConversationView({required this.contactUser, super.key});
+  const ConversationView({super.key});
   static const id = 'conversation_view';
-
-  final PpUser contactUser;
 
   static navigate(PpUser contact) {
     Navigator.pushNamed(
@@ -39,20 +37,25 @@ class _ConversationViewState extends State<ConversationView> {
 
   bool isMock(Box<PpMessage> box) => box.values.length == 1 && box.values.first.isMock;
 
-  PpUser get contactUser => widget.contactUser;
-  late Conversation conversation;
-  late RSAPrivateKey myPrivateKey;
+  PpUser? _contactUser;
+
+  PpUser get contactUser => _contactUser!;
+  Conversation get conversation => conversationService.conversations.getByUid(_contactUser!.uid)!;
+  RSAPrivateKey get myPrivateKey => Me.reference.myPrivateKey;
 
   @override
   void initState() {
-    conversation = conversationService.conversations.getByUid(contactUser.uid)!;
     super.initState();
-    conversationService.resolveUnresolvedMessages();
-    myPrivateKey = Me.reference.myPrivateKey;
+    Future.delayed(Duration.zero, () {
+      conversationService.resolveUnresolvedMessages();
+      // myPrivateKey = Me.reference.myPrivateKey;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+
+    _contactUser ??= ModalRoute.of(context)!.settings.arguments as PpUser;
 
     return Scaffold(
 

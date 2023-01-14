@@ -478,3 +478,5 @@ i want to receive online logs to firebase for testing
 </br> `flutter pub add flutter_timezone`
 
 ### [141] BUG multiple ContactsScreen on stack - fixed
+
+### [142] BUG navigation with arguments gives route name = null  - fixed

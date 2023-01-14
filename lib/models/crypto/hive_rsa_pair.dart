@@ -28,10 +28,6 @@ class HiveRsaPair extends HiveObject {
     required this.uid,
   });
 
-  static String ecrypt({required RSAPublicKey key, required String message}) {
-    return encrypt(message, key);
-  }
-
   static Future<String> generatePairAndSaveToHive() async {
     //returns generated publicKey as String
 

@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_settings_view.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
@@ -34,15 +33,17 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //TODO: BUG - after create account and invitation/accept invitation - contact doesnt show in constat screen
+  //TODO: prevent notification if on conversation view
 
-  //TODO: BUG - conversation/user view navigation - missing route name in history
+  //TODO: BUG - after create account and invitation/accept invitation - contact doesnt show in constat screen
 
   //TODO: pass avatar object in notification if is needed (invitation)
 
   //TODO: icon and splash screens
 
   //TODO: value of unread messages on icon
+
+  // TODO: add notifications enabled in converssation settings
 
   runApp(
       MultiProvider(providers: [
@@ -72,15 +73,6 @@ class MyApp extends StatelessWidget {
       navigatorObservers: [NavigationHistoryObserver()],
       initialRoute: BlankScreen.id,
 
-      onGenerateRoute: (RouteSettings settings) {
-        final routes = <String, WidgetBuilder> {
-          ConversationView.id: (context) => ConversationView(contactUser: settings.arguments as PpUser),
-          UserView.id: (context) => UserView(user: settings.arguments as PpUser),
-        };
-        WidgetBuilder builder = routes[settings.name]!;
-        return MaterialPageRoute(builder: (ctx) => builder(ctx));
-      },
-
       routes: {
         BlankScreen.id: (context) => const BlankScreen(),
 
@@ -88,6 +80,10 @@ class MyApp extends StatelessWidget {
         RegisterFormScreen.id: (context) => RegisterFormScreen(),
 
         ContactsScreen.id: (context) => const ContactsScreen(),
+
+        UserView.id: (context) => const UserView(),
+
+        ConversationView.id: (context) => const ConversationView(),
 
         ConversationSettingsView.id: (context) => const ConversationSettingsView(),
 
