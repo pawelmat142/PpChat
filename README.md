@@ -476,3 +476,5 @@ i want to receive online logs to firebase for testing
 `flutter pub add flutter_local_notifications`
 </br> `flutter pub add device_info_plus`
 </br> `flutter pub add flutter_timezone`
+
+### [141] BUG multiple ContactsScreen on stack - fixed

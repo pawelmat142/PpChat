@@ -11,27 +11,13 @@ import 'package:navigation_history_observer/navigation_history_observer.dart';
 class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  static get context {
-    return navigatorKey.currentContext;
-  }
+  static get context => navigatorKey.currentContext;
 
-  static String get route {
-    if (NavigationHistoryObserver().top != null) {
-      if (NavigationHistoryObserver().top!.settings.name != null) {
-        return NavigationHistoryObserver().top!.settings.name!;
-      }
-    }
-    return '';
-  }
+  static List<String?> get routePath => NavigationHistoryObserver()
+      .history.map((route) => route.settings.name).toList();
 
-  static PpUser? get conversationUser {
-    if (NavigationHistoryObserver().top != null) {
-      if (NavigationHistoryObserver().top!.settings.arguments != null) {
-        return NavigationHistoryObserver().top!.settings.arguments as PpUser;
-      }
-    }
-    return null;
-  }
+  static bool get isContactsScreenInStack => routePath.contains(ContactsScreen.id);
+
 
   static pop({int? delay}) async {
     if (delay != null) {

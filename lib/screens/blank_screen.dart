@@ -12,9 +12,9 @@ import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
-import 'package:flutter_chat_app/services/received_notification.dart';
-import 'package:flutter_chat_app/services/second_page.dart';
-import 'package:flutter_chat_app/services/uid.dart';
+import 'package:flutter_chat_app/services/local_notifications/received_notification.dart';
+import 'package:flutter_chat_app/services/local_notifications/second_page.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
@@ -70,10 +70,12 @@ class BlankScreen extends StatefulWidget {
     Key? key}) : super(key: key);
 
 
+  //start local_notifications purposes
   final NotificationAppLaunchDetails? notificationAppLaunchDetails;
 
   bool get didNotificationLaunchApp =>
       notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
+  //stop local_notifications purposes
 
 
   @override
@@ -82,32 +84,25 @@ class BlankScreen extends StatefulWidget {
 
 class _BlankScreenState extends State<BlankScreen> {
 
-
   bool _notificationsEnabled = false;
 
   @override
   void initState() {
     super.initState();
 
-    print('init');
-
     //local_notifications purposes
     _isAndroidPermissionGranted();
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
-    print('init222');
+    //stop local_notifications purposes
+
+    ContactsScreen.navigate(context);
   }
 
 
   @override
   Widget build(BuildContext context) {
-
-    if (Uid.get != null) {
-      Future.delayed(Duration.zero, () {
-        Navigator.pushNamed(context, ContactsScreen.id);
-      });
-    }
 
     return Scaffold(
 
@@ -134,39 +129,46 @@ class _BlankScreenState extends State<BlankScreen> {
                     ),
 
                     PpButton(
-                        text: 'REGISTER',
-                        onPressed: () => Navigator.pushNamed(context, RegisterFormScreen.id),
-                        color: PRIMARY_COLOR_DARKER,
+                      text: 'REGISTER',
+                      onPressed: () => Navigator.pushNamed(context, RegisterFormScreen.id),
+                      color: PRIMARY_COLOR_DARKER,
                     ),
 
                     PpButton(
-                        text: 'Show plain notification with payload?',
-                        onPressed: () async {
-                          await _showNotification();
-                        },
+                      text: 'Show plain notification with payload?',
+                      onPressed: () async {
+                        await _showNotification();
+                      },
                     ),
 
                     PpButton(text: 'log aaaaaa',
                       onPressed: () {
                         final authService = getIt.get<AuthenticationService>();
                         authService.onLogin(nickname: 'aaaaaa', password: 'aaaaaa');
-                        },
-                      ),
+                      },
+                    ),
 
-                      PpButton(
+                    PpButton(
                       text: 'log bbbbbb',
                       onPressed: () {
                         final authService = getIt.get<AuthenticationService>();
                         authService.onLogin(nickname: 'bbbbbb', password: 'bbbbbb');
                       },
+                    ),
+
+                      PpButton(
+                        text: 'log cccccc',
+                        onPressed: () {
+                          final authService = getIt.get<AuthenticationService>();
+                          authService.onLogin(nickname: 'cccccc', password: 'cccccc');
+                        },
                       ),
 
                       PpButton(
-                      text: 'log cccccc',
-                      onPressed: () {
-                        final authService = getIt.get<AuthenticationService>();
-                        authService.onLogin(nickname: 'cccccc', password: 'cccccc');
-                        },
+                        text: 'test',
+                        onPressed: () {
+                          print(NavigationService.routePath);
+                        }
                       ),
 
                   ]

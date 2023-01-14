@@ -5,7 +5,7 @@ import 'package:flutter_chat_app/screens/data_views/conversation_view/conversati
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/hive_service.dart';
-import 'package:flutter_chat_app/services/local_notifications_service.dart';
+import 'package:flutter_chat_app/services/local_notifications/local_notifications_service.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/firebase_options.dart';
 import 'package:flutter_chat_app/models/conversation/conversations.dart';
@@ -34,9 +34,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //TODO: DEVICE NOTIFICATIONOS FEATURE flutter_local_notifications
+  //TODO: BUG - after create account and invitation/accept invitation - contact doesnt show in constat screen
 
-  //TODO: icon and unread messages counter on it
+  //TODO: BUG - conversation/user view navigation - missing route name in history
+
+  //TODO: pass avatar object in notification if is needed (invitation)
+
+  //TODO: icon and splash screens
+
+  //TODO: value of unread messages on icon
 
   runApp(
       MultiProvider(providers: [
@@ -46,6 +52,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => Notifications()),
         ChangeNotifierProvider(create: (_) => Conversations()),
       ],
+
       child: const MyApp(),
     )
   );

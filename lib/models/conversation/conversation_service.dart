@@ -8,7 +8,7 @@ import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
-import 'package:flutter_chat_app/services/local_notifications_service.dart';
+import 'package:flutter_chat_app/services/local_notifications/local_notifications_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';

@@ -1,7 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
-import 'package:flutter_chat_app/services/local_notifications_service.dart';
+import 'package:flutter_chat_app/services/local_notifications/local_notifications_service.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
@@ -9,8 +9,6 @@ import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
 import 'package:flutter_chat_app/screens/notifications_screen.dart';
 
 class PpFlushbar {
-
-  static String get route => NavigationService.route;
 
   static void invitationNotification(PpNotification notification) {
     if (NavigationService.isFlushbarOpen()) return;

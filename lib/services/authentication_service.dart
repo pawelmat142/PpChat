@@ -40,7 +40,7 @@ class AuthenticationService {
 
       if (userCredential.user != null && !_isRegisterInProgress) {
         log('[FireAuth listener] login');
-        Navigator.pushNamed(context, ContactsScreen.id);
+        ContactsScreen.navigate(context);
         // onInit HomeScreen triggers LoginProcess
       }
       else {

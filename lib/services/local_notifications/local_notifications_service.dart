@@ -5,7 +5,7 @@ import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
-import 'package:flutter_chat_app/services/received_notification.dart';
+import 'package:flutter_chat_app/services/local_notifications/received_notification.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 
