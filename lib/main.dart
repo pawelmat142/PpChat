@@ -33,9 +33,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //TODO: prevent notification if on conversation view
+  //TODO: Notification navigate to conversation/notification
 
-  //TODO: BUG - after create account and invitation/accept invitation - contact doesnt show in constat screen
+  //TODO: BUG - after create account and invitation/accept invitation - contact doesn't show in contact screen
 
   //TODO: pass avatar object in notification if is needed (invitation)
 

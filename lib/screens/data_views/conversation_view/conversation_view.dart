@@ -63,10 +63,6 @@ class _ConversationViewState extends State<ConversationView> {
           title: Text(contactUser.nickname),
           actions: [
             ConversationPopupMenu(conversation: conversation),
-
-            IconButton(onPressed: () {
-              print(NavigationService.routePath);
-            }, icon: const Icon(Icons.add))
           ]
       ),
 

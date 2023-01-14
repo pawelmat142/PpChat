@@ -11,7 +11,6 @@ import 'package:flutter_chat_app/process/find_contact.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/process/login_process.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
-import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
@@ -98,10 +97,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                   : nothingHereWidget();
             }),
           ),
-
-          PpButton(text: 'test', onPressed: () {
-            print(NavigationService.routePath);
-          }),
+          
         ],
       ),
 

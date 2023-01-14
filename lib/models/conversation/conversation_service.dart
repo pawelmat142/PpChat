@@ -95,7 +95,9 @@ class ConversationService {
       }
     }
     // if (initialized && !skipNotification) PpFlushbar.comingMessages(messages: messages.values.toList());
-    if (initialized && !skipNotification) localNotificationsService.messageNotification(messages: messages.values.toList());
+    if (initialized && !skipNotification) {
+      localNotificationsService.messageNotification(messages: messages.values.toList());
+    }
     await _deleteResolvedMessagesInFs(resolvedMessages.keys.toList());
   }
 

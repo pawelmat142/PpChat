@@ -14,7 +14,6 @@ import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/local_notifications/received_notification.dart';
 import 'package:flutter_chat_app/services/local_notifications/second_page.dart';
-import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
@@ -162,13 +161,6 @@ class _BlankScreenState extends State<BlankScreen> {
                           final authService = getIt.get<AuthenticationService>();
                           authService.onLogin(nickname: 'cccccc', password: 'cccccc');
                         },
-                      ),
-
-                      PpButton(
-                        text: 'test',
-                        onPressed: () {
-                          print(NavigationService.routePath);
-                        }
                       ),
 
                   ]
