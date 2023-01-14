@@ -202,8 +202,6 @@ class UserView extends StatelessWidget {
   _onInvite(PpUser foundUser, {required BuildContext context, required String message}) async {
     final spinner = getIt.get<PpSpinner>();
     final popup = getIt.get<Popup>();
-    print('message');
-    print(message);
     try {
       spinner.start();
       await _sendInvitationNotifications(foundUser: foundUser, message: message);

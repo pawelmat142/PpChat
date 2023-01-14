@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
-import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
+import 'package:flutter_chat_app/services/local_notifications_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
@@ -22,6 +24,7 @@ class ConversationService {
   final popup = getIt.get<Popup>();
   final spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
+  final localNotificationsService = getIt.get<LocalNotificationsService>();
 
   static CollectionReference get messagesCollectionRef => firestore
       .collection(Collections.PpUser).doc(Uid.get)
@@ -71,7 +74,7 @@ class ConversationService {
 
   Map<String, PpMessage> unresolvedMessages = {};
 
-  _resolveMessages(Map<String, PpMessage> messages, {bool skipFlushbar = false}) async {
+  _resolveMessages(Map<String, PpMessage> messages, {bool skipNotification = false}) async {
     logService.log('[MSG] Received ${messages.length} messages.');
     Map<String, PpMessage> resolvedMessages = {};
     unresolvedMessages = {};
@@ -91,7 +94,8 @@ class ConversationService {
         unresolvedMessages[documentId] = messages[documentId]!;
       }
     }
-    if (initialized && !skipFlushbar) PpFlushbar.comingMessages(messages: messages.values.toList());
+    // if (initialized && !skipNotification) PpFlushbar.comingMessages(messages: messages.values.toList());
+    if (initialized && !skipNotification) localNotificationsService.messageNotification(messages: messages.values.toList());
     await _deleteResolvedMessagesInFs(resolvedMessages.keys.toList());
   }
 
@@ -121,7 +125,8 @@ class ConversationService {
 
   navigateToConversationView(PpUser contactUser) async {
     await conversations.openOrCreate(contactUid: contactUser.uid);
-    ConversationView.navigate(contactUser);
+    Navigator.pushNamed(NavigationService.context, ConversationView.id, arguments: contactUser);
+    // ConversationView.navigate(contactUser);
   }
 
   PpUser? getContactUserByUid(String contactUid) {
@@ -131,7 +136,7 @@ class ConversationService {
   resolveUnresolvedMessages() {
     if (unresolvedMessages.isNotEmpty) {
       logService.log('[resolveUnresolvedMessages] messages: ${unresolvedMessages.length}');
-      _resolveMessages(unresolvedMessages, skipFlushbar: true);
+      _resolveMessages(unresolvedMessages, skipNotification: true);
     }
   }
 

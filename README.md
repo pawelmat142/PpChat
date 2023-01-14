@@ -469,3 +469,10 @@ delete image in storage on delete account
 
 ### [139] Turn on logs on non debug mode
 i want to receive online logs to firebase for testing
+
+## feature/notifications
+
+### [140] Notifications installation
+`flutter pub add flutter_local_notifications`
+</br> `flutter pub add device_info_plus`
+</br> `flutter pub add flutter_timezone`

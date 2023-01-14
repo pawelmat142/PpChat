@@ -55,6 +55,9 @@ dependencies:
   path_provider: ^2.0.11
   rsa_encrypt: ^2.0.0
   pointycastle: ^3.6.2
+  flutter_local_notifications: ^13.0.0
+  device_info_plus: ^8.0.0
+  flutter_timezone: ^1.0.4
 
 dev_dependencies:
   flutter_test:

@@ -1,13 +1,12 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/services/local_notifications_service.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/conversation/pp_message.dart';
-import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
 import 'package:flutter_chat_app/screens/notifications_screen.dart';
-import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 
 class PpFlushbar {
 
@@ -48,34 +47,34 @@ class PpFlushbar {
 
 
   static void comingMessages({required List<PpMessage> messages, int? delay}) async {
-    if (NavigationService.isConversationOpen(uid: messages[0].sender)) return;
-    if (NavigationService.isFlushbarOpen()) return;
+    final localNotificationsService = getIt.get<LocalNotificationsService>();
+    localNotificationsService.messageNotification(messages: messages);
 
-    final title = messages.length == 1
-      ? 'You have new message'
-      : 'You have ${messages.length} new messages';
-    final contactsLength = messages.map((m) => m.sender).toSet().length;
-    Flushbar? flushbar;
-    flushbar = basic(
-      title: title,
-      message: 'Tap to checkout',
-      icon: const Icon(Icons.comments_disabled, size: 30, color: Colors.white),
-      duration: const Duration(seconds: 10),
-      onTap: () {
-        flushbar!.dismiss();
-        if (contactsLength == 1) {
-          final conversationService = getIt.get<ConversationService>();
-          final contactUser = conversationService.getContactUserByUid(messages.first.sender);
-          if (contactUser != null) {
-            conversationService.navigateToConversationView(contactUser);
-          }
-        } else {
-          NavigationService.popToHome();
-          Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
-        }
-      },
-    );
-    flushbar.show(NavigationService.context);
+    // final title = messages.length == 1
+    //   ? 'You have new message'
+    //   : 'You have ${messages.length} new messages';
+    // final contactsLength = messages.map((m) => m.sender).toSet().length;
+    // Flushbar? flushbar;
+    // flushbar = basic(
+    //   title: title,
+    //   message: 'Tap to checkout',
+    //   icon: const Icon(Icons.comments_disabled, size: 30, color: Colors.white),
+    //   duration: const Duration(seconds: 10),
+    //   onTap: () {
+    //     flushbar!.dismiss();
+    //     if (contactsLength == 1) {
+    //       final conversationService = getIt.get<ConversationService>();
+    //       final contactUser = conversationService.getContactUserByUid(messages.first.sender);
+    //       if (contactUser != null) {
+    //         conversationService.navigateToConversationView(contactUser);
+    //       }
+    //     } else {
+    //       NavigationService.popToHome();
+    //       Navigator.pushNamed(NavigationService.context, ContactsScreen.id);
+    //     }
+    //   },
+    // );
+    // flushbar.show(NavigationService.context);
   }
 
   static showBasic(){
