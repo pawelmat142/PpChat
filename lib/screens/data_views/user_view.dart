@@ -62,7 +62,7 @@ class UserView extends StatelessWidget {
         appBar: AppBar(title: Text(
             isMe(context) ?  'My account'
                 : isContact(context) ? 'Contact view'
-                  : isFoundUser(context) ? 'You have found user' : '')
+                  : isFoundUser(context) ? 'You have found user' : '??')
         ),
 
         body: GestureDetector(
@@ -139,7 +139,7 @@ class UserView extends StatelessWidget {
                     color: PRIMARY_COLOR_LIGHTER,
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                        return EditAvatarView(user: user(context));
+                        return EditAvatarView(user: Me.reference.get);
                       }));
                   }),
 

@@ -33,11 +33,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //TODO: BUG - edit avatar view - PpUser = null???
-
   //TODO: BUG - after create account and invitation/accept invitation - contact doesn't show in contact screen
-
-  //TODO: icon and splash screens
 
   //TODO: value of unread messages on icon
 
@@ -65,7 +61,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter chat app',
+      title: 'PpChat',
       theme: ThemeData.light(),
       navigatorKey: NavigationService.navigatorKey,
       navigatorObservers: [NavigationHistoryObserver()],

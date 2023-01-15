@@ -491,3 +491,8 @@ i want to receive online logs to firebase for testing
 ### [146] PpNotification data model refactored to pass AvatarModel object
 
 ### [147] ConversationSettingsView refactored
+
+### [148] Icon, app name changed
+`appicon.co` - generate folder from one square png
+</br> android/app/src/main/res - replace all mipmap folders
+</br> iod/Runner - replace whole Assets.xcassets folder

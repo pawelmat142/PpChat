@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/notification/notifications.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
 import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
@@ -147,9 +148,15 @@ class _BlankScreenState extends State<BlankScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
 
-                    _InfoValueString(
-                      title: 'Did notification launch app?',
-                      value: widget.didNotificationLaunchApp,
+                    Image.asset('assets/images/icon.png'),
+
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 30),
+                      child: Text('PpChat', style: TextStyle(
+                        fontFamily: AvatarService.avatarFont,
+                        fontSize: 30,
+                        color: Colors.black54,
+                      )),
                     ),
 
                     PpButton(
@@ -321,38 +328,4 @@ class _BlankScreenState extends State<BlankScreen> {
     }
     log('navigate by payload - path: ${NavigationService.routes.map((r) => r.settings.name).toList()}');
   }
-}
-
-
-
-class _InfoValueString extends StatelessWidget {
-  const _InfoValueString({
-    required this.title,
-    required this.value,
-    Key? key,
-  }) : super(key: key);
-
-  final String title;
-  final Object? value;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-    child: Text.rich(
-      TextSpan(
-        children: <InlineSpan>[
-          TextSpan(
-            text: '$title ',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          TextSpan(
-            text: '$value',
-          )
-        ],
-      ),
-    ),
-  );
-
 }
