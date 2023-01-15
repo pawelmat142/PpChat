@@ -10,16 +10,8 @@ class ConversationSettings extends HiveObject {
   static const int timeToLiveInMinutesDefault = 10080;
   /// 1 week = 7 x 24 h = 168 h = 10 080 min
   // static const int timeToLiveAfterReadInMinutesDefault = 1;
-  static const int timeToLiveAfterReadInMinutesDefault = 10;
+  static const int timeToLiveAfterReadInMinutesDefault = 15;
   /// 1 day = 24 h = 1440 min
-
-  ///USED TO NUMBER PICKER ONLY
-  static const int timeToLiveMin = 10;
-  static const int timeToLiveMax = 43200;
-  /// 1 month = 30 x 24 x 60 min = 43 200
-
-  static const int timeToLiveAfterReadMin = 10;
-  static const int timeToLiveAfterReadMax = 10080;
 
   static String createKey({required String contactUid}) {
     return 'config_${Uid.get!}_$contactUid';
@@ -37,7 +29,6 @@ class ConversationSettings extends HiveObject {
     final settings = ConversationSettings(contactUid: contactUid);
     settings.timeToLiveInMinutes = timeToLive;
     settings.timeToLiveAfterReadInMinutes = timeToLiveAfterRead;
-    settings.validate();
     return settings;
   }
 
@@ -58,16 +49,6 @@ class ConversationSettings extends HiveObject {
 
   @HiveField(2)
   int timeToLiveAfterReadInMinutes;
-
-
-  validate() {
-    if (timeToLiveInMinutes < timeToLiveMin
-        || timeToLiveInMinutes > timeToLiveMax
-        || timeToLiveAfterReadInMinutes < timeToLiveAfterReadMin
-        || timeToLiveAfterReadInMinutes > timeToLiveAfterReadMax
-    ) throw Exception('LIMIT EXCEEDED!!');
-  }
-
 
 }
 

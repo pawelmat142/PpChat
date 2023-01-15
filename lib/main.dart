@@ -41,7 +41,7 @@ void main() async {
 
   //TODO: value of unread messages on icon
 
-  // TODO: add notifications enabled in converssation settings
+  // TODO: delete account only from device feature
 
   runApp(
       MultiProvider(providers: [
