@@ -33,11 +33,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //TODO: Notification navigate to conversation/notification
+  //TODO: BUG - edit avatar view - PpUser = null???
 
   //TODO: BUG - after create account and invitation/accept invitation - contact doesn't show in contact screen
-
-  //TODO: pass avatar object in notification if is needed (invitation)
 
   //TODO: icon and splash screens
 

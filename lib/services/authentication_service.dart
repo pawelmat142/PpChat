@@ -54,7 +54,7 @@ class AuthenticationService {
       await _popup.show('Wrong credentials!',
           text: 'Please try again.',
           error: true,
-          enableNavigateBack: true
+          enableNavigateBack: false
       );
     } catch (error) {
       _spinner.stop();

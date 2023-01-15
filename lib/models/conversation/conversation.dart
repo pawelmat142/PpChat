@@ -47,7 +47,7 @@ class Conversation {
     }
     await _initializeSettings();
     contactMessagesCollectionRef = conversationService.contactMessagesCollectionRef(contactUid: contactUid);
-    await messageCleaner.init(contactUid: contactUid);
+    await messageCleaner.init(contactUid: contactUid, box: box!);
   }
 
   _initializeContactPublicKey() {

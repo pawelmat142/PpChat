@@ -487,3 +487,5 @@ i want to receive online logs to firebase for testing
 
 ### [145] Navigation by notification payload
 `flutter pub add flutter_fgbg`
+
+### [146] PpNotification data model refactored to pass AvatarModel object

@@ -25,7 +25,10 @@ class NotificationTile extends StatelessWidget {
 
                   Row(
                     children: [
-                      AvatarWidget.createFromNotification(notification, size: AVATAR_SIZE),
+                      AvatarWidget(
+                        uid: notification.documentId,
+                        model: notification.avatar,
+                      ),
                       getContent(),
                     ],
                   ),

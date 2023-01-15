@@ -10,6 +10,7 @@ import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
+import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/process/delete_account_process.dart';
@@ -231,7 +232,9 @@ class UserView extends StatelessWidget {
     batch.set(receiverNotificationsRef, PpNotification.createInvitation(
         sender: userService.nickname,
         receiver: foundUser.nickname,
-        text: message).asMap);
+        text: message,
+        avatar: Me.reference.get.avatar
+    ).asMap);
 
     final myNotificationsRef = firestore
         .collection(Collections.PpUser).doc(Uid.get)
@@ -242,6 +245,7 @@ class UserView extends StatelessWidget {
       sender: userService.nickname,
       receiver: foundUser.nickname,
       text: message,
+      avatar: foundUser.avatar
     );
     batch.set(myNotificationsRef, selfNotification.asMap);
 

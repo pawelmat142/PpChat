@@ -163,13 +163,6 @@ class _BlankScreenState extends State<BlankScreen> {
                       color: PRIMARY_COLOR_DARKER,
                     ),
 
-                    PpButton(
-                      text: 'Show plain notification with payload?',
-                      onPressed: () async {
-                        await _showNotification();
-                      },
-                    ),
-
                     PpButton(text: 'log aaaaaa',
                       onPressed: () {
                         final authService = getIt.get<AuthenticationService>();
@@ -202,19 +195,6 @@ class _BlankScreenState extends State<BlankScreen> {
   }
 
   //local_notifications purposes - everything under
-  Future<void> _showNotification() async {
-    const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails('your channel id', 'your channel name',
-        channelDescription: 'your channel description',
-        importance: Importance.max,
-        priority: Priority.high,
-        ticker: 'ticker');
-    const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(
-        id++, 'plain title', 'plain body', notificationDetails,
-        payload: 'item x');
-  }
 
   //not used yet
   Future<String> getInitialRoute() async {

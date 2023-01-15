@@ -22,11 +22,11 @@ class MessageCleaner {
 
   bool initialized = false;
 
-  init({required String contactUid}) async {
+  init({required String contactUid, required Box<PpMessage> box}) async {
     if (initialized) return;
     this.contactUid = contactUid;
+    this.box = box;
     log('initialization');
-    box = await _getBox();
     await _cleanExpiredMessages();
     _messageTimers = [];
     _setMessageTimersIfExpiresSoon();
@@ -118,10 +118,6 @@ class MessageCleaner {
   _cleanOne(msgKey) async {
     box.delete(msgKey);
     log('message with key: $msgKey deleted now');
-  }
-
-  _getBox() {
-    return conversationService.conversations.getByUid(contactUid)!.box;
   }
 
 }

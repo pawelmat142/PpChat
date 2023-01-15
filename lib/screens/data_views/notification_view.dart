@@ -77,8 +77,11 @@ class NotificationView extends StatelessWidget {
               /// AVATAR
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
-                child: AvatarWidget.createFromNotification(notification,
-                    size: AVATAR_SIZE_BIG),
+                child: AvatarWidget(
+                  uid: notification.documentId,
+                  model: notification.avatar,
+                  size: AVATAR_SIZE_BIG,
+                ),
               ),
 
               /// NICKNAME

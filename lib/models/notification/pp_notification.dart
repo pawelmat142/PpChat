@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_fields.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
+import 'package:flutter_chat_app/models/user/avatar/avatar_model.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 
 class PpNotification {
@@ -12,6 +13,7 @@ class PpNotification {
   bool isFlushed;
   bool isResolved;
   final String text;
+  final AvatarModel avatar;
 
   PpNotification({
     required this.documentId,
@@ -21,7 +23,8 @@ class PpNotification {
     required this.isRead,
     required this.isFlushed,
     required this.isResolved,
-    required this.text
+    required this.text,
+    required this.avatar,
   });
 
   Map<String, dynamic> get asMap => {
@@ -33,6 +36,7 @@ class PpNotification {
     PpNotificationFields.isFlushed: isFlushed,
     PpNotificationFields.isResolved: isResolved,
     PpNotificationFields.text: text,
+    PpNotificationFields.avatar: avatar.asMap,
   };
 
   static PpNotification fromMap(Map<String, dynamic> notificationMap) {
@@ -46,6 +50,7 @@ class PpNotification {
       isFlushed: notificationMap[PpNotificationFields.isFlushed],
       isResolved: notificationMap[PpNotificationFields.isResolved],
       text: notificationMap[PpNotificationFields.text],
+      avatar: AvatarModel.fromMap(notificationMap[PpNotificationFields.avatar]),
     );
   }
 
@@ -53,7 +58,12 @@ class PpNotification {
     return PpNotification.fromMap(doc.data() as Map<String, dynamic>);
   }
 
-  static PpNotification createInvitation({required String text, required String sender, required String receiver}) => PpNotification(
+  static PpNotification createInvitation({
+    required String text,
+    required String sender,
+    required String receiver,
+    required AvatarModel avatar
+  }) => PpNotification(
       documentId: Uid.get!,
       sender: sender,
       receiver: receiver,
@@ -61,10 +71,17 @@ class PpNotification {
       isRead: false,
       isFlushed: false,
       isResolved: true,
-      text: text
+      text: text,
+      avatar: avatar
   );
 
-  static PpNotification createInvitationAcceptance({required String text, required String sender, required String receiver, required String documentId}) => PpNotification(
+  static PpNotification createInvitationAcceptance({
+    required String text,
+    required String sender,
+    required String receiver,
+    required String documentId,
+    required AvatarModel avatar
+  }) => PpNotification(
       documentId: documentId,
       sender: sender,
       receiver: receiver,
@@ -72,10 +89,17 @@ class PpNotification {
       isRead: false,
       isFlushed: false,
       isResolved: false,
-      text: text
+      text: text,
+      avatar: avatar
   );
 
-  static PpNotification createInvitationSelfNotification({required String text, required String sender, required String receiver, required String documentId}) => PpNotification(
+  static PpNotification createInvitationSelfNotification({
+    required String text,
+    required String sender,
+    required String receiver,
+    required String documentId,
+    required AvatarModel avatar
+  }) => PpNotification(
       documentId: documentId,
       sender: sender,
       receiver: receiver,
@@ -83,10 +107,15 @@ class PpNotification {
       isRead: true,
       isFlushed: true,
       isResolved: true,
-      text: text
+      text: text,
+      avatar: avatar
   );
 
-  static PpNotification createContactDeleted({required String sender, required String receiver}) => PpNotification(
+  static PpNotification createContactDeleted({
+    required String sender,
+    required String receiver,
+    required AvatarModel avatar
+  }) => PpNotification(
       documentId: Uid.get!,
       sender: sender,
       receiver: receiver,
@@ -94,7 +123,8 @@ class PpNotification {
       isRead: true,
       isFlushed: true,
       isResolved: false,
-      text: PpNotificationTypes.contactDeletedNotification
+      text: PpNotificationTypes.contactDeletedNotification,
+      avatar: avatar
   );
 
   static List<PpNotification> filterUnread(List<PpNotification> input) {

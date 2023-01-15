@@ -57,7 +57,9 @@ class ContactsService {
   _sendContactDeletedNotification(PpUser contactUser) async {
     final notification = PpNotification.createContactDeleted(
         sender: me.nickname,
-        receiver: contactUser.nickname);
+        receiver: contactUser.nickname,
+        avatar: Me.reference.get.avatar
+    );
 
     await contactNotificationDocRef(contactUid: contactUser.uid).set(notification.asMap);
   }
