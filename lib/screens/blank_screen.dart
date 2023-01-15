@@ -5,15 +5,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_chat_app/models/contact/contacts.dart';
+import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
+import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
+import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/services/local_notifications/local_notifications_service.dart';
 import 'package:flutter_chat_app/services/local_notifications/received_notification.dart';
-import 'package:flutter_chat_app/services/local_notifications/second_page.dart';
+import 'package:flutter_chat_app/services/log_service.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
+import 'package:flutter_chat_app/services/uid.dart';
+import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
@@ -85,18 +93,40 @@ class _BlankScreenState extends State<BlankScreen> {
 
   bool _notificationsEnabled = false;
 
+  final localNotificationsService = getIt.get<LocalNotificationsService>();
+  final logService = getIt.get<LogService>();
+  log(String txt) => logService.log(txt);
+
+  late StreamSubscription<FGBGType> subscription;
+
   @override
   void initState() {
     super.initState();
+
+    subscription = FGBGEvents.stream.listen((event) {
+      if (event == FGBGType.background) {
+        localNotificationsService.isAppInBackground = true;
+      }
+      else if (event == FGBGType.foreground) {
+        localNotificationsService.isAppInBackground = false;
+      }
+      print('app in background: ${localNotificationsService.isAppInBackground}');
+    });
 
     //local_notifications purposes
     _isAndroidPermissionGranted();
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
-    _configureSelectNotificationSubject();
+    _notificationPayloadNavigatorListener();
     //stop local_notifications purposes
 
     ContactsScreen.navigate(context);
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
 
@@ -155,13 +185,13 @@ class _BlankScreenState extends State<BlankScreen> {
                       },
                     ),
 
-                      PpButton(
-                        text: 'log cccccc',
-                        onPressed: () {
-                          final authService = getIt.get<AuthenticationService>();
-                          authService.onLogin(nickname: 'cccccc', password: 'cccccc');
-                        },
-                      ),
+                    PpButton(
+                      text: 'log cccccc',
+                      onPressed: () {
+                        final authService = getIt.get<AuthenticationService>();
+                        authService.onLogin(nickname: 'cccccc', password: 'cccccc');
+                      },
+                    ),
 
                   ]
                 ),
@@ -266,12 +296,10 @@ class _BlankScreenState extends State<BlankScreen> {
               isDefaultAction: true,
               onPressed: () async {
                 Navigator.of(context, rootNavigator: true).pop();
-                await Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        SecondPage(receivedNotification.payload),
-                  ),
-                );
+
+                //todo: need to be tested with ios
+                _navigateByPayload(receivedNotification.payload);
+
               },
               child: const Text('Ok'),
             )
@@ -281,12 +309,37 @@ class _BlankScreenState extends State<BlankScreen> {
     });
   }
 
-  void _configureSelectNotificationSubject() {
-    selectNotificationStream.stream.listen((String? payload) async {
-      await Navigator.of(context).push(MaterialPageRoute<void>(
-        builder: (BuildContext context) => SecondPage(payload),
-      ));
+  void _notificationPayloadNavigatorListener() {
+    selectNotificationStream.stream.listen((String? payload) {
+      _navigateByPayload(payload);
     });
+  }
+
+  _navigateByPayload(String? payload) {
+    if (payload != null && Uid.get != null) {
+      final splitted = payload.split('-');
+      if (splitted.length == 2) {
+
+        final payloadType = splitted.first;
+        final uid = splitted.last;
+
+        if (payloadType == 'invitation') {
+          final invitation = Notifications.reference.findBySenderUid(uid);
+          if (invitation != null) {
+            NotificationView.navigate(invitation);
+          }
+        }
+
+        if (payloadType == 'conversation') {
+          final contactUser = Contacts.reference.getByUid(uid);
+          if (contactUser != null) {
+            ConversationView.navigate(contactUser);
+          }
+        }
+
+      }
+    }
+    log('navigate by payload - path: ${NavigationService.routes.map((r) => r.settings.name).toList()}');
   }
 }
 

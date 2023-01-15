@@ -484,3 +484,6 @@ i want to receive online logs to firebase for testing
 ### [143] BUG navigation with arguments gives route name = null - fixed
 
 ### [144] Notifications on coming messages / invitations
+
+### [145] Navigation by notification payload
+`flutter pub add flutter_fgbg`

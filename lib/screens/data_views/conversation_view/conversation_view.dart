@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/conversation/conversation.dart';
+import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/message_bubble.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
@@ -27,6 +28,14 @@ class ConversationView extends StatefulWidget {
     );
   }
 
+  static popAndNavigate(PpUser contact) {
+    Navigator.popAndPushNamed(
+        NavigationService.context,
+        ConversationView.id,
+        arguments: contact
+    );
+  }
+
   @override
   State<ConversationView> createState() => _ConversationViewState();
 }
@@ -38,17 +47,20 @@ class _ConversationViewState extends State<ConversationView> {
   bool isMock(Box<PpMessage> box) => box.values.length == 1 && box.values.first.isMock;
 
   PpUser? _contactUser;
-
   PpUser get contactUser => _contactUser!;
-  Conversation get conversation => conversationService.conversations.getByUid(_contactUser!.uid)!;
   RSAPrivateKey get myPrivateKey => Me.reference.myPrivateKey;
+
+  late Conversation conversation;
+
+  bool initialized = false;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
+      conversation = await Conversations.reference.openOrCreate(contactUid: contactUser.uid);
+      setState(() => initialized = true);
       conversationService.resolveUnresolvedMessages();
-      // myPrivateKey = Me.reference.myPrivateKey;
     });
   }
 
@@ -61,13 +73,16 @@ class _ConversationViewState extends State<ConversationView> {
 
       appBar: AppBar(
           title: Text(contactUser.nickname),
-          actions: [
+          actions: !initialized ? [] : [
             ConversationPopupMenu(conversation: conversation),
           ]
       ),
 
       body: SafeArea(
-        child: Column(children: [
+        child: !initialized
+        ? const Center(child: CircularProgressIndicator()) :
+
+        Column(children: [
 
           //MESSAGES AREA
           Expanded(child: ValueListenableBuilder<Box<PpMessage>>(

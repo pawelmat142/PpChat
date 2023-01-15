@@ -22,19 +22,21 @@ class LocalNotificationsService {
   invitationNotification({required String uid}) async {
     await flutterLocalNotificationsPlugin.show(
         id++, 'You have new invitation', null, _getNotificationDetails(),
-        payload: uid
-    );
+        payload: 'invitation-$uid');
   }
 
   messageNotification({required List<PpMessage> messages}) async {
-    if (NavigationService.isUserConversationOpen(messages.first.sender)) return;
-    if (NavigationService.isContactsOpen) return;
+    if (!isAppInBackground) {
+      if (NavigationService.isUserConversationOpen(messages.first.sender)) return;
+      if (NavigationService.isContactsOpen) return;
+    }
     await flutterLocalNotificationsPlugin.show(
         id++, 'You have new message', null, _getNotificationDetails(),
-        payload: 'item x'
+        payload: 'conversation-${messages.first.sender}'
     );
   }
 
+  bool isAppInBackground = false;
 
   _init() async {
 

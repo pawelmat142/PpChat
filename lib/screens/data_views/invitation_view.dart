@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
@@ -10,7 +11,7 @@ import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 
 class InvitationView extends NotificationView {
-  InvitationView(super.notification, {super.key});
+  InvitationView(super.notification, {PpUser? contactUser, super.key});
 
   final invitationService = getIt.get<InvitationService>();
 
