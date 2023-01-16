@@ -1,4 +1,3 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_settings_view.dart';

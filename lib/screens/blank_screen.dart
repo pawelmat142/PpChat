@@ -8,6 +8,7 @@ import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
+import 'package:flutter_chat_app/services/app_service.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
@@ -25,31 +26,22 @@ class BlankScreen extends StatefulWidget {
 
 class _BlankScreenState extends State<BlankScreen> {
 
+  final appService = getIt.get<AppService>();
   final logService = getIt.get<LogService>();
   log(String txt) => logService.log(txt);
 
   late StreamSubscription<FGBGType> subscription;
 
-  //TODO
-  bool _notificationsEnabled = true;
 
   @override
   void initState() {
     super.initState();
-
-    NotificationController.init();
-
-    subscription = FGBGEvents.stream.listen((event) {
-      if (event == FGBGType.background) {
-
-      }
-      else if (event == FGBGType.foreground) {
-
-      }
-      print('app in background: ${event == FGBGType.background}');
-    });
-
+    NotificationController.initListeners();
     ContactsScreen.navigate(context);
+    subscription = FGBGEvents.stream.listen((event) {
+      appService.isAppInBackground = event == FGBGType.background;
+      print('is app in background: ${appService.isAppInBackground}');
+    });
   }
 
   @override
@@ -67,11 +59,7 @@ class _BlankScreenState extends State<BlankScreen> {
       body: Padding(
         padding: BASIC_HORIZONTAL_PADDING,
         child: Center(
-          child:
-              !_notificationsEnabled
-              ? const CircularProgressIndicator()
-
-              : SingleChildScrollView(
+          child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -96,7 +84,7 @@ class _BlankScreenState extends State<BlankScreen> {
                                   channelKey: 'basic_channel',
                                   title: 'Simple Notification',
                                   body: 'Simple body',
-                                  actionType: ActionType.Default
+                                  actionType: ActionType.Default,
                               )
                           );
                         }

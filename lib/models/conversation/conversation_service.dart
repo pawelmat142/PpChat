@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
@@ -83,8 +84,9 @@ class ConversationService {
       final contactUid = senderUid != Uid.get ? senderUid : messages[documentId]!.receiver;
       if (contacts.containsByUid(contactUid)) {
 
-        final conversation = await conversations.openOrCreate(contactUid: contactUid);
         final msg = messages[documentId]!;
+        if (msg.message == '') continue;
+        final conversation = await conversations.openOrCreate(contactUid: contactUid);
         conversation.addMessageToHive(msg);
         resolvedMessages[documentId] = msg;
       }
@@ -92,9 +94,9 @@ class ConversationService {
         unresolvedMessages[documentId] = messages[documentId]!;
       }
     }
-    if (initialized && !skipNotification) {
-      //TODO message notification
-    }
+
+    NotificationController.notifyMessage(contactUid: messages.values.first.sender);
+
     await _deleteResolvedMessagesInFs(resolvedMessages.keys.toList());
   }
 

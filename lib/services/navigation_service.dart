@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:another_flushbar/flushbar_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
