@@ -8,7 +8,6 @@ import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
-import 'package:flutter_chat_app/services/local_notifications/local_notifications_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
@@ -24,7 +23,6 @@ class ConversationService {
   final popup = getIt.get<Popup>();
   final spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
-  final localNotificationsService = getIt.get<LocalNotificationsService>();
 
   static CollectionReference get messagesCollectionRef => firestore
       .collection(Collections.PpUser).doc(Uid.get)
@@ -94,9 +92,8 @@ class ConversationService {
         unresolvedMessages[documentId] = messages[documentId]!;
       }
     }
-    // if (initialized && !skipNotification) PpFlushbar.comingMessages(messages: messages.values.toList());
     if (initialized && !skipNotification) {
-      localNotificationsService.messageNotification(messages: messages.values.toList());
+      //TODO message notification
     }
     await _deleteResolvedMessagesInFs(resolvedMessages.keys.toList());
   }

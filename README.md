@@ -479,8 +479,6 @@ i want to receive online logs to firebase for testing
 
 ### [141] BUG multiple ContactsScreen on stack - fixed
 
-### [142] BUG navigation with arguments gives route name = null - fixed
-
 ### [143] BUG navigation with arguments gives route name = null - fixed
 
 ### [144] Notifications on coming messages / invitations
@@ -496,3 +494,7 @@ i want to receive online logs to firebase for testing
 `appicon.co` - generate folder from one square png
 </br> android/app/src/main/res - replace all mipmap folders
 </br> iod/Runner - replace whole Assets.xcassets folder
+
+### [149] AwesomeNotification instead of flutter_local_notifications
+`flutter pub add awesome_notifications`
+</br>refactored

@@ -7,13 +7,11 @@ import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_types.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
-import 'package:flutter_chat_app/services/local_notifications/local_notifications_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 
 class ResolveNotificationsProcess extends LogProcess {
 
   final _invitationService = getIt.get<InvitationService>();
-  final localNotificationsService = getIt.get<LocalNotificationsService>();
 
   Me get me => Me.reference;
 
@@ -98,7 +96,7 @@ class ResolveNotificationsProcess extends LogProcess {
       final notification = notificationsToFlush.first;
       switch (notification.type) {
         case PpNotificationTypes.invitation:
-          localNotificationsService.invitationNotification(uid: notification.documentId);
+          //TODO: invitation notification
           break;
         case PpNotificationTypes.invitationAcceptance:
           PpSnackBar.invitationAcceptances();

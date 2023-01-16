@@ -1,90 +1,23 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_chat_app/models/contact/contacts.dart';
-import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
-import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
-import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
+import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
-import 'package:flutter_chat_app/services/local_notifications/local_notifications_service.dart';
-import 'package:flutter_chat_app/services/local_notifications/received_notification.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
-import 'package:flutter_chat_app/services/navigation_service.dart';
-import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-
-//start local_notifications purposes
-final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-/// Streams are created so that app can respond to notification-related events
-/// since the plugin is initialised in the `main` function
-final didReceiveLocalNotificationStream = StreamController<ReceivedNotification>.broadcast();
-
-final selectNotificationStream = StreamController<String?>.broadcast();
-
-const MethodChannel platform = MethodChannel('dexterx.dev/flutter_local_notifications_example');
-
-const String portName = 'notification_send_port';
-
-String? selectedNotificationPayload;
-
-/// A notification action which triggers a url launch event
-const String urlLaunchActionId = 'id_1';
-
-/// A notification action which triggers a App navigation event
-const String navigationActionId = 'id_3';
-
-/// Defines a iOS/MacOS notification category for text input actions.
-const String darwinNotificationCategoryText = 'textCategory';
-
-/// Defines a iOS/MacOS notification category for plain actions.
-const String darwinNotificationCategoryPlain = 'plainCategory';
-
-@pragma('vm:entry-point')
-void notificationTapBackground(NotificationResponse notificationResponse) {
-  // ignore: avoid_print
-  print('notification(${notificationResponse.id}) action tapped: '
-      '${notificationResponse.actionId} with'
-      ' payload: ${notificationResponse.payload}');
-  if (notificationResponse.input?.isNotEmpty ?? false) {
-    // ignore: avoid_print
-    print(
-        'notification action tapped with input: ${notificationResponse.input}');
-  }
-}
-
-int id = 0;
-//stop local_notifications purposes
-
 
 class BlankScreen extends StatefulWidget {
   static const String id = 'blank_screen';
 
-  const BlankScreen({
-    this.notificationAppLaunchDetails,
-    Key? key}) : super(key: key);
-
-
-  //start local_notifications purposes
-  final NotificationAppLaunchDetails? notificationAppLaunchDetails;
-
-  bool get didNotificationLaunchApp =>
-      notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
-  //stop local_notifications purposes
-
+  const BlankScreen({Key? key}) : super(key: key);
 
   @override
   State<BlankScreen> createState() => _BlankScreenState();
@@ -92,34 +25,29 @@ class BlankScreen extends StatefulWidget {
 
 class _BlankScreenState extends State<BlankScreen> {
 
-  bool _notificationsEnabled = false;
-
-  final localNotificationsService = getIt.get<LocalNotificationsService>();
   final logService = getIt.get<LogService>();
   log(String txt) => logService.log(txt);
 
   late StreamSubscription<FGBGType> subscription;
 
+  //TODO
+  bool _notificationsEnabled = true;
+
   @override
   void initState() {
     super.initState();
 
+    NotificationController.init();
+
     subscription = FGBGEvents.stream.listen((event) {
       if (event == FGBGType.background) {
-        localNotificationsService.isAppInBackground = true;
+
       }
       else if (event == FGBGType.foreground) {
-        localNotificationsService.isAppInBackground = false;
-      }
-      print('app in background: ${localNotificationsService.isAppInBackground}');
-    });
 
-    //local_notifications purposes
-    _isAndroidPermissionGranted();
-    _requestPermissions();
-    _configureDidReceiveLocalNotificationSubject();
-    _notificationPayloadNavigatorListener();
-    //stop local_notifications purposes
+      }
+      print('app in background: ${event == FGBGType.background}');
+    });
 
     ContactsScreen.navigate(context);
   }
@@ -157,6 +85,21 @@ class _BlankScreenState extends State<BlankScreen> {
                         fontSize: 30,
                         color: Colors.black54,
                       )),
+                    ),
+
+                    PpButton(
+                        text: 'TEST',
+                        onPressed: () {
+                          AwesomeNotifications().createNotification(
+                              content: NotificationContent(
+                                  id: 10,
+                                  channelKey: 'basic_channel',
+                                  title: 'Simple Notification',
+                                  body: 'Simple body',
+                                  actionType: ActionType.Default
+                              )
+                          );
+                        }
                     ),
 
                     PpButton(
@@ -201,131 +144,32 @@ class _BlankScreenState extends State<BlankScreen> {
     );
   }
 
-  //local_notifications purposes - everything under
 
-  //not used yet
-  Future<String> getInitialRoute() async {
-    String initialRoute = BlankScreen.id;
-
-    final NotificationAppLaunchDetails? notificationAppLaunchDetails = !kIsWeb &&
-        Platform.isLinux
-        ? null
-        : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-
-    if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
-      selectedNotificationPayload = notificationAppLaunchDetails!.notificationResponse?.payload;
-
-      //route by notification
-      initialRoute = BlankScreen.id;
-    }
-
-    return initialRoute;
-  }
-
-  Future<void> _isAndroidPermissionGranted() async {
-    if (Platform.isAndroid) {
-      final bool granted = await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-          ?.areNotificationsEnabled() ??
-          false;
-
-      setState(() {
-        _notificationsEnabled = granted;
-      });
-    }
-  }
-
-  Future<void> _requestPermissions() async {
-    if (Platform.isIOS || Platform.isMacOS) {
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-          MacOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-    } else if (Platform.isAndroid) {
-      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
-
-      final bool? granted = await androidImplementation?.requestPermission();
-      setState(() {
-        _notificationsEnabled = granted ?? false;
-      });
-    }
-  }
-
-  void _configureDidReceiveLocalNotificationSubject() {
-    didReceiveLocalNotificationStream.stream
-        .listen((ReceivedNotification receivedNotification) async {
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) => CupertinoAlertDialog(
-          title: receivedNotification.title != null
-              ? Text(receivedNotification.title!)
-              : null,
-          content: receivedNotification.body != null
-              ? Text(receivedNotification.body!)
-              : null,
-          actions: <Widget>[
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              onPressed: () async {
-                Navigator.of(context, rootNavigator: true).pop();
-
-                //todo: need to be tested with ios
-                _navigateByPayload(receivedNotification.payload);
-
-              },
-              child: const Text('Ok'),
-            )
-          ],
-        ),
-      );
-    });
-  }
-
-  void _notificationPayloadNavigatorListener() {
-    selectNotificationStream.stream.listen((String? payload) {
-      _navigateByPayload(payload);
-    });
-  }
-
-  _navigateByPayload(String? payload) {
-    if (payload != null && Uid.get != null) {
-      final splitted = payload.split('-');
-      if (splitted.length == 2) {
-
-        final payloadType = splitted.first;
-        final uid = splitted.last;
-
-        if (payloadType == 'invitation') {
-          final invitation = Notifications.reference.findBySenderUid(uid);
-          if (invitation != null) {
-            NotificationView.navigate(invitation);
-          }
-        }
-
-        if (payloadType == 'conversation') {
-          final contactUser = Contacts.reference.getByUid(uid);
-          if (contactUser != null) {
-            ConversationView.navigate(contactUser);
-          }
-        }
-
-      }
-    }
-    log('navigate by payload - path: ${NavigationService.routes.map((r) => r.settings.name).toList()}');
-  }
+  //TODO notification payload
+  // _navigateByPayload(String? payload) {
+  //   if (payload != null && Uid.get != null) {
+  //     final splitted = payload.split('-');
+  //     if (splitted.length == 2) {
+  //
+  //       final payloadType = splitted.first;
+  //       final uid = splitted.last;
+  //
+  //       if (payloadType == 'invitation') {
+  //         final invitation = Notifications.reference.findBySenderUid(uid);
+  //         if (invitation != null) {
+  //           NotificationView.navigate(invitation);
+  //         }
+  //       }
+  //
+  //       if (payloadType == 'conversation') {
+  //         final contactUser = Contacts.reference.getByUid(uid);
+  //         if (contactUser != null) {
+  //           ConversationView.navigate(contactUser);
+  //         }
+  //       }
+  //
+  //     }
+  //   }
+  //   log('navigate by payload - path: ${NavigationService.routes.map((r) => r.settings.name).toList()}');
+  // }
 }
