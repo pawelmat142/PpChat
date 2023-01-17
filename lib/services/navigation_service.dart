@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:another_flushbar/flushbar_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
@@ -73,10 +72,6 @@ class NavigationService {
   static homeAndContacts() {
     popToHome();
     // Navigator.pushNamedAndRemoveUntil(NavigationService.context, ContactsScreen.id, ModalRoute.withName(HomeScreen.id));
-  }
-
-  static isFlushbarOpen() {
-    return routes.indexWhere((p0) => p0 is FlushbarRoute) != -1;
   }
 
   static popHomeIfAnyUserView({required String uid}) {
