@@ -1,7 +1,65 @@
-# flutter_chat_app
+# Flutter chat app
 
-This project is meant to be an example of building my flutter application step by step. Each commit will be a documentation of expanding the application with next feature.
+Just another simple chat application made to learn next technology. </br>
+
+## Table of contents
+* [General info](#general-info)
+* [Technologies](#technologies)
+* [Packages](#packages)
+* [Setup](#setup)
+* [Commits](#commits)
+
+## General info
+
+This project is meant to be an example of building my first Flutter application step by step. </br>
+Each commit will be a documentation of expanding the application with next feature. </br>
 </br></br>
+
+## Technologies
+Project is created with:
+* Flutter 3
+* Dart 2
+* Firebase (Firestore, FireAuth, storage)
+
+## Packages
+Flutter/Dart packages used to build this project:
+* reactive_forms
+* get_it
+* firebase_core
+* firebase_auth
+* cloud_firestore
+* hive
+* hive_flutter
+* navigation_history_observer
+* provider
+* intl
+* auto_size_text
+* firebase_storage
+* cross_file
+* file_picker
+* image_picker
+* path_provider: ^2.0.11
+* rsa_encrypt: ^2.0.0
+* pointycastle: ^3.6.2
+* flutter_timezone: ^1.0.4
+* flutter_fgbg: ^0.2.2
+* device_info_plus: ^6.0.0
+* awesome_notifications:
+
+## Setup
+
+Ready .apk file may be installed on any Android device. You can download it [here](https://drive.google.com/drive/folders/1OpUzcEuO5Mr3DBd4977ORzwrv-EduInr?hl=pl)
+<br />
+or
+<br />
+To run this project locally:
+* first You need to have Android Studio with Flutter
+* You also need to have your Firebase account and database
+* open Android Studio
+* File > New > Project from Version Control
+* paste url: 
+```https://github.com/pawelmat142/flutter_chat_app.git```
+* 
 
 ## Commits
 
