@@ -35,8 +35,6 @@ void main() async {
 
   //TODO: BUG - after create account and invitation/accept invitation - contact doesn't show in contact screen
 
-  //TODO: value of unread messages on icon
-
   // TODO: delete account only from device feature
 
   runApp(

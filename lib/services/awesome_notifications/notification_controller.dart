@@ -63,12 +63,14 @@ class NotificationController {
 
 
   static initAwesomeNotifications() {
-    AwesomeNotifications().initialize(null,
+    AwesomeNotifications().initialize(
+        null, //default icon
         [
           NotificationChannel(
               channelKey: notificationsChannelKey,
               channelName: 'PpChat notifications',
               channelDescription: 'PpChat notifications',
+              channelShowBadge: true,
               // defaultColor: PRIMARY_COLOR,
               ledColor: Colors.white
           )
