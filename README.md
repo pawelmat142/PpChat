@@ -1,7 +1,69 @@
-# flutter_chat_app
+# Flutter chat app
 
-This project is meant to be an example of building my flutter application step by step. Each commit will be a documentation of expanding the application with next feature.
+Just another simple chat application made to learn next technology. </br>
+
+## Table of contents
+* [General info](#general-info)
+* [Technologies](#technologies)
+* [Packages](#packages)
+* [Setup](#setup)
+* [Commits](#commits)
+
+## General info
+
+This project is meant to be an example of building my first Flutter application step by step. </br>
+Each commit will be a documentation of expanding the application with next feature. </br>
 </br></br>
+
+## Technologies
+Project is created with:
+* Flutter 3
+* Dart 2
+* Firebase (Firestore, FireAuth, storage)
+
+## Packages
+Flutter/Dart packages used to build this project:
+* reactive_forms
+* get_it
+* firebase_core
+* firebase_auth
+* cloud_firestore
+* hive
+* hive_flutter
+* navigation_history_observer
+* provider
+* intl
+* auto_size_text
+* firebase_storage
+* cross_file
+* file_picker
+* image_picker
+* path_provider
+* rsa_encrypt
+* pointycastle
+* flutter_timezone
+* flutter_fgbg
+* device_info_plus
+* awesome_notifications
+
+## Setup
+
+Ready .apk file may be installed on any Android device. You can download it [here](https://drive.google.com/drive/folders/1OpUzcEuO5Mr3DBd4977ORzwrv-EduInr?hl=pl)
+<br />
+or
+<br />
+To run this project locally:
+* You need to have Android Studio with Android Virtual Device and Flutter
+* You also need to have your Firebase account - add new project
+* Configure Firebase: open Project Overview website > add app > Flutter > follow the steps
+* Add Firestore Database, get into Rules and paste content of firestore_security_rules.js there
+* Add Storage, get into Rules and paste content of firebase_storage_security_rules.js there
+* open Android Studio
+* File > New > Project from Version Control
+* paste url:
+  ```https://github.com/pawelmat142/flutter_chat_app.git```
+* press get dependencies
+* start emulator and run app
 
 ## Commits
 
@@ -84,7 +146,7 @@ cloud firestore example implementation
 ### [017] firestore - security rules
 basic firebase security rules written
 </br> little refactor what makes nickname equals user document id so nickname is unique
-</br> 
+</br>
 
 ### [018] firestore - security rules - continued
 private sub collection created inside user what makes user modifiable only for owner
@@ -115,7 +177,7 @@ notifications screen,
 </br> stream builder with notification tile implemented
 
 ### [025] State services refactor
-services what keeps some user state refactored with login/logout triggering 
+services what keeps some user state refactored with login/logout triggering
 notifications screen refactor - no more stream builder
 little screens refactors
 
@@ -290,7 +352,7 @@ example on login process
 ### [075] PpUser - signature field
 PpUser model - add signature field what is PpUser docId now
 
-### [076] PpUser - PpUser document id change to 
+### [076] PpUser - PpUser document id change to
 
 ### [077] Update security rules
 access to CONTACTS, NOTIFICATIONS, Messages
@@ -370,7 +432,7 @@ directories paths refactored
 
 ### [104] timeToLive set to sent messages
 
-### [105] login/logout, deleteContact fix 
+### [105] login/logout, deleteContact fix
 
 ### [106] login/logout, deleteContact fix..
 
@@ -504,3 +566,9 @@ i want to receive online logs to firebase for testing
 ### [151] Dismiss notification on open conversation
 
 ### [152] Badges
+
+## last_fixes
+
+### [153] On tap MessageBubble show duration to expire
+
+### [154] Delete account data from device feature
