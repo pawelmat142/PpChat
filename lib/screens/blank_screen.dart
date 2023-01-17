@@ -76,21 +76,6 @@ class _BlankScreenState extends State<BlankScreen> {
                     ),
 
                     PpButton(
-                        text: 'TEST',
-                        onPressed: () {
-                          AwesomeNotifications().createNotification(
-                              content: NotificationContent(
-                                  id: 10,
-                                  channelKey: 'basic_channel',
-                                  title: 'Simple Notification',
-                                  body: 'Simple body',
-                                  actionType: ActionType.Default,
-                              )
-                          );
-                        }
-                    ),
-
-                    PpButton(
                         text: 'LOGIN',
                         onPressed: () => Navigator.pushNamed(context, LoginFormScreen.id),
                     ),
@@ -132,32 +117,4 @@ class _BlankScreenState extends State<BlankScreen> {
     );
   }
 
-
-  //TODO notification payload
-  // _navigateByPayload(String? payload) {
-  //   if (payload != null && Uid.get != null) {
-  //     final splitted = payload.split('-');
-  //     if (splitted.length == 2) {
-  //
-  //       final payloadType = splitted.first;
-  //       final uid = splitted.last;
-  //
-  //       if (payloadType == 'invitation') {
-  //         final invitation = Notifications.reference.findBySenderUid(uid);
-  //         if (invitation != null) {
-  //           NotificationView.navigate(invitation);
-  //         }
-  //       }
-  //
-  //       if (payloadType == 'conversation') {
-  //         final contactUser = Contacts.reference.getByUid(uid);
-  //         if (contactUser != null) {
-  //           ConversationView.navigate(contactUser);
-  //         }
-  //       }
-  //
-  //     }
-  //   }
-  //   log('navigate by payload - path: ${NavigationService.routes.map((r) => r.settings.name).toList()}');
-  // }
 }

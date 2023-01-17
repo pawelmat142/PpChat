@@ -6,6 +6,7 @@ import 'package:flutter_chat_app/screens/data_views/conversation_view/message_bu
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_popup_menu.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/message_input.dart';
+import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
@@ -61,6 +62,7 @@ class _ConversationViewState extends State<ConversationView> {
       conversation = await Conversations.reference.openOrCreate(contactUid: contactUser.uid);
       setState(() => initialized = true);
       conversationService.resolveUnresolvedMessages();
+      NotificationController.dismiss(contactUid: contactUser.uid);
     });
   }
 

@@ -500,3 +500,5 @@ i want to receive online logs to firebase for testing
 </br>refactored
 
 ### [150] payload navigation and preventing refactored
+
+### [151] Dismiss notification on open conversation
