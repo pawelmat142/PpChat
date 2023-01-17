@@ -38,13 +38,13 @@ Flutter/Dart packages used to build this project:
 * cross_file
 * file_picker
 * image_picker
-* path_provider: ^2.0.11
-* rsa_encrypt: ^2.0.0
-* pointycastle: ^3.6.2
-* flutter_timezone: ^1.0.4
-* flutter_fgbg: ^0.2.2
-* device_info_plus: ^6.0.0
-* awesome_notifications:
+* path_provider
+* rsa_encrypt
+* pointycastle
+* flutter_timezone
+* flutter_fgbg
+* device_info_plus
+* awesome_notifications
 
 ## Setup
 
@@ -53,13 +53,17 @@ Ready .apk file may be installed on any Android device. You can download it [her
 or
 <br />
 To run this project locally:
-* first You need to have Android Studio with Flutter
-* You also need to have your Firebase account and database
+* You need to have Android Studio with Android Virtual Device and Flutter
+* You also need to have your Firebase account - add new project
+* Configure Firebase: open Project Overview website > add app > Flutter > follow the steps
+* Add Firestore Database, get into Rules and paste content of firestore_security_rules.js there
+* Add Storage, get into Rules and paste content of firebase_storage_security_rules.js there
 * open Android Studio
 * File > New > Project from Version Control
-* paste url: 
-```https://github.com/pawelmat142/flutter_chat_app.git```
-* 
+* paste url:
+  ```https://github.com/pawelmat142/flutter_chat_app.git```
+* press get dependencies
+* start emulator and run app
 
 ## Commits
 
@@ -142,7 +146,7 @@ cloud firestore example implementation
 ### [017] firestore - security rules
 basic firebase security rules written
 </br> little refactor what makes nickname equals user document id so nickname is unique
-</br> 
+</br>
 
 ### [018] firestore - security rules - continued
 private sub collection created inside user what makes user modifiable only for owner
@@ -173,7 +177,7 @@ notifications screen,
 </br> stream builder with notification tile implemented
 
 ### [025] State services refactor
-services what keeps some user state refactored with login/logout triggering 
+services what keeps some user state refactored with login/logout triggering
 notifications screen refactor - no more stream builder
 little screens refactors
 
@@ -348,7 +352,7 @@ example on login process
 ### [075] PpUser - signature field
 PpUser model - add signature field what is PpUser docId now
 
-### [076] PpUser - PpUser document id change to 
+### [076] PpUser - PpUser document id change to
 
 ### [077] Update security rules
 access to CONTACTS, NOTIFICATIONS, Messages
@@ -428,7 +432,7 @@ directories paths refactored
 
 ### [104] timeToLive set to sent messages
 
-### [105] login/logout, deleteContact fix 
+### [105] login/logout, deleteContact fix
 
 ### [106] login/logout, deleteContact fix..
 
