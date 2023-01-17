@@ -10,9 +10,6 @@ part 'hive_rsa_pair.g.dart';
 @HiveType(typeId: 3)
 class HiveRsaPair extends HiveObject {
 
-  // final signature = _collection.doc().id;
-
-
   @HiveField(0)
   final String privateAsString;
 
@@ -90,6 +87,11 @@ class HiveRsaPair extends HiveObject {
     return RsaKeyHelper().parsePublicKeyFromPem(input);
   }
 
+  static clearMyPair() async {
+    final box = await _openOrCreate();
+    await box.clear();
+    await box.close();
+  }
 
 
   static log(String txt) {

@@ -39,7 +39,6 @@ class _BlankScreenState extends State<BlankScreen> {
     ContactsScreen.navigate(context);
     subscription = FGBGEvents.stream.listen((event) {
       appService.isAppInBackground = event == FGBGType.background;
-      print('is app in background: ${appService.isAppInBackground}');
     });
   }
 
