@@ -106,7 +106,10 @@ class _ConversationViewState extends State<ConversationView> {
                           ? decrypt(m.message, myPrivateKey)
                           : m.message,
                       my: m.sender == Uid.get,
-                      timestamp: m.timestamp)
+                      timestamp: m.timestamp,
+                      readTimestamp: m.readTimestamp,
+                      timeToLive: m.timeToLive,
+                      timeToLiveAfterRead: m.timeToLiveAfterRead)
                   ).toList();
 
                 interfaces.sort((a, b) => b.timestamp.compareTo(a.timestamp));

@@ -504,3 +504,7 @@ i want to receive online logs to firebase for testing
 ### [151] Dismiss notification on open conversation
 
 ### [152] Badges
+
+## last_fixes
+
+### [153] On tap MessageBubble show duration to expire
