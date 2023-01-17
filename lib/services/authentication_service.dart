@@ -40,7 +40,7 @@ class AuthenticationService {
 
       if (userCredential.user != null && !_isRegisterInProgress) {
         log('[FireAuth listener] login');
-        Navigator.pushNamed(context, ContactsScreen.id);
+        ContactsScreen.navigate(context);
         // onInit HomeScreen triggers LoginProcess
       }
       else {
@@ -54,7 +54,7 @@ class AuthenticationService {
       await _popup.show('Wrong credentials!',
           text: 'Please try again.',
           error: true,
-          enableNavigateBack: true
+          enableNavigateBack: false
       );
     } catch (error) {
       _spinner.stop();

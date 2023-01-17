@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
+import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
-import 'package:flutter_chat_app/dialogs/pp_flushbar.dart';
 import 'package:flutter_chat_app/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
@@ -97,15 +97,12 @@ class ResolveNotificationsProcess extends LogProcess {
       final notification = notificationsToFlush.first;
       switch (notification.type) {
         case PpNotificationTypes.invitation:
-          PpFlushbar.invitationNotification(notification);
+          NotificationController.notifyInvitation(contactUid: notification.documentId);
           break;
         case PpNotificationTypes.invitationAcceptance:
           PpSnackBar.invitationAcceptances();
           break;
       }
-    }
-    else if (notificationsToFlush.isNotEmpty) {
-      PpFlushbar.multipleNotifications(value: notificationsToFlush.length);
     }
   }
 

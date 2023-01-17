@@ -32,13 +32,25 @@ class NotificationView extends StatelessWidget {
       );
   }
 
+  static popAndNavigate(PpNotification notification, {required BuildContext context}) {
+      // Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => NotificationView.factory(notification)),
+      );
+  }
+
   final PpNotification notification;
   final notificationService = getIt.get<PpNotificationService>();
   final contactsService = getIt.get<ContactsService>();
   final spinner = getIt.get<PpSpinner>();
   final popup = getIt.get<Popup>();
 
-  NotificationView(this.notification, {super.key});
+  NotificationView(this.notification, {super.key}) {
+    if (!notification.isRead) {
+      markAsRead();
+    }
+  }
 
   String get title => 'Notification';
   String get content => 'You have new notification!';
@@ -51,10 +63,6 @@ class NotificationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    if (!notification.isRead) {
-      markAsRead();
-    }
 
     return Scaffold(
 
@@ -69,8 +77,11 @@ class NotificationView extends StatelessWidget {
               /// AVATAR
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
-                child: AvatarWidget.createFromNotification(notification,
-                    size: AVATAR_SIZE_BIG),
+                child: AvatarWidget(
+                  uid: notification.documentId,
+                  model: notification.avatar,
+                  size: AVATAR_SIZE_BIG,
+                ),
               ),
 
               /// NICKNAME

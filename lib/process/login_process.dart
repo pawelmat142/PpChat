@@ -7,11 +7,13 @@ import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
+import 'package:flutter_chat_app/services/log_service.dart';
 
 class LoginProcess extends LogProcess {
 
   final userService = getIt.get<PpUserService>();
   final authService = getIt.get<AuthenticationService>();
+  final logService = getIt.get<LogService>();
 
   process() async {
     log('[LoginProcess] [START]');
@@ -26,6 +28,7 @@ class LoginProcess extends LogProcess {
     await Me.reference.startFirestoreObserver();
     await Me.reference.initPrivateKey();
     log('[LoginProcess] [Me] initialized');
+    logService.setContext(Me.reference.nickname);
 
     await ContactUids.reference.startFirestoreObserver();
     log('[LoginProcess] [ContactUids] initialized');

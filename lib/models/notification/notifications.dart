@@ -44,6 +44,11 @@ class Notifications extends FsCollectionModel<PpNotification> {
     await process.process();
   }
 
+  PpNotification? findBySenderUid(String uid) {
+    final index = get.indexWhere((n) => n.documentId == uid);
+    return index == -1 ? null : get[index];
+  }
+
 
   @override
   CollectionReference<Map<String, dynamic>> get collectionRef => firestore

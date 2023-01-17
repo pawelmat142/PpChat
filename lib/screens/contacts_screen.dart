@@ -13,11 +13,19 @@ import 'package:flutter_chat_app/process/login_process.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
+import 'package:flutter_chat_app/services/navigation_service.dart';
+import 'package:flutter_chat_app/services/uid.dart';
 import 'package:provider/provider.dart';
 
 class ContactsScreen extends StatefulWidget {
   const ContactsScreen({Key? key}) : super(key: key);
   static const String id = 'contacts_screen';
+
+  static navigate(BuildContext context) {
+    if (Uid.get != null && !NavigationService.isContactsScreenInStack) {
+      Future.delayed(Duration.zero, () => Navigator.pushNamed(context, ContactsScreen.id));
+    }
+  }
 
   @override
   State<ContactsScreen> createState() => _ContactsScreenState();
@@ -88,7 +96,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
                   : nothingHereWidget();
             }),
-          )
+          ),
+          
         ],
       ),
 

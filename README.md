@@ -469,3 +469,38 @@ delete image in storage on delete account
 
 ### [139] Turn on logs on non debug mode
 i want to receive online logs to firebase for testing
+
+## feature/notifications
+
+### [140] Notifications installation
+`flutter pub add flutter_local_notifications`
+</br> `flutter pub add device_info_plus`
+</br> `flutter pub add flutter_timezone`
+
+### [141] BUG multiple ContactsScreen on stack - fixed
+
+### [143] BUG navigation with arguments gives route name = null - fixed
+
+### [144] Notifications on coming messages / invitations
+
+### [145] Navigation by notification payload
+`flutter pub add flutter_fgbg`
+
+### [146] PpNotification data model refactored to pass AvatarModel object
+
+### [147] ConversationSettingsView refactored
+
+### [148] Icon, app name changed
+`appicon.co` - generate folder from one square png
+</br> android/app/src/main/res - replace all mipmap folders
+</br> iod/Runner - replace whole Assets.xcassets folder
+
+### [149] AwesomeNotification instead of flutter_local_notifications
+`flutter pub add awesome_notifications`
+</br>refactored
+
+### [150] payload navigation and preventing refactored
+
+### [151] Dismiss notification on open conversation
+
+### [152] Badges

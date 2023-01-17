@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/conversation/conversation.dart';
+import 'package:flutter_chat_app/models/conversation/conversations.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/message_bubble.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_popup_menu.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/message_input.dart';
+import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
@@ -16,16 +18,22 @@ import 'package:pointycastle/asymmetric/api.dart';
 import 'package:rsa_encrypt/rsa_encrypt.dart';
 
 class ConversationView extends StatefulWidget {
-  const ConversationView({required this.contactUser, super.key});
+  const ConversationView({super.key});
   static const id = 'conversation_view';
-
-  final PpUser contactUser;
 
   static navigate(PpUser contact) {
     Navigator.pushNamed(
       NavigationService.context,
       ConversationView.id,
       arguments: contact
+    );
+  }
+
+  static popAndNavigate(PpUser contact) {
+    Navigator.popAndPushNamed(
+        NavigationService.context,
+        ConversationView.id,
+        arguments: contact
     );
   }
 
@@ -39,32 +47,44 @@ class _ConversationViewState extends State<ConversationView> {
 
   bool isMock(Box<PpMessage> box) => box.values.length == 1 && box.values.first.isMock;
 
-  PpUser get contactUser => widget.contactUser;
+  PpUser? _contactUser;
+  PpUser get contactUser => _contactUser!;
+  RSAPrivateKey get myPrivateKey => Me.reference.myPrivateKey;
+
   late Conversation conversation;
-  late RSAPrivateKey myPrivateKey;
+
+  bool initialized = false;
 
   @override
   void initState() {
-    conversation = conversationService.conversations.getByUid(contactUser.uid)!;
     super.initState();
-    conversationService.resolveUnresolvedMessages();
-    myPrivateKey = Me.reference.myPrivateKey;
+    Future.delayed(Duration.zero, () async {
+      conversation = await Conversations.reference.openOrCreate(contactUid: contactUser.uid);
+      setState(() => initialized = true);
+      conversationService.resolveUnresolvedMessages();
+      NotificationController.dismiss(contactUid: contactUser.uid);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
 
+    _contactUser ??= ModalRoute.of(context)!.settings.arguments as PpUser;
+
     return Scaffold(
 
       appBar: AppBar(
           title: Text(contactUser.nickname),
-          actions: [
+          actions: !initialized ? [] : [
             ConversationPopupMenu(conversation: conversation),
           ]
       ),
 
       body: SafeArea(
-        child: Column(children: [
+        child: !initialized
+        ? const Center(child: CircularProgressIndicator()) :
+
+        Column(children: [
 
           //MESSAGES AREA
           Expanded(child: ValueListenableBuilder<Box<PpMessage>>(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:another_flushbar/flushbar_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
@@ -11,26 +13,46 @@ import 'package:navigation_history_observer/navigation_history_observer.dart';
 class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  static get context {
-    return navigatorKey.currentContext;
+  static get context => navigatorKey.currentContext;
+
+  static get routes => NavigationHistoryObserver().history;
+
+  static bool get isContactsScreenInStack => routes
+      .map((route) => route.settings.name).contains(ContactsScreen.id);
+
+  static bool get isContactsOpen {
+    final lastRoute = routes.last;
+    if (lastRoute.settings.name == ContactsScreen.id) {
+      return true;
+    }
+    return false;
   }
 
-  static String get route {
-    if (NavigationHistoryObserver().top != null) {
-      if (NavigationHistoryObserver().top!.settings.name != null) {
-        return NavigationHistoryObserver().top!.settings.name!;
+
+  static bool isUserConversationOpen(String contactUid) {
+    final lastRoute = routes.last;
+    if (lastRoute.settings.name == ConversationView.id) {
+      final user = lastRoute.settings.arguments;
+      if (lastRoute.settings.arguments is PpUser) {
+        if ((user as PpUser).uid == contactUid) {
+          return true;
+        }
       }
     }
-    return '';
+    return false;
   }
 
-  static PpUser? get conversationUser {
-    if (NavigationHistoryObserver().top != null) {
-      if (NavigationHistoryObserver().top!.settings.arguments != null) {
-        return NavigationHistoryObserver().top!.settings.arguments as PpUser;
+  static bool isUserViewOpen(String contactUid) {
+    final lastRoute = routes.last;
+    if (lastRoute.settings.name == UserView.id) {
+      final user = lastRoute.settings.arguments;
+      if (lastRoute.settings.arguments is PpUser) {
+        if ((user as PpUser).uid == contactUid) {
+          return true;
+        }
       }
     }
-    return null;
+    return false;
   }
 
   static pop({int? delay}) async {
@@ -53,34 +75,12 @@ class NavigationService {
     // Navigator.pushNamedAndRemoveUntil(NavigationService.context, ContactsScreen.id, ModalRoute.withName(HomeScreen.id));
   }
 
-  static isConversationOpen({required String uid}) {
-    final conversationRouteIndex = NavigationHistoryObserver().history
-        .indexWhere((p0) => p0.settings.name == ConversationView.id);
-    if (conversationRouteIndex != -1) {
-      final conversationRoute = NavigationHistoryObserver().history[conversationRouteIndex];
-      final conversationUser = conversationRoute.settings.arguments as PpUser;
-      return conversationUser.uid == uid;
-    }
-    return false;
-  }
-
-  static isUserViewOpen({required String uid}) {
-    final userRouteIndex = NavigationHistoryObserver().history
-        .indexWhere((p0) => p0.settings.name == UserView.id);
-    if (userRouteIndex != -1) {
-      final userRoute = NavigationHistoryObserver().history[userRouteIndex];
-      final user = userRoute.settings.arguments as PpUser;
-      return user.uid == uid;
-    }
-    return false;
-  }
-
   static isFlushbarOpen() {
-    return NavigationHistoryObserver().history.indexWhere((p0) => p0 is FlushbarRoute) != -1;
+    return routes.indexWhere((p0) => p0 is FlushbarRoute) != -1;
   }
 
   static popHomeIfAnyUserView({required String uid}) {
-    if (isUserViewOpen(uid: uid) || isConversationOpen(uid: uid)) {
+    if (isUserViewOpen(uid) || isUserConversationOpen(uid)) {
       popToHome();
       final popup = getIt.get<Popup>();
       popup.show('Contact deleted!', error: true);

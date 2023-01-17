@@ -46,7 +46,9 @@ class AcceptInvitationProcess extends LogProcess {
         text: invitation.text,
         sender: invitation.receiver,
         receiver: invitation.sender,
-        documentId: Uid.get!);
+        documentId: Uid.get!,
+        avatar: Me.reference.get.avatar
+    );
     batch.set(contactNotificationDocRef, document.asMap);
 
     //add to contacts
