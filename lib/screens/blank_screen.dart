@@ -84,28 +84,28 @@ class _BlankScreenState extends State<BlankScreen> {
                       color: PRIMARY_COLOR_DARKER,
                     ),
 
-                    PpButton(text: 'log aaaaaa',
-                      onPressed: () {
-                        final authService = getIt.get<AuthenticationService>();
-                        authService.onLogin(nickname: 'aaaaaa', password: 'aaaaaa');
-                      },
-                    ),
-
-                    PpButton(
-                      text: 'log bbbbbb',
-                      onPressed: () {
-                        final authService = getIt.get<AuthenticationService>();
-                        authService.onLogin(nickname: 'bbbbbb', password: 'bbbbbb');
-                      },
-                    ),
-
-                    PpButton(
-                      text: 'log cccccc',
-                      onPressed: () {
-                        final authService = getIt.get<AuthenticationService>();
-                        authService.onLogin(nickname: 'cccccc', password: 'cccccc');
-                      },
-                    ),
+                    // PpButton(text: 'log aaaaaa',
+                    //   onPressed: () {
+                    //     final authService = getIt.get<AuthenticationService>();
+                    //     authService.onLogin(nickname: 'aaaaaa', password: 'aaaaaa');
+                    //   },
+                    // ),
+                    //
+                    // PpButton(
+                    //   text: 'log bbbbbb',
+                    //   onPressed: () {
+                    //     final authService = getIt.get<AuthenticationService>();
+                    //     authService.onLogin(nickname: 'bbbbbb', password: 'bbbbbb');
+                    //   },
+                    // ),
+                    //
+                    // PpButton(
+                    //   text: 'log cccccc',
+                    //   onPressed: () {
+                    //     final authService = getIt.get<AuthenticationService>();
+                    //     authService.onLogin(nickname: 'cccccc', password: 'cccccc');
+                    //   },
+                    // ),
 
                   ]
                 ),
