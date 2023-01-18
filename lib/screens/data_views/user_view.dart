@@ -14,6 +14,7 @@ import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/process/delete_account_process.dart';
+import 'package:flutter_chat_app/process/delete_from_device_process.dart';
 import 'package:flutter_chat_app/screens/data_views/edit_avatar_view.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/notifications_screen.dart';
@@ -150,6 +151,23 @@ class UserView extends StatelessWidget {
                   PpButton(text: 'Logout', color: PRIMARY_COLOR_DARKER, onPressed: () {
                     final authService = getIt.get<AuthenticationService>();
                     authService.onLogout();
+                  }),
+
+                  PpButton(text: 'Delete from device', color: Colors.deepOrange, onPressed: () {
+                    final popup = getIt.get<Popup>();
+                    final spinner = getIt.get<PpSpinner>();
+                    popup.show('Are you sure?',
+                        text: 'Data like conversations or settings will be lost but You can log in again',
+                        error: true,
+                        buttons: [PopupButton('Delete', error: true, onPressed: () async {
+                          NavigationService.popToBlank();
+                          spinner.start(context: context);
+                          final process = DeleteFromDeviceProcess();
+                          await process.process();
+                          spinner.stop();
+                          PpSnackBar.deleted();
+                        })]
+                    );
                   }),
 
                   PpButton(text: 'Delete my account',

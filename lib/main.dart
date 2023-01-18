@@ -33,10 +33,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //TODO: BUG - after create account and invitation/accept invitation - contact doesn't show in contact screen
-
-  // TODO: delete account only from device feature
-
   runApp(
       MultiProvider(providers: [
         ChangeNotifierProvider(create: (_) => Me()),

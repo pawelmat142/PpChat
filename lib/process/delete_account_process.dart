@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
+import 'package:flutter_chat_app/models/crypto/hive_rsa_pair.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
@@ -114,7 +115,7 @@ class DeleteAccountProcess extends LogProcess {
         log('[${contact.nickname}] conversation and settings deleted!');
       }
 
-      // await _deleteHiveConversationsData();
+      await HiveRsaPair.clearMyPair();
 
       await _prepareBatch();
 
