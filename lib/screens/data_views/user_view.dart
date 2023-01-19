@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/group_conversation/group_conversation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
@@ -182,6 +183,13 @@ class UserView extends StatelessWidget {
                             })]
                         );
                     }),
+
+                  PpButton(text: 'new group',
+                      color: Colors.red, onPressed: () async {
+                        final groupConversationService = getIt.get<GroupConversationService>();
+                        groupConversationService.startNewConversation();
+                    }),
+
                 ])
 
               /// else

@@ -571,3 +571,7 @@ i want to receive online logs to firebase for testing
 ### [153] On tap MessageBubble show duration to expire
 
 ### [154] Delete account data from device feature
+
+## feature/group_chat
+
+### [155]

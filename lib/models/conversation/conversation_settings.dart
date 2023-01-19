@@ -6,6 +6,36 @@ part 'conversation_settings.g.dart';
 @HiveType(typeId: 1)
 class ConversationSettings extends HiveObject {
 
+  @HiveField(0)
+  final String contactUid;
+
+  @HiveField(1)
+  int timeToLiveInMinutes;
+
+  @HiveField(2)
+  int timeToLiveAfterReadInMinutes;
+
+  ConversationSettings({
+    required this.contactUid,
+    this.timeToLiveInMinutes = timeToLiveInMinutesDefault,
+    this.timeToLiveAfterReadInMinutes = timeToLiveAfterReadInMinutesDefault,
+  });
+
+  Map<String, dynamic> get asMap => {
+    ConversationSettingsFields.contactUid: contactUid,
+    ConversationSettingsFields.timeToLiveInMinutes: timeToLiveInMinutes,
+    ConversationSettingsFields.timeToLiveAfterReadInMinutes: timeToLiveAfterReadInMinutes,
+  };
+
+  static ConversationSettings fromMap(Map<String, dynamic> map) {
+    return ConversationSettings(
+      contactUid: map[ConversationSettingsFields.contactUid],
+      timeToLiveInMinutes: map[ConversationSettingsFields.timeToLiveInMinutes],
+      timeToLiveAfterReadInMinutes: map[ConversationSettingsFields.timeToLiveAfterReadInMinutes],
+    );
+  }
+
+
   // static const int timeToLiveInMinutesDefault = 2;
   static const int timeToLiveInMinutesDefault = 10080;
   /// 1 week = 7 x 24 h = 168 h = 10 080 min
@@ -33,22 +63,6 @@ class ConversationSettings extends HiveObject {
   }
 
   String get hiveKey => 'config_${Uid.get!}_$contactUid';
-
-
-  ConversationSettings({
-    required this.contactUid,
-    this.timeToLiveInMinutes = timeToLiveInMinutesDefault,
-    this.timeToLiveAfterReadInMinutes = timeToLiveAfterReadInMinutesDefault,
-  });
-
-  @HiveField(0)
-  final String contactUid;
-
-  @HiveField(1)
-  int timeToLiveInMinutes;
-
-  @HiveField(2)
-  int timeToLiveAfterReadInMinutes;
 
 }
 

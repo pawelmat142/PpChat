@@ -1,6 +1,7 @@
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
+import 'package:flutter_chat_app/models/group_conversation/group_conversation_service.dart';
 import 'package:flutter_chat_app/models/notification/invitation_service.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
@@ -34,6 +35,8 @@ Future<void> initGetIt() async {
   getIt.registerLazySingleton(() => ConversationSettingsService());
 
   getIt.registerLazySingleton(() => AppService());
+
+  getIt.registerLazySingleton(() => GroupConversationService());
 
   getIt.registerSingleton(AuthenticationService());
 }

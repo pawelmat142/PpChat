@@ -6,6 +6,7 @@ abstract class Collections {
   static const String NOTIFICATIONS = 'NOTIFICATIONS';
   static const String CONTACTS = 'CONTACTS';
   static const String Messages = 'Messages';
+  static const String GroupConversations = 'GroupConversations';
 
   static const String DELETED_ACCOUNTS = 'DELETED_ACCOUNTS';
 
