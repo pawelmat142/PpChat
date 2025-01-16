@@ -5,11 +5,11 @@ import 'package:flutter_chat_app/screens/forms/others/form_styles.dart';
 
 // ignore: must_be_immutable
 class PpButtonControllable extends StatefulWidget {
+  final String text;
   final Function onPressed;
   bool active;
-  final bool controllable;
-  final String text;
   final int transition;
+  final bool controllable;
   final double height;
   final EdgeInsets padding;
   final double borderRadius;

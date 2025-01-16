@@ -39,10 +39,12 @@ class Popup {
       },
       child: Text(
         btn.text,
-        style: TextStyle(
-            fontWeight: btn.bold || buttons[buttons.length - 1] == btn ? FontWeight.w800 : FontWeight.w500,
-            color: btn.color ?? (btn.error ? Theme.of(NavigationService.context).errorColor : Theme.of(NavigationService.context).primaryColor)
-        ),
+
+        // TODO fix after recovery
+        // style: TextStyle(
+        //     fontWeight: btn.bold || buttons[buttons.length - 1] == btn ? FontWeight.w800 : FontWeight.w500,
+        //     color: btn.color ?? (btn.error ? Theme.of(NavigationService.context).errorColor : Theme.of(NavigationService.context).primaryColor)
+        // ),
       ),
     )).toList();
   }
@@ -75,10 +77,13 @@ class Popup {
       context: NavigationService.context,
       builder: (context) => AlertDialog(
         title: Text(title,
-            style: TextStyle(
-                color: error
-                    ? Theme.of(context).errorColor
-                    : Theme.of(context).primaryColorDark)),
+
+            // TODO
+            // style: TextStyle(
+            //     color: error
+            //         ? Theme.of(context).errorColor
+            //         : Theme.of(context).primaryColorDark)
+            ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

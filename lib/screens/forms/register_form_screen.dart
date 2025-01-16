@@ -26,8 +26,9 @@ class RegisterFormScreen extends StatelessWidget {
     Fields.password: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
     Fields.repassword: FormControl<String>(),
   }, validators: [
-    myMustMatch(Fields.nickname, Fields.renickname),
-    myMustMatch(Fields.password, Fields.repassword)
+    // TODO - fix after recovery
+    // myMustMatch(Fields.nickname, Fields.renickname),
+    // myMustMatch(Fields.password, Fields.repassword)
   ]);
 
   void _submitForm(BuildContext context) {

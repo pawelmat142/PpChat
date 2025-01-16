@@ -76,8 +76,8 @@ class _ConversationSettingsViewState extends State<ConversationSettingsView> {
     if (saveButton == null) return;
     options[_selectedTimeToLiveAfterRead] ==
           currentSettingsState.timeToLiveAfterReadInMinutes
-          && options[_selectedTimeToLive] ==
-              currentSettingsState.timeToLiveInMinutes
+      && options[_selectedTimeToLive] ==
+          currentSettingsState.timeToLiveInMinutes
     ? saveButton!.deactivation()
     : saveButton!.activation();
   }
