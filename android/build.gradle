@@ -16,32 +16,3 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
-
-//def flutterRoot = localProperties.getProperty('flutter.sdk')
-//if (flutterRoot == null) {
-//    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
-//}
-
-// Top-level build.gradle file where you can add configuration options common to all sub-projects/modules.
-//buildscript {
-//    repositories {
-//        google() // For Android Gradle Plugin
-//        mavenCentral() // For Kotlin and other dependencies
-//    }
-//    dependencies {
-//        classpath "com.android.tools.build:gradle:8.0.2" // Ensure you use a compatible Gradle version
-//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20" // Match Kotlin version
-//        classpath "com.google.gms:google-services:4.4.2" // If you're using Firebase
-//    }
-//}
-//
-//allprojects {
-//    repositories {
-//        google()
-//        mavenCentral()
-//    }
-//}
-//
-//tasks.register("clean", Delete) {
-//    delete rootProject.buildDir
-//}

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/screens/forms/validators/must_equal_validator.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_submit.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_text_field.dart';
-import 'package:flutter_chat_app/screens/forms/others/validators.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
@@ -26,9 +26,8 @@ class RegisterFormScreen extends StatelessWidget {
     Fields.password: FormControl<String>(validators: [Validators.required, Validators.minLength(6)]),
     Fields.repassword: FormControl<String>(),
   }, validators: [
-    // TODO - fix after recovery
-    // myMustMatch(Fields.nickname, Fields.renickname),
-    // myMustMatch(Fields.password, Fields.repassword)
+    MustEqualValidator(Fields.nickname, Fields.renickname),
+    MustEqualValidator(Fields.password, Fields.repassword)
   ]);
 
   void _submitForm(BuildContext context) {
@@ -68,7 +67,7 @@ class RegisterFormScreen extends StatelessWidget {
             PpTextField(
                 fieldName: Fields.renickname,
                 labelHint: 'REPEAT NICKNAME',
-                mustMatchMsg: 'Login must match.',
+                mustEqualMsg: 'Repeat nickname must equal nickname',
                 onSubmitted: () => form.focus(Fields.password)
             ),
 
@@ -84,7 +83,7 @@ class RegisterFormScreen extends StatelessWidget {
             PpTextField(
                 fieldName: Fields.repassword,
                 labelHint: 'REPEAT PASSWORD',
-                mustMatchMsg: 'Password must match.',
+                mustEqualMsg: 'Repeat password must equal password',
                 passwordMode: true,
                 onSubmitted: () => _submitForm(context),
             ),
