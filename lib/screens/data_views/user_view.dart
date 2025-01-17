@@ -26,7 +26,7 @@ import 'package:flutter_chat_app/services/authentication_service.dart';
 
 
 class UserView extends StatelessWidget {
-  const UserView({Key? key}) : super(key: key);
+  const UserView({super.key});
   static const String id = 'user_view';
 
   static popAndNavigate({required PpUser user, int? delay}) async {

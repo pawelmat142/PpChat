@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 
+import '../utils/style_util.dart';
+
 class PopupButton {
   final Function? onPressed;
   final String text;
@@ -39,12 +41,10 @@ class Popup {
       },
       child: Text(
         btn.text,
-
-        // TODO fix after recovery
-        // style: TextStyle(
-        //     fontWeight: btn.bold || buttons[buttons.length - 1] == btn ? FontWeight.w800 : FontWeight.w500,
-        //     color: btn.color ?? (btn.error ? Theme.of(NavigationService.context).errorColor : Theme.of(NavigationService.context).primaryColor)
-        // ),
+        style: TextStyle(
+            fontWeight: btn.bold || buttons[buttons.length - 1] == btn ? FontWeight.w800 : FontWeight.w500,
+            color: StyleUtil.btnColor(btn)
+        ),
       ),
     )).toList();
   }
@@ -77,12 +77,10 @@ class Popup {
       context: NavigationService.context,
       builder: (context) => AlertDialog(
         title: Text(title,
-
-            // TODO
-            // style: TextStyle(
-            //     color: error
-            //         ? Theme.of(context).errorColor
-            //         : Theme.of(context).primaryColorDark)
+            style: TextStyle(
+                color: error
+                    ? Theme.of(context).colorScheme.error
+                    : Theme.of(context).primaryColorDark)
             ),
         content: Column(
           mainAxisSize: MainAxisSize.min,

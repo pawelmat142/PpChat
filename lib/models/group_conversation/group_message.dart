@@ -1,5 +1,3 @@
-import 'package:flutter_chat_app/models/group_conversation/group_conversation.dart';
-
 class GroupMessage {
 
   final String message;

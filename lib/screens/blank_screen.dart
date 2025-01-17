@@ -8,16 +8,17 @@ import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/services/app_service.dart';
-import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
 
+import '../services/authentication_service.dart';
+
 class BlankScreen extends StatefulWidget {
   static const String id = 'blank_screen';
 
-  const BlankScreen({Key? key}) : super(key: key);
+  const BlankScreen({super.key});
 
   @override
   State<BlankScreen> createState() => _BlankScreenState();
@@ -86,28 +87,28 @@ class _BlankScreenState extends State<BlankScreen> {
                       color: PRIMARY_COLOR_DARKER,
                     ),
 
-                    // PpButton(text: 'log aaaaaa',
-                    //   onPressed: () {
-                    //     final authService = getIt.get<AuthenticationService>();
-                    //     authService.onLogin(nickname: 'aaaaaa', password: 'aaaaaa');
-                    //   },
-                    // ),
-                    //
-                    // PpButton(
-                    //   text: 'log bbbbbb',
-                    //   onPressed: () {
-                    //     final authService = getIt.get<AuthenticationService>();
-                    //     authService.onLogin(nickname: 'bbbbbb', password: 'bbbbbb');
-                    //   },
-                    // ),
-                    //
-                    // PpButton(
-                    //   text: 'log cccccc',
-                    //   onPressed: () {
-                    //     final authService = getIt.get<AuthenticationService>();
-                    //     authService.onLogin(nickname: 'cccccc', password: 'cccccc');
-                    //   },
-                    // ),
+                    PpButton(text: 'log aaaaaa',
+                      onPressed: () {
+                        final authService = getIt.get<AuthenticationService>();
+                        authService.onLogin(nickname: 'aaaaaa', password: 'aaaaaa');
+                      },
+                    ),
+
+                    PpButton(
+                      text: 'log bbbbbb',
+                      onPressed: () {
+                        final authService = getIt.get<AuthenticationService>();
+                        authService.onLogin(nickname: 'bbbbbb', password: 'bbbbbb');
+                      },
+                    ),
+
+                    PpButton(
+                      text: 'log cccccc',
+                      onPressed: () {
+                        final authService = getIt.get<AuthenticationService>();
+                        authService.onLogin(nickname: 'cccccc', password: 'cccccc');
+                      },
+                    ),
 
                   ]
                 ),
