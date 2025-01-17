@@ -39,10 +39,9 @@ class _BlankScreenState extends State<BlankScreen> {
     NotificationController.initListeners();
     ContactsScreen.navigate(context);
 
-    // TODO fix after recovery
-    // subscription = FGBGEvents.stream.listen((event) {
-    //   appService.isAppInBackground = event == FGBGType.background;
-    // });
+    subscription = FGBGEvents.instance.stream.listen((event) {
+      appService.isAppInBackground = event == FGBGType.background;
+    });
   }
 
   @override
