@@ -28,7 +28,9 @@ abstract class PpUserFields {
       && ppUserMap.keys.contains(PpUserFields.publicKeyAsString)
       && ppUserMap[PpUserFields.publicKeyAsString] is String
 
-    ) {return;} else {
+    ) {
+      return;
+    } else {
       throw Exception(["PpUser MAP ERROR"]);
     }
   }

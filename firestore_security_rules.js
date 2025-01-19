@@ -19,8 +19,8 @@ service cloud.firestore {
 
       function isSender() { return
       	request.auth.uid == resource.data.documentId
-        || request.auth.uid == request.data.documentId
-        || request.auth.uid == request.resource.data.documentId;
+            || request.auth.uid == request.data.documentId
+            || request.auth.uid == request.resource.data.documentId;
       }
 
       function isContact(contactUid) { return request.auth.uid in getContactsUids(contactUid); }
@@ -30,7 +30,7 @@ service cloud.firestore {
         	.data.type == "invitationAcceptance";
       }
 
-			allow create: if request.auth.uid == request.resource.data.uid;
+      allow create: if request.auth.uid == request.resource.data.uid;
       allow read: if logged();
       allow delete, update: if isOwner();
 
@@ -49,13 +49,11 @@ service cloud.firestore {
       	allow read, write: if isOwner() || isContact(UID) || isInvitationAccepted(UID);
       }
 
-
     }
 
     match /DELETED_ACCOUNTS/{nickname} {
     	allow write: if true;
     }
-
 
   }
 }

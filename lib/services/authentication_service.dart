@@ -13,7 +13,10 @@ import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 
+import '../utils/auth_util.dart';
+
 class AuthenticationService {
+
   final _fireAuth = FirebaseAuth.instance;
   final _userService = getIt.get<PpUserService>();
   final _popup = getIt.get<Popup>();
@@ -23,7 +26,6 @@ class AuthenticationService {
   log(String txt) => logService.log(txt);
   logError(String txt) => logService.error(txt);
 
-
   get context => NavigationService.context;
 
   bool _isRegisterInProgress = false;
@@ -31,11 +33,14 @@ class AuthenticationService {
 
   String get getUid => Uid.get!;
 
-  void onLogin({required String nickname, required String password}) async {
+  void onLogin({ required String nickname, required String password }) async {
     try {
       log('[START] Login by form process');
       _spinner.start();
-      final userCredential = await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
+      final userCredential = await _fireAuth.signInWithEmailAndPassword(
+          email: AuthUtil.toEmail(nickname),
+          password: password
+      );
       _spinner.stop();
 
       if (userCredential.user != null && !_isRegisterInProgress) {
@@ -44,21 +49,25 @@ class AuthenticationService {
         // onInit HomeScreen triggers LoginProcess
       }
       else {
-        _popup.sww(text: 'login by form: user missing');
+        _popup.sww(text: 'Login by form: user missing');
       }
       log('[STOP] Login by form process');
     }
     on FirebaseAuthException {
       _spinner.stop();
-      if (_fireAuth.currentUser != null) await _fireAuth.signOut();
+      if (_fireAuth.currentUser != null) {
+        await _fireAuth.signOut();
+      }
       await _popup.show('Wrong credentials!',
           text: 'Please try again.',
           error: true,
           enableNavigateBack: false
       );
     } catch (error) {
-      _spinner.stop();
       logService.errorHandler(error);
+    }
+    finally {
+      _spinner.stop();
     }
   }
 
@@ -97,7 +106,7 @@ class AuthenticationService {
     try {
       _spinner.start();
       _isRegisterInProgress = true;
-      await _fireAuth.createUserWithEmailAndPassword(email: _toEmail(nickname), password: password);
+      await _fireAuth.createUserWithEmailAndPassword(email: AuthUtil.toEmail(nickname), password: password);
       await _userService.createNewUser(nickname: nickname);
       await _fireAuth.signOut();
       _isRegisterInProgress = false;
@@ -111,25 +120,22 @@ class AuthenticationService {
     } on FirebaseAuthException {
       _nicknameInUse();
     } catch (error) {
-      _isRegisterInProgress = false;
       logService.errorHandler(error);
+    }
+    finally {
+      _isRegisterInProgress = false;
     }
   }
 
   _nicknameInUse () {
-    _spinner.stop();
     _isRegisterInProgress = false;
     _popup.show('Nickname already in use!', error: true);
   }
 
   void _errorPopup() {
-    _spinner.stop();
     Navigator.pop(context, BlankScreen.id);
     _popup.show('Something went wrong!', error: true);
   }
 
-  static const String _firebaseEmailSuffix = '@no.email';
-  static String _toEmail(String login) => login + _firebaseEmailSuffix;
-  static String _toNickname(String email) => email.replaceAll(_firebaseEmailSuffix, '');
-  static String get nickname => _toNickname(FirebaseAuth.instance.currentUser!.email!);
+
 }

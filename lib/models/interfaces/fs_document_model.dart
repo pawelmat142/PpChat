@@ -59,8 +59,9 @@ abstract class FsDocumentModel<T> with ChangeNotifier {
       _state = documentSnapshot.exists ? stateFromSnapshot(documentSnapshot) : null;
       notifyListeners();
 
-      if (!completer.isCompleted) completer.complete();
-
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
     }, onError: (error) {
       errorHandler(error, null, '_firestoreDocumentObserver');
     });
