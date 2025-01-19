@@ -62,8 +62,8 @@ class NavigationService {
     Navigator.pop(context);
   }
 
-  static popToHome() {
-    Navigator.popUntil(context, ModalRoute.withName(ContactsScreen.id));
+  static popToHome({BuildContext? ctx}) {
+    Navigator.popUntil(ctx ?? context, ModalRoute.withName(ContactsScreen.id));
   }
 
   static popToBlank() {

@@ -89,7 +89,7 @@ class _BlankScreenState extends State<BlankScreen> {
                     PpButton(text: 'log aaaaaa',
                       onPressed: () {
                         final authService = getIt.get<AuthenticationService>();
-                        authService.onLogin(nickname: 'aaaaaa', password: 'aaaaaa');
+                        authService.login(nickname: 'aaaaaa', password: 'aaaaaa');
                       },
                     ),
 
@@ -97,7 +97,7 @@ class _BlankScreenState extends State<BlankScreen> {
                       text: 'log bbbbbb',
                       onPressed: () {
                         final authService = getIt.get<AuthenticationService>();
-                        authService.onLogin(nickname: 'bbbbbb', password: 'bbbbbb');
+                        authService.login(nickname: 'bbbbbb', password: 'bbbbbb');
                       },
                     ),
 
@@ -105,7 +105,7 @@ class _BlankScreenState extends State<BlankScreen> {
                       text: 'log cccccc',
                       onPressed: () {
                         final authService = getIt.get<AuthenticationService>();
-                        authService.onLogin(nickname: 'cccccc', password: 'cccccc');
+                        authService.login(nickname: 'cccccc', password: 'cccccc');
                       },
                     ),
 

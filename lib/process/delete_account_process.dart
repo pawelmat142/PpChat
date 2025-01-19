@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/models/conversation/conversation_settings_service.dart';
 import 'package:flutter_chat_app/models/crypto/hive_rsa_pair.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
+import 'package:flutter_chat_app/services/deleted_account_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/process/log_process.dart';
@@ -24,6 +25,7 @@ class DeleteAccountProcess extends LogProcess {
   final _contactsService = getIt.get<ContactsService>();
   final _conversationService = getIt.get<ConversationService>();
   final _conversationSettingsService = getIt.get<ConversationSettingsService>();
+  final _deletedAccountService = getIt.get<DeletedAccountService>();
 
   final Me me = Me.reference;
   final Contacts contacts = Contacts.reference;
@@ -136,11 +138,8 @@ class DeleteAccountProcess extends LogProcess {
   }
 
   _addDeletedAccountLogBatch() {
-    final documentReference = firestore
-        .collection(Collections.DELETED_ACCOUNTS).doc(me.nickname);
-
+    final documentReference = _deletedAccountService.collection.doc(me.nickname);
     final data = {'uid': _myUid, 'nickname': me.nickname};
-
     _batchSet(documentReference: documentReference, data: data);
   }
 

@@ -1,14 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
+import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
+import 'package:flutter_chat_app/services/deleted_account_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/process/logout_process.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
-import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
@@ -19,6 +20,7 @@ class AuthenticationService {
 
   final _fireAuth = FirebaseAuth.instance;
   final _userService = getIt.get<PpUserService>();
+  final _deletedAccountService = getIt.get<DeletedAccountService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
@@ -26,17 +28,25 @@ class AuthenticationService {
   log(String txt) => logService.log(txt);
   logError(String txt) => logService.error(txt);
 
-  get context => NavigationService.context;
+  get ctx => NavigationService.context;
 
   bool _isRegisterInProgress = false;
   bool _isDeletingAccount = false;
 
   String get getUid => Uid.get!;
 
-  void onLogin({ required String nickname, required String password }) async {
+  void login({ required String nickname, required String password }) async {
     try {
       log('[START] Login by form process');
       _spinner.start();
+
+      final bool isDeletedAccount = await _deletedAccountService.isDeletedAccount(nickname);
+      if (isDeletedAccount) {
+        _spinner.stop();
+        _popup.show('Account has been deleted', error: true);
+        return;
+      }
+
       final userCredential = await _fireAuth.signInWithEmailAndPassword(
           email: AuthUtil.toEmail(nickname),
           password: password
@@ -45,8 +55,8 @@ class AuthenticationService {
 
       if (userCredential.user != null && !_isRegisterInProgress) {
         log('[FireAuth listener] login');
-        ContactsScreen.navigate(context);
-        // onInit HomeScreen triggers LoginProcess
+        ContactsScreen.navigate(ctx);
+        // onInit ContactsScreen triggers LoginProcess
       }
       else {
         _popup.sww(text: 'Login by form: user missing');
@@ -95,14 +105,14 @@ class AuthenticationService {
   void _logoutResult({bool skipSignOut = false}) async {
     if (!_isRegisterInProgress && !_isDeletingAccount) {
       if (!skipSignOut) await signOut();
-      Navigator.of(context).popUntil((route) => route.isFirst);
+      Navigator.of(ctx).popUntil((route) => route.isFirst);
       PpSnackBar.logout();
     }
     _isDeletingAccount = false;
   }
 
 
-  void register({required String nickname, required String password}) async {
+  Future<void> register(BuildContext context, {required String nickname, required String password}) async {
     try {
       _spinner.start();
       _isRegisterInProgress = true;
@@ -112,11 +122,13 @@ class AuthenticationService {
       _isRegisterInProgress = false;
       _spinner.stop();
 
-      _popup.show('Registration successful!',
-        text: 'You can now log in.',
+      await _popup.show('Registration successful!',
+        text: 'You can log in now.',
+        context: NavigationService.context,
         enableOkButton: true,
-        defaultAction: () => Navigator.pop(context, LoginFormScreen.id)
-      );
+        defaultAction: () {
+          Navigator.popAndPushNamed(context, LoginFormScreen.id);
+        });
     } on FirebaseAuthException {
       _nicknameInUse();
     } catch (error) {
@@ -133,7 +145,7 @@ class AuthenticationService {
   }
 
   void _errorPopup() {
-    Navigator.pop(context, BlankScreen.id);
+    Navigator.pop(ctx, BlankScreen.id);
     _popup.show('Something went wrong!', error: true);
   }
 

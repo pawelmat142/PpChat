@@ -52,7 +52,7 @@ service cloud.firestore {
     }
 
     match /DELETED_ACCOUNTS/{nickname} {
-    	allow write: if true;
+    	allow read, write: if true;
     }
 
   }

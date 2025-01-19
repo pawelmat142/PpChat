@@ -20,7 +20,7 @@ class ConversationSettingsView extends StatefulWidget {
         arguments: contactUid
     );
   }
-  const ConversationSettingsView({Key? key}) : super(key: key);
+  const ConversationSettingsView({super.key});
 
   @override
   State<ConversationSettingsView> createState() => _ConversationSettingsViewState();

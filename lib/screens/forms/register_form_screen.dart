@@ -32,9 +32,9 @@ class RegisterFormScreen extends StatelessWidget {
 
   void _submitForm(BuildContext context) {
     if (form.valid) {
-      _authService.register(
-          nickname: form.control(Fields.nickname).value,
-          password: form.control(Fields.password).value
+      _authService.register(context,
+        nickname: form.control(Fields.nickname).value,
+        password: form.control(Fields.password).value,
       );
       form.reset();
       FocusScope.of(context).unfocus();

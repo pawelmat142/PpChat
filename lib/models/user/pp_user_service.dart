@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
-import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_chat_app/constants/collections.dart';

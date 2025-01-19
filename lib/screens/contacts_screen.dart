@@ -18,7 +18,7 @@ import 'package:flutter_chat_app/services/uid.dart';
 import 'package:provider/provider.dart';
 
 class ContactsScreen extends StatefulWidget {
-  const ContactsScreen({Key? key}) : super(key: key);
+  const ContactsScreen({super.key});
   static const String id = 'contacts_screen';
 
   static navigate(BuildContext context) {

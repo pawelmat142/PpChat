@@ -59,7 +59,8 @@ class Popup {
     List<PopupButton>? buttons,
     Function? defaultAction,
     Widget? content,
-    int? delay
+    int? delay,
+    BuildContext? context
   }) async {
 
     List<PopupButton> $buttons = buttons ?? [];
@@ -74,7 +75,7 @@ class Popup {
     }
 
     return showDialog(
-      context: NavigationService.context,
+      context: context ?? NavigationService.context,
       builder: (context) => AlertDialog(
         title: Text(title,
             style: TextStyle(

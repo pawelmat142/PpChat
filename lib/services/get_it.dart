@@ -12,6 +12,8 @@ import 'package:flutter_chat_app/models/contact/contacts_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:get_it/get_it.dart';
 
+import 'deleted_account_service.dart';
+
 final getIt = GetIt.instance;
 
 Future<void> initGetIt() async {
@@ -21,6 +23,8 @@ Future<void> initGetIt() async {
   getIt.registerLazySingleton(() => PpSpinner());
 
   getIt.registerLazySingleton(() => PpUserService());
+
+  getIt.registerLazySingleton(() => DeletedAccountService());
 
   getIt.registerLazySingleton(() => PpNotificationService());
 
