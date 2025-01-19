@@ -20,7 +20,7 @@ class Conversation {
   final conversationService = getIt.get<ConversationService>();
   final messageCleaner = MessageCleaner();
 
-  Conversation({required this.contactUid});
+  Conversation({ required this.contactUid });
 
   final String contactUid;
   Box<PpMessage>? box;
@@ -40,7 +40,7 @@ class Conversation {
   late ConversationSettings settings;
   late CollectionReference contactMessagesCollectionRef;
 
-  open({bool temporary = false}) async {
+  open({ bool temporary = false }) async {
     box = await Hive.openBox(hiveKey(contactUid: contactUid));
     if (!temporary) {
       _initializeContactPublicKey();
@@ -63,11 +63,11 @@ class Conversation {
   }
 
 
-  sendMessage(String content) async {
+  sendMessage(String content, { reversed = false }) async {
     final PpMessage encryptedMessage = PpMessage.create(
         message: encrypt(content, contactPublicKey),
-        sender: Uid.get!,
-        receiver: contactUid,
+        sender: reversed ? contactUid : Uid.get!,
+        receiver: reversed ? Uid.get! : contactUid,
         timeToLive: settings.timeToLiveInMinutes,
         timeToLiveAfterRead: settings.timeToLiveAfterReadInMinutes
     );
@@ -75,8 +75,8 @@ class Conversation {
 
     final PpMessage messageForMe = PpMessage.create(
         message: content,
-        sender: Uid.get!,
-        receiver: contactUid,
+        sender: reversed ? contactUid : Uid.get!,
+        receiver: reversed ? Uid.get! : contactUid,
         timeToLive: settings.timeToLiveInMinutes,
         timeToLiveAfterRead: settings.timeToLiveAfterReadInMinutes
     );
@@ -110,7 +110,9 @@ class Conversation {
       _isMocked = true;
       await box!.clear();
     } else if (_isMocked) {
-      if (isLocked) return;
+      if (isLocked) {
+        return;
+      }
       _isMocked = false;
       await box!.clear();
     }
@@ -128,24 +130,12 @@ class Conversation {
     return conversation;
   }
 
-
-
-
-
-
-
-
-
-
-
   static log(String txt) {
     Future.delayed(Duration.zero, () {
       final logService = getIt.get<LogService>();
       logService.log('[Conversation] $txt');
     });
   }
-
-
 
 }
 

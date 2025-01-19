@@ -29,19 +29,20 @@ class AcceptInvitationProcess extends LogProcess {
     contactUid = invitation.documentId;
 
     contactPpUserDocRef = firestore
-        .collection(Collections.PpUser).doc(contactUid);
+        .collection(Collections.PpUser)
+        .doc(contactUid);
 
     final contactNotificationDocRef = contactPpUserDocRef
         .collection(Collections.NOTIFICATIONS).doc(Uid.get);
 
-    // delete invitation
+    // delete invitation notification
     final invitationRef = firestore
         .collection(Collections.PpUser).doc(Uid.get)
         .collection(Collections.NOTIFICATIONS).doc(contactUid);
     batch.delete(invitationRef);
 
 
-    // update sender invitationSelfNotification to invitation acceptance
+    // update sender invitationSelfNotification to invitationAcceptance
     final document = PpNotification.createInvitationAcceptance(
         text: invitation.text,
         sender: invitation.receiver,
@@ -65,13 +66,15 @@ class AcceptInvitationProcess extends LogProcess {
     log('[AcceptInvitationProcess] _resolveFirstMessage');
 
     final publicKey = await _getContactPublicKey();
-    if (publicKey == null) throw Exception('Public key not found for contactUid: $contactUid');
+    if (publicKey == null) {
+      throw Exception('Public key not found for contactUid: $contactUid');
+    }
 
     final temporaryConversationObject = Conversation(contactUid: contactUid);
     await temporaryConversationObject.open(temporary: true);
     temporaryConversationObject.contactPublicKey = publicKey;
 
-    temporaryConversationObject.sendMessage(invitation.text);
+    temporaryConversationObject.sendMessage(invitation.text, reversed: true);
   }
 
   Future<RSAPublicKey?> _getContactPublicKey() async {

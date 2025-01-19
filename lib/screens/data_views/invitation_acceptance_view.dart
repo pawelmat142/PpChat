@@ -13,7 +13,7 @@ class InvitationAcceptanceView extends NotificationView {
   final conversationService = getIt.get<ConversationService>();
 
   @override
-  get title => 'INVITATION ACCEPTANCE';
+  get title => 'Invitation accepted';
 
   @override
   get content => 'Accepted your invitation!';

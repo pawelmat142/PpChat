@@ -13,8 +13,6 @@ class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
   static const String id = 'notifications_screen';
 
-  // Notifications get notifications => notificationService.notifications;
-
   List<NotificationTile> _notificationTilesMapper(List<PpNotification> notifications) {
     notifications.sort((a, b) => (b.isRead ? 0 : 1));
     return notifications.map((n) => NotificationTile(n)).toList();
@@ -25,7 +23,7 @@ class NotificationsScreen extends StatelessWidget {
 
     return Scaffold(
 
-      appBar: AppBar(title: const Text('NOTIFICATIONS')),
+      appBar: AppBar(title: const Text('Notifications')),
 
       body: ListView(
         padding: const EdgeInsets.only(top: BASIC_TOP_PADDING_VALUE),
@@ -36,20 +34,7 @@ class NotificationsScreen extends StatelessWidget {
                 ? Column(children: _notificationTilesMapper(notifications.get))
 
                 : nothingHereWidget();
-
-
           }),
-          // StreamBuilder<List<PpNotification>>(
-          //     initialData: notifications.toScreen,
-          //     stream: notifications.toScreenStream,
-          //     builder: (context, snapshot) {
-          //       return snapshot.data != null && snapshot.data!.isNotEmpty
-          //
-          //           ? Column(children: _notificationTilesMapper(snapshot))
-          //
-          //           : nothingHereWidget();
-          //     }
-          // ),
           removeAllButton(),
 
         ],

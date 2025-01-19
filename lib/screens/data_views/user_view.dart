@@ -212,7 +212,7 @@ class UserView extends StatelessWidget {
                     ),
 
                     PpButton(text: 'Invite', onPressed: () {
-                      _onInvite(user(context), context: context, message: message);
+                      sendInvitation(user(context), context: context, message: message);
                     })
 
                   ],
@@ -226,7 +226,7 @@ class UserView extends StatelessWidget {
     );
   }
 
-  _onInvite(PpUser foundUser, {required BuildContext context, required String message}) async {
+  sendInvitation(PpUser foundUser, {required BuildContext context, required String message}) async {
     final spinner = getIt.get<PpSpinner>();
     final popup = getIt.get<Popup>();
     try {
@@ -241,11 +241,11 @@ class UserView extends StatelessWidget {
     _goToNotifications(context: context);
   }
 
-  _goToNotifications({required BuildContext context}) {
+  _goToNotifications({ required BuildContext context }) {
     Navigator.popAndPushNamed(context, NotificationsScreen.id);
   }
 
-  _sendInvitationNotifications({required PpUser foundUser, required String message}) async {
+  _sendInvitationNotifications({ required PpUser foundUser, required String message }) async {
     final userService = getIt.get<PpUserService>();
 
     final firestore = FirebaseFirestore.instance;
@@ -255,12 +255,14 @@ class UserView extends StatelessWidget {
         .collection(Collections.PpUser).doc(foundUser.uid)
         .collection(Collections.NOTIFICATIONS).doc(Uid.get);
     //contact's notification docId = my uid so any next notification from me will overwrite it
-    batch.set(receiverNotificationsRef, PpNotification.createInvitation(
+
+    final PpNotification invitation = PpNotification.createInvitation(
         sender: userService.nickname,
         receiver: foundUser.nickname,
         text: message,
         avatar: Me.reference.get.avatar
-    ).asMap);
+    );
+    batch.set(receiverNotificationsRef, invitation.asMap);
 
     final myNotificationsRef = firestore
         .collection(Collections.PpUser).doc(Uid.get)
@@ -277,6 +279,5 @@ class UserView extends StatelessWidget {
 
     await batch.commit();
   }
-
 
 }
