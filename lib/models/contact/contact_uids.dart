@@ -47,7 +47,7 @@ class ContactUids extends FsDocumentModel<List<String>> {
   addMany(List<String> items) {
     final List<String> currentUids = get;
     currentUids.addAll(items);
-    set(currentUids);
+    return set(currentUids);
   }
 
   deleteOne(String item) {

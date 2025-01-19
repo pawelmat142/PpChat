@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/models/conversation/conversation.dart';
-import 'package:flutter_chat_app/models/crypto/hive_rsa_pair.dart';
-import 'package:flutter_chat_app/models/user/pp_user.dart';
+import 'package:flutter_chat_app/models/conversation/conversation_settings.dart';
+import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:flutter_chat_app/models/contact/contact_uids.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/process/log_process.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
-import 'package:pointycastle/asymmetric/api.dart';
+import 'package:hive/hive.dart';
+import 'package:rsa_encrypt/rsa_encrypt.dart';
+
+import '../models/crypto/hive_rsa_pair.dart';
 
 class AcceptInvitationProcess extends LogProcess {
 
@@ -41,7 +44,6 @@ class AcceptInvitationProcess extends LogProcess {
         .collection(Collections.NOTIFICATIONS).doc(contactUid);
     batch.delete(invitationRef);
 
-
     // update sender invitationSelfNotification to invitationAcceptance
     final document = PpNotification.createInvitationAcceptance(
         text: invitation.text,
@@ -58,34 +60,39 @@ class AcceptInvitationProcess extends LogProcess {
     //finalize
     await batch.commit();
 
-    _resolveFirstMessage(invitation);
+    _firstMessageSimulation(invitation);
     log('[STOP] [AcceptInvitationProcess]');
   }
 
-  _resolveFirstMessage(PpNotification invitation) async {
-    log('[AcceptInvitationProcess] _resolveFirstMessage');
-
-    final publicKey = await _getContactPublicKey();
-    if (publicKey == null) {
-      throw Exception('Public key not found for contactUid: $contactUid');
+  _firstMessageSimulation(PpNotification invitation) async {
+    if (invitation.text.isEmpty) {
+      log('[SKIP] [AcceptInvitationProcess] _firstMessageSimulation');
+      return;
     }
+    log('[AcceptInvitationProcess] _firstMessageSimulation');
 
-    final temporaryConversationObject = Conversation(contactUid: contactUid);
-    await temporaryConversationObject.open(temporary: true);
-    temporaryConversationObject.contactPublicKey = publicKey;
+    final PpMessage firstMessage = PpMessage.create(
+        message: invitation.text,
+        sender: contactUid,
+        receiver: Uid.get!,
+        timeToLive: ConversationSettings.timeToLiveInMinutesDefault,
+        timeToLiveAfterRead: ConversationSettings.timeToLiveAfterReadInMinutesDefault
+    );
 
-    temporaryConversationObject.sendMessage(invitation.text, reversed: true);
+    final PpMessage encryptedFirstMessage = PpMessage.create(
+        message: encrypt(invitation.text, HiveRsaPair.stringToRsaPublic(Me.reference.get.publicKeyAsString)),
+        sender: contactUid,
+        receiver: Uid.get!,
+        timeToLive: ConversationSettings.timeToLiveInMinutesDefault,
+        timeToLiveAfterRead: ConversationSettings.timeToLiveAfterReadInMinutesDefault
+    );
+
+    await firestore.collection(Collections.PpUser)
+        .doc(contactUid)
+        .collection(Collections.Messages)
+        .add(firstMessage.asMap);
+
+    Box<PpMessage> box = await Hive.openBox(Conversation.hiveKey(contactUid: contactUid));
+    await box.add(encryptedFirstMessage);
   }
-
-  Future<RSAPublicKey?> _getContactPublicKey() async {
-    final user = await _getPpUserObjectByUid();
-    return user == null ? null : HiveRsaPair.stringToRsaPublic(user.publicKeyAsString);
-  }
-
-  Future<PpUser?> _getPpUserObjectByUid() async {
-    final result = await contactPpUserDocRef.get();
-    final data = result.data();
-    return data == null ? null : PpUser.fromMap(data);
-  }
-
 }

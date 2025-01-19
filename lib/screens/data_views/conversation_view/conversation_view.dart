@@ -91,11 +91,15 @@ class _ConversationViewState extends State<ConversationView> {
               valueListenable: conversation.box!.listenable(),
               builder: (context, box, _) {
 
-                if (box.values.isEmpty) return const Center(child: Text('empty!'));
+                if (!box.isOpen || box.values.isEmpty) {
+                  return const Center(child: Text('empty!'));
+                }
 
                 ///MOCK MESSAGES
                 ///are not encrypted!
-                if (isMock(box)) return MessageMock(box.values.first, contactUser);
+                if (isMock(box)) {
+                  return MessageMock(box.values.first, contactUser);
+                }
 
                 conversationService.markAsRead(box);
 

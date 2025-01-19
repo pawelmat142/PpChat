@@ -25,22 +25,26 @@ class InvitationAcceptanceView extends NotificationView {
   get buttons {
     return [
 
-      PpButton(text: 'show user', onPressed: () async {
+      PpButton(text: 'Show contact', onPressed: () async {
         NavigationService.homeAndContacts();
         final user = super.contactsService.getByNickname(nickname: notification.sender);
-        if (user != null) UserView.navigate(user: user);
+        if (user != null) {
+          UserView.navigate(user: user);
+        }
       }),
 
-      PpButton(text: 'Write message', onPressed: () async {
+      PpButton(text: 'Conversation', onPressed: () async {
         NavigationService.homeAndContacts();
         final user = contactsService.getByUid(uid: notification.documentId);
-        if (user != null) conversationService.navigateToConversationView(user);
+        if (user != null) {
+          conversationService.navigateToConversationView(user);
+        }
       }),
 
-      PpButton(text: 'remove notification', color: Colors.red, onPressed: () async {
-          await notificationService.onRemoveNotification(notification);
-          Navigator.pop(NavigationService.context);
-          PpSnackBar.deleted();
+      PpButton(text: 'Remove notification', color: Colors.red, onPressed: () async {
+        await notificationService.onRemoveNotification(notification);
+        Navigator.pop(NavigationService.context);
+        PpSnackBar.deleted();
       }),
 
     ];

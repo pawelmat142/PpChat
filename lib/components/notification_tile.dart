@@ -92,7 +92,7 @@ class NotificationTile extends StatelessWidget {
   getTitle() {
     switch(notification.type) {
       case PpNotificationTypes.invitation: return 'Invitation';
-      case PpNotificationTypes.invitationSelfNotification: return 'Your invitation';
+      case PpNotificationTypes.invitationSelfNotification: return 'Invitation sent';
       case PpNotificationTypes.invitationAcceptance: return 'Invitation accepted';
       default: return 'Unknown';
     }

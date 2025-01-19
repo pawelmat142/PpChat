@@ -3,7 +3,8 @@ import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 
 class MessageInput extends StatefulWidget {
-  const MessageInput({required this.conversation, required, Key? key}) : super(key: key);
+  const MessageInput({required this.conversation, required, super.key});
+
   final Conversation conversation;
 
   @override

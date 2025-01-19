@@ -27,7 +27,7 @@ class InvitationService {
       return;
     }
     final newContactUids = invitationAcceptances.map((n) => n.documentId).toSet().toList();
-    contactUids.addMany(newContactUids);
+    await contactUids.addMany(newContactUids);
   }
 
   resolveContactDeletedNotifications(Set<PpNotification> notifications) async {

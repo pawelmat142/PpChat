@@ -40,11 +40,9 @@ class Conversation {
   late ConversationSettings settings;
   late CollectionReference contactMessagesCollectionRef;
 
-  open({ bool temporary = false }) async {
+  open() async {
     box = await Hive.openBox(hiveKey(contactUid: contactUid));
-    if (!temporary) {
-      _initializeContactPublicKey();
-    }
+    _initializeContactPublicKey();
     await _initializeSettings();
     contactMessagesCollectionRef = conversationService.contactMessagesCollectionRef(contactUid: contactUid);
     await messageCleaner.init(contactUid: contactUid, box: box!);
@@ -58,16 +56,14 @@ class Conversation {
 
   _initializeSettings() async {
     final conversationSettingsService = getIt.get<ConversationSettingsService>();
-    settings = await conversationSettingsService
-        .getSettings(contactUid: contactUid);
+    settings = await conversationSettingsService.getSettings(contactUid: contactUid);
   }
 
-
-  sendMessage(String content, { reversed = false }) async {
+  sendMessage(String content) async {
     final PpMessage encryptedMessage = PpMessage.create(
         message: encrypt(content, contactPublicKey),
-        sender: reversed ? contactUid : Uid.get!,
-        receiver: reversed ? Uid.get! : contactUid,
+        sender: Uid.get!,
+        receiver: contactUid,
         timeToLive: settings.timeToLiveInMinutes,
         timeToLiveAfterRead: settings.timeToLiveAfterReadInMinutes
     );
@@ -75,8 +71,8 @@ class Conversation {
 
     final PpMessage messageForMe = PpMessage.create(
         message: content,
-        sender: reversed ? contactUid : Uid.get!,
-        receiver: reversed ? Uid.get! : contactUid,
+        sender: Uid.get!,
+        receiver: contactUid,
         timeToLive: settings.timeToLiveInMinutes,
         timeToLiveAfterRead: settings.timeToLiveAfterReadInMinutes
     );

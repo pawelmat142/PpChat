@@ -50,9 +50,8 @@ class InvitationView extends NotificationView {
       NavigationService.homeAndContacts();
       spinner.start();
       await AcceptInvitationProcess(invitation: notification).process();
-      // await process.process();
       spinner.stop();
-      final user = contactsService.getByUid(uid: notification.documentId);
+      final PpUser? user = contactsService.getByUid(uid: notification.documentId);
       if (user != null) {
         UserView.navigate(user: user);
       }

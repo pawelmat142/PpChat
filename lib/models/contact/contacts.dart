@@ -77,10 +77,7 @@ class Contacts extends FsCollectionModel<PpUser> {
     return get.indexWhere((i) => i.uid == item.uid);
   }
 
-
-
-
-  getByNickname(String nickname) {
+  PpUser? getByNickname(String nickname) {
     final index = get.indexWhere((c) => c.nickname == nickname);
     return index != -1 ? get[index] : null;
   }
@@ -93,7 +90,6 @@ class Contacts extends FsCollectionModel<PpUser> {
   bool containsByUid(String uid) {
     return get.indexWhere((c) => c.uid == uid) != -1;
   }
-
 
 }
 

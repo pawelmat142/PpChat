@@ -13,7 +13,7 @@ class InvitationSelfNotificationView extends NotificationView {
   final invitationService = getIt.get<InvitationService>();
 
   @override
-  get title => 'YOUR INVITATION';
+  get title => 'Invitation sent';
 
   @override
   String get nickname => notification.receiver;
