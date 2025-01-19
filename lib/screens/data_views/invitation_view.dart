@@ -16,7 +16,7 @@ class InvitationView extends NotificationView {
   final invitationService = getIt.get<InvitationService>();
 
   @override
-  get title => 'INVITATION';
+  get title => 'Invitation';
 
   @override
   get content => 'Invites you to contacts!';
@@ -26,17 +26,17 @@ class InvitationView extends NotificationView {
     return [
 
       PpButton(
-        text: 'ACCEPT',
-        onPressed: () => _onAcceptInvitation(),
+        text: 'Accept',
+        onPressed: () => _acceptInvitation(),
       ),
 
       PpButton(
-        text: 'REJECT',
+        text: 'Reject',
         color: PRIMARY_COLOR_DARKER,
         onPressed: () {
-          popup.show('Shure?', error: true, buttons: [
+          popup.show('Sure?', error: true, buttons: [
             PopupButton('Yes', color: Colors.deepOrange, onPressed: () {
-              invitationService.onRejectReceivedInvitation(notification);
+              invitationService.rejectReceivedInvitation(notification);
               NavigationService.pop();
           })]);
         }
@@ -45,15 +45,17 @@ class InvitationView extends NotificationView {
     ];
   }
 
-  _onAcceptInvitation() async {
+  _acceptInvitation() async {
     try {
       NavigationService.homeAndContacts();
       spinner.start();
-      final process = AcceptInvitationProcess(invitation: notification);
-      await process.process();
+      await AcceptInvitationProcess(invitation: notification).process();
+      // await process.process();
       spinner.stop();
       final user = contactsService.getByUid(uid: notification.documentId);
-      if (user != null) UserView.navigate(user: user);
+      if (user != null) {
+        UserView.navigate(user: user);
+      }
     } catch (error) {
       spinner.stop();
       popup.sww(text: 'acceptInvitationForReceiver');

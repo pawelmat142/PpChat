@@ -182,7 +182,7 @@ class ConversationService {
 
   onDeleteContact(PpUser contactUser) async {
     final contactsService = getIt.get<ContactsService>();
-    await contactsService.onDeleteContact(contactUser.uid);
+    await contactsService.deleteContact(contactUser.uid);
   }
 
   isConversationLocked(PpUser contactUser) {

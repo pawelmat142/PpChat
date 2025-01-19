@@ -29,7 +29,7 @@ class ContactsService {
   Conversations get conversations => Conversations.reference;
 
 
-  onDeleteContact(String uid) async {
+  deleteContact(String uid) async {
     await Future.delayed(const Duration(milliseconds: 100));
     await _popup.show('Are you sure?', error: true,
         text: 'All data will be lost also on the other side!',

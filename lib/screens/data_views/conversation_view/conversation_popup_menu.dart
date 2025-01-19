@@ -12,7 +12,7 @@ import 'package:flutter_chat_app/models/conversation/conversation_service.dart';
 import 'package:flutter_chat_app/models/conversation/conversation.dart';
 
 class ConversationPopupMenu extends StatelessWidget {
-  const ConversationPopupMenu({required this.conversation, Key? key}) : super(key: key);
+  const ConversationPopupMenu({required this.conversation, super.key});
   final Conversation conversation;
 
   PpUser get contactUser => Contacts.reference.getByUid(conversation.contactUid)!;
@@ -100,7 +100,7 @@ class ConversationPopupMenu extends StatelessWidget {
 
   _onDeleteContact() async {
     final contactsService = getIt.get<ContactsService>();
-    await contactsService.onDeleteContact(conversation.contactUid);
+    await contactsService.deleteContact(conversation.contactUid);
   }
 
   _onSettings() {

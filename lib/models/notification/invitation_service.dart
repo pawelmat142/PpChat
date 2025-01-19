@@ -23,7 +23,9 @@ class InvitationService {
 
 
   resolveInvitationAcceptances(Set<PpNotification> invitationAcceptances) async {
-    if (invitationAcceptances.isEmpty) return;
+    if (invitationAcceptances.isEmpty) {
+      return;
+    }
     final newContactUids = invitationAcceptances.map((n) => n.documentId).toSet().toList();
     contactUids.addMany(newContactUids);
   }
@@ -42,7 +44,7 @@ class InvitationService {
     }
   }
 
-  onCancelSentInvitation(PpNotification notification) async {
+  cancelSentInvitation(PpNotification notification) async {
     try {
       logService.log('[START] [CANCEL SENT INVITATION]');
       if (notification.type != PpNotificationTypes.invitationSelfNotification) {
@@ -59,7 +61,7 @@ class InvitationService {
     }
   }
 
-  onRejectReceivedInvitation(PpNotification notification) async {
+  rejectReceivedInvitation(PpNotification notification) async {
     try {
       logService.log('[START] [REJECT RECEIVED INVITATION]');
       if (notification.type != PpNotificationTypes.invitation) {

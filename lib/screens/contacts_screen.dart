@@ -63,7 +63,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
               authService.onLogout();
             },
           ),
-          title: const Text('CONTACTS'),
+          title: const Text('Contacts'),
           actions: [
             IconButton(
                 onPressed: () => UserView.navigate(user: me),
@@ -111,6 +111,6 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   nothingHereWidget() {
-    return const Center(child: Text('Nothing here'));
+    return const Center(child: Text('You have no contacts'));
   }
 }

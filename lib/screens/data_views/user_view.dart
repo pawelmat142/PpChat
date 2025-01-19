@@ -126,7 +126,7 @@ class UserView extends StatelessWidget {
                       color: Colors.red, onPressed: () async {
                         final contactsService = getIt.get<ContactsService>();
                         if (contactsService.contactExists(user(context).uid)) {
-                          await contactsService.onDeleteContact(user(context).uid);
+                          await contactsService.deleteContact(user(context).uid);
                         } else {
                           PpSnackBar.contactNotExists();
                         }
@@ -154,7 +154,7 @@ class UserView extends StatelessWidget {
                     authService.onLogout();
                   }),
 
-                  PpButton(text: 'Delete from device', color: Colors.deepOrange, onPressed: () {
+                  PpButton(text: 'Delete on this device', color: Colors.deepOrange, onPressed: () {
                     final popup = getIt.get<Popup>();
                     final spinner = getIt.get<PpSpinner>();
                     popup.show('Are you sure?',
@@ -204,7 +204,7 @@ class UserView extends StatelessWidget {
                         // scrollPadding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 200),
                         onChanged: (x) => message = x,
                         decoration: const InputDecoration(
-                          labelText: 'FIRST MESSAGE',
+                          labelText: 'First message',
                           floatingLabelAlignment: FloatingLabelAlignment.center,
                           floatingLabelBehavior: FloatingLabelBehavior.auto,
                         ),
