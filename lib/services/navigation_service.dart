@@ -17,7 +17,8 @@ class NavigationService {
   static get routes => NavigationHistoryObserver().history;
 
   static bool get isContactsScreenInStack => routes
-      .map((route) => route.settings.name).contains(ContactsScreen.id);
+      .map((route) => route.settings.name)
+      .contains(ContactsScreen.id);
 
   static bool get isContactsOpen {
     final lastRoute = routes.last;
@@ -61,8 +62,8 @@ class NavigationService {
     Navigator.pop(context);
   }
 
-  static popToHome() {
-    Navigator.popUntil(context, ModalRoute.withName(ContactsScreen.id));
+  static popToHome({BuildContext? ctx}) {
+    Navigator.popUntil(ctx ?? context, ModalRoute.withName(ContactsScreen.id));
   }
 
   static popToBlank() {

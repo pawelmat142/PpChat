@@ -20,7 +20,7 @@ class ConversationSettingsView extends StatefulWidget {
         arguments: contactUid
     );
   }
-  const ConversationSettingsView({Key? key}) : super(key: key);
+  const ConversationSettingsView({super.key});
 
   @override
   State<ConversationSettingsView> createState() => _ConversationSettingsViewState();
@@ -76,8 +76,8 @@ class _ConversationSettingsViewState extends State<ConversationSettingsView> {
     if (saveButton == null) return;
     options[_selectedTimeToLiveAfterRead] ==
           currentSettingsState.timeToLiveAfterReadInMinutes
-          && options[_selectedTimeToLive] ==
-              currentSettingsState.timeToLiveInMinutes
+      && options[_selectedTimeToLive] ==
+          currentSettingsState.timeToLiveInMinutes
     ? saveButton!.deactivation()
     : saveButton!.activation();
   }

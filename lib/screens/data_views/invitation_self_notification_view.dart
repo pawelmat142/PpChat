@@ -13,7 +13,7 @@ class InvitationSelfNotificationView extends NotificationView {
   final invitationService = getIt.get<InvitationService>();
 
   @override
-  get title => 'YOUR INVITATION';
+  get title => 'Invitation sent';
 
   @override
   String get nickname => notification.receiver;
@@ -25,16 +25,16 @@ class InvitationSelfNotificationView extends NotificationView {
   get buttons {
     return [
 
-      PpButton(text: 'cancel invitation', onPressed: () {
-        popup.show('Shure?', error: true,
+      PpButton(text: 'Cancel invitation', onPressed: () {
+        popup.show('Sure?', error: true,
             buttons: [PopupButton('Yes', onPressed: () {
-            invitationService.onCancelSentInvitation(super.notification);
+            invitationService.cancelSentInvitation(super.notification);
             NavigationService.pop(delay: 100);
         })]);
       }),
 
 
-      PpButton(text: 'remove notification', color: Colors.red, onPressed: () {
+      PpButton(text: 'Remove notification', color: Colors.red, onPressed: () {
         Navigator.pop(NavigationService.context);
         notificationService.onRemoveNotification(notification);
         PpSnackBar.deleted();

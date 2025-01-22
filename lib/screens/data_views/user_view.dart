@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/group_conversation/group_conversation_service.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
@@ -25,7 +26,7 @@ import 'package:flutter_chat_app/services/authentication_service.dart';
 
 
 class UserView extends StatelessWidget {
-  const UserView({Key? key}) : super(key: key);
+  const UserView({super.key});
   static const String id = 'user_view';
 
   static popAndNavigate({required PpUser user, int? delay}) async {
@@ -125,7 +126,7 @@ class UserView extends StatelessWidget {
                       color: Colors.red, onPressed: () async {
                         final contactsService = getIt.get<ContactsService>();
                         if (contactsService.contactExists(user(context).uid)) {
-                          await contactsService.onDeleteContact(user(context).uid);
+                          await contactsService.deleteContact(user(context).uid);
                         } else {
                           PpSnackBar.contactNotExists();
                         }
@@ -153,7 +154,7 @@ class UserView extends StatelessWidget {
                     authService.onLogout();
                   }),
 
-                  PpButton(text: 'Delete from device', color: Colors.deepOrange, onPressed: () {
+                  PpButton(text: 'Delete on this device', color: Colors.deepOrange, onPressed: () {
                     final popup = getIt.get<Popup>();
                     final spinner = getIt.get<PpSpinner>();
                     popup.show('Are you sure?',
@@ -182,6 +183,13 @@ class UserView extends StatelessWidget {
                             })]
                         );
                     }),
+
+                  PpButton(text: 'new group',
+                      color: Colors.red, onPressed: () async {
+                        final groupConversationService = getIt.get<GroupConversationService>();
+                        groupConversationService.startNewConversation();
+                    }),
+
                 ])
 
               /// else
@@ -196,7 +204,7 @@ class UserView extends StatelessWidget {
                         // scrollPadding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 200),
                         onChanged: (x) => message = x,
                         decoration: const InputDecoration(
-                          labelText: 'FIRST MESSAGE',
+                          labelText: 'First message',
                           floatingLabelAlignment: FloatingLabelAlignment.center,
                           floatingLabelBehavior: FloatingLabelBehavior.auto,
                         ),
@@ -204,7 +212,7 @@ class UserView extends StatelessWidget {
                     ),
 
                     PpButton(text: 'Invite', onPressed: () {
-                      _onInvite(user(context), context: context, message: message);
+                      sendInvitation(user(context), context: context, message: message);
                     })
 
                   ],
@@ -218,7 +226,7 @@ class UserView extends StatelessWidget {
     );
   }
 
-  _onInvite(PpUser foundUser, {required BuildContext context, required String message}) async {
+  sendInvitation(PpUser foundUser, {required BuildContext context, required String message}) async {
     final spinner = getIt.get<PpSpinner>();
     final popup = getIt.get<Popup>();
     try {
@@ -233,11 +241,11 @@ class UserView extends StatelessWidget {
     _goToNotifications(context: context);
   }
 
-  _goToNotifications({required BuildContext context}) {
+  _goToNotifications({ required BuildContext context }) {
     Navigator.popAndPushNamed(context, NotificationsScreen.id);
   }
 
-  _sendInvitationNotifications({required PpUser foundUser, required String message}) async {
+  _sendInvitationNotifications({ required PpUser foundUser, required String message }) async {
     final userService = getIt.get<PpUserService>();
 
     final firestore = FirebaseFirestore.instance;
@@ -247,12 +255,14 @@ class UserView extends StatelessWidget {
         .collection(Collections.PpUser).doc(foundUser.uid)
         .collection(Collections.NOTIFICATIONS).doc(Uid.get);
     //contact's notification docId = my uid so any next notification from me will overwrite it
-    batch.set(receiverNotificationsRef, PpNotification.createInvitation(
+
+    final PpNotification invitation = PpNotification.createInvitation(
         sender: userService.nickname,
         receiver: foundUser.nickname,
         text: message,
         avatar: Me.reference.get.avatar
-    ).asMap);
+    );
+    batch.set(receiverNotificationsRef, invitation.asMap);
 
     final myNotificationsRef = firestore
         .collection(Collections.PpUser).doc(Uid.get)
@@ -269,6 +279,5 @@ class UserView extends StatelessWidget {
 
     await batch.commit();
   }
-
 
 }

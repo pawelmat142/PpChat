@@ -20,7 +20,7 @@ class Conversation {
   final conversationService = getIt.get<ConversationService>();
   final messageCleaner = MessageCleaner();
 
-  Conversation({required this.contactUid});
+  Conversation({ required this.contactUid });
 
   final String contactUid;
   Box<PpMessage>? box;
@@ -40,11 +40,9 @@ class Conversation {
   late ConversationSettings settings;
   late CollectionReference contactMessagesCollectionRef;
 
-  open({bool temporary = false}) async {
+  open() async {
     box = await Hive.openBox(hiveKey(contactUid: contactUid));
-    if (!temporary) {
-      _initializeContactPublicKey();
-    }
+    _initializeContactPublicKey();
     await _initializeSettings();
     contactMessagesCollectionRef = conversationService.contactMessagesCollectionRef(contactUid: contactUid);
     await messageCleaner.init(contactUid: contactUid, box: box!);
@@ -58,10 +56,8 @@ class Conversation {
 
   _initializeSettings() async {
     final conversationSettingsService = getIt.get<ConversationSettingsService>();
-    settings = await conversationSettingsService
-        .getSettings(contactUid: contactUid);
+    settings = await conversationSettingsService.getSettings(contactUid: contactUid);
   }
-
 
   sendMessage(String content) async {
     final PpMessage encryptedMessage = PpMessage.create(
@@ -110,7 +106,9 @@ class Conversation {
       _isMocked = true;
       await box!.clear();
     } else if (_isMocked) {
-      if (isLocked) return;
+      if (isLocked) {
+        return;
+      }
       _isMocked = false;
       await box!.clear();
     }
@@ -128,24 +126,12 @@ class Conversation {
     return conversation;
   }
 
-
-
-
-
-
-
-
-
-
-
   static log(String txt) {
     Future.delayed(Duration.zero, () {
       final logService = getIt.get<LogService>();
       logService.log('[Conversation] $txt');
     });
   }
-
-
 
 }
 

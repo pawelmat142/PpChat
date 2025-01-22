@@ -7,7 +7,7 @@ import 'package:flutter_chat_app/screens/notifications_screen.dart';
 import 'package:provider/provider.dart';
 
 class NotificationInfo extends StatelessWidget {
-  const NotificationInfo({Key? key}) : super(key: key);
+  const NotificationInfo({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class NotificationInfo extends StatelessWidget {
         onTap: () => Navigator.pushNamed(context, NotificationsScreen.id),
         child: Container(
           decoration: BoxDecoration(
-            color: PRIMARY_COLOR_LIGHTER.withOpacity(0.5),
+            color: PRIMARY_COLOR_LIGHTER,
             shape: BoxShape.rectangle,
             borderRadius: const BorderRadius.all(Radius.circular(primaryButtonBorderRadius))
           ),
@@ -28,7 +28,7 @@ class NotificationInfo extends StatelessWidget {
                   PpNotification.getUnread(notifications.get).length.toString();
               final totalNotifications = notifications.get.length.toString();
               return Text(
-                  'NOTIFICATIONS: $totalNotifications      UNREAD: $unreadNotifications',
+                  'Notifications: $totalNotifications      Unread: $unreadNotifications',
                 style: const TextStyle(
                     color: WHITE_COLOR,
                     letterSpacing: 1,

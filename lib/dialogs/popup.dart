@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 
+import '../utils/style_util.dart';
+
 class PopupButton {
   final Function? onPressed;
   final String text;
@@ -41,7 +43,7 @@ class Popup {
         btn.text,
         style: TextStyle(
             fontWeight: btn.bold || buttons[buttons.length - 1] == btn ? FontWeight.w800 : FontWeight.w500,
-            color: btn.color ?? (btn.error ? Theme.of(NavigationService.context).errorColor : Theme.of(NavigationService.context).primaryColor)
+            color: StyleUtil.btnColor(btn)
         ),
       ),
     )).toList();
@@ -57,7 +59,8 @@ class Popup {
     List<PopupButton>? buttons,
     Function? defaultAction,
     Widget? content,
-    int? delay
+    int? delay,
+    BuildContext? context
   }) async {
 
     List<PopupButton> $buttons = buttons ?? [];
@@ -72,13 +75,14 @@ class Popup {
     }
 
     return showDialog(
-      context: NavigationService.context,
+      context: context ?? NavigationService.context,
       builder: (context) => AlertDialog(
         title: Text(title,
             style: TextStyle(
                 color: error
-                    ? Theme.of(context).errorColor
-                    : Theme.of(context).primaryColorDark)),
+                    ? Theme.of(context).colorScheme.error
+                    : Theme.of(context).primaryColorDark)
+            ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

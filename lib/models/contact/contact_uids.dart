@@ -22,33 +22,40 @@ class ContactUids extends FsDocumentModel<List<String>> {
       .collection(Collections.CONTACTS).doc(Uid.get);
 
   @override
-  Map<String, dynamic> get stateAsMap => {contactUidsFieldName: get};
+  Map<String, dynamic> get stateAsMap => { contactUidsFieldName: get };
 
 
   @override
   stateFromSnapshot(DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
     final data = documentSnapshot.data();
-    if (data == null) return [];
+    if (data == null) {
+      return [];
+    }
     final result = data[contactUidsFieldName];
-    if (result == null) return [];
+    if (result == null) {
+      return [];
+    }
     return (result as List).map((item) => item as String).toList();
   }
 
   addOne(String item) {
-    get.add(item);
-    set(get);
+    final List<String> currentUids = get;
+    currentUids.add(item);
+    set(currentUids);
   }
 
   addMany(List<String> items) {
-    get.addAll(items);
-    set(get);
+    final List<String> currentUids = get;
+    currentUids.addAll(items);
+    return set(currentUids);
   }
 
   deleteOne(String item) {
     final index = get.indexWhere((c) => c == item);
     if (index != -1) {
-      get.removeAt(index);
-      set(get);
+      final List<String> currentUids = get;
+      currentUids.removeAt(index);
+      set(currentUids);
       log('[$runtimeType] delete item index: $index');
     }
   }
@@ -56,6 +63,4 @@ class ContactUids extends FsDocumentModel<List<String>> {
   bool contains(String contactUid) {
     return get.indexWhere((c) => c == contactUid) != -1;
   }
-
-
 }

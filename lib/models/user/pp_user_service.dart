@@ -1,20 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
-import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/models/user/pp_user_fields.dart';
+import 'package:flutter_chat_app/utils/auth_util.dart';
 
+/*
+* PpUser collection management
+*/
 class PpUserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final logService = getIt.get<LogService>();
 
   Me get me => Me.reference;
-  String get nickname => me.nickname.isNotEmpty ? me.nickname : AuthenticationService.nickname;
+  String get nickname => me.nickname.isNotEmpty ? me.nickname : AuthUtil.nickname;
 
   CollectionReference<Map<String, dynamic>> get _collection => _firestore.collection(Collections.PpUser);
   DocumentReference<Map<String, dynamic>> get documentRef => _collection.doc(Uid.get);

@@ -18,7 +18,7 @@ import 'package:flutter_chat_app/services/uid.dart';
 import 'package:provider/provider.dart';
 
 class ContactsScreen extends StatefulWidget {
-  const ContactsScreen({Key? key}) : super(key: key);
+  const ContactsScreen({super.key});
   static const String id = 'contacts_screen';
 
   static navigate(BuildContext context) {
@@ -41,8 +41,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
     super.initState();
     Future.delayed(Duration.zero, () async {
       spinner.start(context: context);
-      final process = LoginProcess();
-      await process.process();
+      await LoginProcess().process();
       spinner.stop(context: context);
       Future.delayed(Duration.zero, ()  {
         PpSnackBar.login();
@@ -63,7 +62,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
               authService.onLogout();
             },
           ),
-          title: const Text('CONTACTS'),
+          title: const Text('Contacts'),
           actions: [
             IconButton(
                 onPressed: () => UserView.navigate(user: me),
@@ -111,6 +110,6 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   nothingHereWidget() {
-    return const Center(child: Text('Nothing here'));
+    return const Center(child: Text('You have no contacts'));
   }
 }

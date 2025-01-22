@@ -24,7 +24,7 @@ class LoginFormScreen extends StatelessWidget {
 
   void _submitForm(BuildContext context) {
     if (form.valid) {
-      _authService.onLogin(
+      _authService.login(
           nickname: form.control(Fields.nickname).value,
           password: form.control(Fields.password).value
       );

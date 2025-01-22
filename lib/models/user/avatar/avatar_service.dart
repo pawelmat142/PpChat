@@ -38,7 +38,7 @@ abstract class AvatarService {
 
   static Color getColor(String key) => colorsPalette[key]!;
 
-  static createRandom({required String userNickname}) {
+  static AvatarModel createRandom({required String userNickname}) {
     return AvatarModel(
         color: randomColorKey,
         txt: userNickname[0],

@@ -63,9 +63,13 @@ class ConversationService {
       for (var doc in event.docs) {
         messages[doc.id] = PpMessage.fromDB(doc);
       }
-      if (messages.isNotEmpty) await _resolveMessages(messages);
+      if (messages.isNotEmpty) {
+        await _resolveMessages(messages);
+      }
 
-      if (!completer.isCompleted) completer.complete();
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
     });
     logService.log('[START] [Messages] firestore collection observer');
     return completer.future;
@@ -73,22 +77,27 @@ class ConversationService {
 
   Map<String, PpMessage> unresolvedMessages = {};
 
-  _resolveMessages(Map<String, PpMessage> messages, {bool skipNotification = false}) async {
+  _resolveMessages(Map<String, PpMessage> messages, { bool skipNotification = false }) async {
     logService.log('[MSG] Received ${messages.length} messages.');
     Map<String, PpMessage> resolvedMessages = {};
     unresolvedMessages = {};
 
     for (var documentId in messages.keys) {
 
-      final senderUid = messages[documentId]!.sender;
-      final contactUid = senderUid != Uid.get ? senderUid : messages[documentId]!.receiver;
+      final PpMessage message = messages[documentId]!;
+
+      final sender = message.sender;
+
+      final contactUid = sender != Uid.get ? sender : message.receiver;
+
       if (contacts.containsByUid(contactUid)) {
 
-        final msg = messages[documentId]!;
-        if (msg.message == '') continue;
+        if (message.message == '') {
+          continue;
+        }
         final conversation = await conversations.openOrCreate(contactUid: contactUid);
-        conversation.addMessageToHive(msg);
-        resolvedMessages[documentId] = msg;
+        conversation.addMessageToHive(message);
+        resolvedMessages[documentId] = message;
       }
       else {
         unresolvedMessages[documentId] = messages[documentId]!;
@@ -182,7 +191,7 @@ class ConversationService {
 
   onDeleteContact(PpUser contactUser) async {
     final contactsService = getIt.get<ContactsService>();
-    await contactsService.onDeleteContact(contactUser.uid);
+    await contactsService.deleteContact(contactUser.uid);
   }
 
   isConversationLocked(PpUser contactUser) {

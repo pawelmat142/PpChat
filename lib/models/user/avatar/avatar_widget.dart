@@ -14,8 +14,8 @@ class AvatarWidget extends StatelessWidget {
     required this.model,
     this.pickedImageFile,
     required this.uid,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
 
   final double? size;
   final AvatarModel model;

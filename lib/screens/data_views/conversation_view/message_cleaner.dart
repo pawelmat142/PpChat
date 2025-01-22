@@ -66,8 +66,10 @@ class MessageCleaner {
 
   _setMessageTimersIfExpiresSoon() async {
     _cancelMessageTimers();
-    for (final key in box.keys) {
-      _checkSingleMessage(key);
+    if (box.isOpen) {
+      for (final key in box.keys) {
+        _checkSingleMessage(key);
+      }
     }
   }
 
@@ -91,15 +93,26 @@ class MessageCleaner {
 
   Duration _getDurationToExpireAfterReadIfSoon(PpMessage m) {
     final duration = m.readTimestamp.add(Duration(minutes: m.timeToLiveAfterRead)).difference(DateTime.now());
-    return m.isRead && duration.inSeconds > 0 && duration.inMinutes < timerPeriod ? duration : Duration.zero;
+    if (m.isRead && duration.inSeconds > 0 && duration.inMinutes < timerPeriod) {
+      return duration;
+    } else {
+      return Duration.zero;
+    }
   }
 
   Duration? _getShorterDuration(Duration a, Duration b) {
     final aPositive = a.inSeconds > 0;
     final bPositive = b.inSeconds > 0;
-    if (aPositive && !bPositive) return a;
-    if (!aPositive && bPositive) return b;
-    if (aPositive && bPositive) return a.compareTo(b) < 0 ? a : b;
+
+    if (aPositive && !bPositive) {
+      return a;
+    }
+    if (!aPositive && bPositive) {
+      return b;
+    }
+    if (aPositive && bPositive) {
+      return a.compareTo(b) < 0 ? a : b;
+    }
     return null;
   }
 

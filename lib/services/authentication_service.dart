@@ -1,21 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
+import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
+import 'package:flutter_chat_app/services/deleted_account_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/process/logout_process.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
-import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/screens/blank_screen.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 
+import '../utils/auth_util.dart';
+
 class AuthenticationService {
+
   final _fireAuth = FirebaseAuth.instance;
   final _userService = getIt.get<PpUserService>();
+  final _deletedAccountService = getIt.get<DeletedAccountService>();
   final _popup = getIt.get<Popup>();
   final _spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
@@ -23,42 +28,56 @@ class AuthenticationService {
   log(String txt) => logService.log(txt);
   logError(String txt) => logService.error(txt);
 
-
-  get context => NavigationService.context;
+  get ctx => NavigationService.context;
 
   bool _isRegisterInProgress = false;
   bool _isDeletingAccount = false;
 
   String get getUid => Uid.get!;
 
-  void onLogin({required String nickname, required String password}) async {
+  void login({ required String nickname, required String password }) async {
     try {
       log('[START] Login by form process');
       _spinner.start();
-      final userCredential = await _fireAuth.signInWithEmailAndPassword(email: _toEmail(nickname), password: password);
+
+      final bool isDeletedAccount = await _deletedAccountService.isDeletedAccount(nickname);
+      if (isDeletedAccount) {
+        _spinner.stop();
+        _popup.show('Account has been deleted', error: true);
+        return;
+      }
+
+      final userCredential = await _fireAuth.signInWithEmailAndPassword(
+          email: AuthUtil.toEmail(nickname),
+          password: password
+      );
       _spinner.stop();
 
       if (userCredential.user != null && !_isRegisterInProgress) {
         log('[FireAuth listener] login');
-        ContactsScreen.navigate(context);
-        // onInit HomeScreen triggers LoginProcess
+        ContactsScreen.navigate(ctx);
+        // onInit ContactsScreen triggers LoginProcess
       }
       else {
-        _popup.sww(text: 'login by form: user missing');
+        _popup.sww(text: 'Login by form: user missing');
       }
       log('[STOP] Login by form process');
     }
     on FirebaseAuthException {
       _spinner.stop();
-      if (_fireAuth.currentUser != null) await _fireAuth.signOut();
+      if (_fireAuth.currentUser != null) {
+        await _fireAuth.signOut();
+      }
       await _popup.show('Wrong credentials!',
           text: 'Please try again.',
           error: true,
           enableNavigateBack: false
       );
     } catch (error) {
-      _spinner.stop();
       logService.errorHandler(error);
+    }
+    finally {
+      _spinner.stop();
     }
   }
 
@@ -86,50 +105,49 @@ class AuthenticationService {
   void _logoutResult({bool skipSignOut = false}) async {
     if (!_isRegisterInProgress && !_isDeletingAccount) {
       if (!skipSignOut) await signOut();
-      Navigator.of(context).popUntil((route) => route.isFirst);
+      Navigator.of(ctx).popUntil((route) => route.isFirst);
       PpSnackBar.logout();
     }
     _isDeletingAccount = false;
   }
 
 
-  void register({required String nickname, required String password}) async {
+  Future<void> register(BuildContext context, {required String nickname, required String password}) async {
     try {
       _spinner.start();
       _isRegisterInProgress = true;
-      await _fireAuth.createUserWithEmailAndPassword(email: _toEmail(nickname), password: password);
+      await _fireAuth.createUserWithEmailAndPassword(email: AuthUtil.toEmail(nickname), password: password);
       await _userService.createNewUser(nickname: nickname);
       await _fireAuth.signOut();
       _isRegisterInProgress = false;
       _spinner.stop();
 
-      _popup.show('Registration successful!',
-        text: 'You can now log in.',
+      await _popup.show('Registration successful!',
+        text: 'You can log in now.',
+        context: NavigationService.context,
         enableOkButton: true,
-        defaultAction: () => Navigator.pop(context, LoginFormScreen.id)
-      );
+        defaultAction: () {
+          Navigator.popAndPushNamed(context, LoginFormScreen.id);
+        });
     } on FirebaseAuthException {
       _nicknameInUse();
     } catch (error) {
-      _isRegisterInProgress = false;
       logService.errorHandler(error);
+    }
+    finally {
+      _isRegisterInProgress = false;
     }
   }
 
   _nicknameInUse () {
-    _spinner.stop();
     _isRegisterInProgress = false;
     _popup.show('Nickname already in use!', error: true);
   }
 
   void _errorPopup() {
-    _spinner.stop();
-    Navigator.pop(context, BlankScreen.id);
+    Navigator.pop(ctx, BlankScreen.id);
     _popup.show('Something went wrong!', error: true);
   }
 
-  static const String _firebaseEmailSuffix = '@no.email';
-  static String _toEmail(String login) => login + _firebaseEmailSuffix;
-  static String _toNickname(String email) => email.replaceAll(_firebaseEmailSuffix, '');
-  static String get nickname => _toNickname(FirebaseAuth.instance.currentUser!.email!);
+
 }
