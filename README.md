@@ -31,9 +31,21 @@ Application offers the following functionalities:
 
 </br>
 
-## 3. Setup
+## 3. Screenshots
 
-### 3.1. Run localy - Android Studio + AVD
+<img src="screenshots/home.jpg" alt="Home Screen" height="400">
+<img src="screenshots/register.jpg" alt="Home Screen" height="400">
+<img src="screenshots/find.jpg" alt="Home Screen" height="400">
+<img src="screenshots/contacts.jpg" alt="Home Screen" height="400">
+<img src="screenshots/menu.jpg" alt="Home Screen" height="400">
+<img src="screenshots/settings.jpg" alt="Home Screen" height="400">
+<img src="screenshots/avatar.jpg" alt="Home Screen" height="400">
+
+</br>
+
+## 4. Setup
+
+### 4.1. Run localy - Android Studio + AVD
 
 Ensure you have the following installed:
 
@@ -61,13 +73,13 @@ flutter run
 
 </br>
 
-### 3.2. Mobile device
+### 4.2. Mobile device
 
-#### 3.2.1. Android 
+#### 4.2.1. Android 
 
 To install app on Android device download and install `.apk` file from [here](https://drive.google.com/drive/folders/1KJUvu4on77YObjU1Zx1S0USbiPTxdg0V?usp=sharing)
 
-#### 3.2.2. iOS  
+#### 4.2.2. iOS  
 
 This project does not include a generated `.ipa` file for iOS because Apple requires a paid Developer Account to create and distribute `.ipa` files. As this is a personal portfolio project, I have chosen not to pay for this service. However, the project can still be run locally on iOS devices using Xcode with a free Apple ID. To run app on an iOS device using Xcode, follow these steps:
 
@@ -86,7 +98,7 @@ open ios/Runner.xcworkspace
 - in Xcode, choose your connected device from the target device dropdown,
 - Click the <strong>Run</strong> button in Xcode to build and install the app.
 
-## 3.3. Write to me 
+## 4.3. Write to me 
 
 - Create account with nickname and password
 - Find contact `pawelmat142`
@@ -94,7 +106,7 @@ open ios/Runner.xcworkspace
 
 </br>
 
-## 4. Security
+## 5. Security
 
 The app is not secured, and the firebase api keys are public:
 
