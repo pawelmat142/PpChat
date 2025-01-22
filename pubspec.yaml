@@ -100,17 +100,11 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   fonts:
-    - family: Rubik Spray Paint
+    - family: Fredoka
       fonts:
-        - asset: assets/fonts/RubikSprayPaint-Regular.ttf
-
-    - family: Concert One
-      fonts:
-        - asset: assets/fonts/ConcertOne-Regular.ttf
-
-    - family: Luckiest Guy
-      fonts:
-        - asset: assets/fonts/LuckiestGuy-Regular.ttf
+        - asset: assets/fonts/Fredoka/Fredoka-Regular.ttf
+#        - asset: assets/fonts/Fredoka/Fredoka-Bold.ttf
+#        - asset: assets/fonts/Fredoka/Fredoka-Medium.ttf
   # example:
   # fonts:
   #   - family: Schyler

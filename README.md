@@ -29,6 +29,7 @@ Application offers the following functionalities:
 - RSA private key is stored in local storage using <strong>Hive</strong> package.
 - Logging into the same account from another device generates a new key pair and publishes a new public key.
 
+</br>
 
 ## 3. Setup
 
@@ -43,9 +44,12 @@ Ensure you have the following installed:
 
 To run the app locally using AVD follow these steps:
 
-- create project directory, open it with Android Studio and run in terminal: 
+- create project directory, open it with console and run: 
 ```
-git clone https://github.com/pawelmat142/ppChat.git .
+git clone https://github.com/pawelmat142/ppChat.git ./
+```
+- open project with Android Studio and run in terminal:
+```
 flutter pub get
 ```
 - open Device Manager
@@ -54,6 +58,8 @@ flutter pub get
 ```
 flutter run
 ```
+
+</br>
 
 ### 3.2. Mobile device
 

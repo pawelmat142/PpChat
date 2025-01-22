@@ -12,7 +12,7 @@ class PpFormSubmit extends StatelessWidget {
     super.key,
     required this.formStatusChanged,
     required this.onSubmit,
-    this.text = 'SUBMIT',
+    this.text = 'Submit',
     this.initActive = false,
   });
 

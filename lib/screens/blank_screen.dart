@@ -70,44 +70,46 @@ class _BlankScreenState extends State<BlankScreen> {
                       padding: EdgeInsets.symmetric(vertical: 30),
                       child: Text('PpChat', style: TextStyle(
                         fontFamily: AvatarService.avatarFont,
-                        fontSize: 30,
-                        color: Colors.black54,
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold
+                        // color: Colors.black54,
                       )),
                     ),
 
                     PpButton(
-                        text: 'LOGIN',
+                        text: 'Login',
                         onPressed: () => Navigator.pushNamed(context, LoginFormScreen.id),
                     ),
 
                     PpButton(
-                      text: 'REGISTER',
+                      text: 'Register',
                       onPressed: () => Navigator.pushNamed(context, RegisterFormScreen.id),
                       color: PRIMARY_COLOR_DARKER,
                     ),
 
-                    PpButton(text: 'log aaaaaa',
-                      onPressed: () {
-                        final authService = getIt.get<AuthenticationService>();
-                        authService.login(nickname: 'aaaaaa', password: 'aaaaaa');
-                      },
-                    ),
-
-                    PpButton(
-                      text: 'log bbbbbb',
-                      onPressed: () {
-                        final authService = getIt.get<AuthenticationService>();
-                        authService.login(nickname: 'bbbbbb', password: 'bbbbbb');
-                      },
-                    ),
-
-                    PpButton(
-                      text: 'log cccccc',
-                      onPressed: () {
-                        final authService = getIt.get<AuthenticationService>();
-                        authService.login(nickname: 'cccccc', password: 'cccccc');
-                      },
-                    ),
+                    // The buttons are used to simplify the login process for testing purposes.
+                    // PpButton(text: 'log aaaaaa',
+                    //   onPressed: () {
+                    //     final authService = getIt.get<AuthenticationService>();
+                    //     authService.login(nickname: 'aaaaaa', password: 'aaaaaa');
+                    //   },
+                    // ),
+                    //
+                    // PpButton(
+                    //   text: 'log bbbbbb',
+                    //   onPressed: () {
+                    //     final authService = getIt.get<AuthenticationService>();
+                    //     authService.login(nickname: 'bbbbbb', password: 'bbbbbb');
+                    //   },
+                    // ),
+                    //
+                    // PpButton(
+                    //   text: 'log cccccc',
+                    //   onPressed: () {
+                    //     final authService = getIt.get<AuthenticationService>();
+                    //     authService.login(nickname: 'cccccc', password: 'cccccc');
+                    //   },
+                    // ),
 
                   ]
                 ),
