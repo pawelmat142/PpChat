@@ -33,13 +33,9 @@ Application offers the following functionalities:
 
 ## 3. Screenshots
 
-<img src="screenshots/home.jpg" alt="Home Screen" height="400">
-<img src="screenshots/register.jpg" alt="Home Screen" height="400">
-<img src="screenshots/find.jpg" alt="Home Screen" height="400">
-<img src="screenshots/contacts.jpg" alt="Home Screen" height="400">
-<img src="screenshots/menu.jpg" alt="Home Screen" height="400">
-<img src="screenshots/settings.jpg" alt="Home Screen" height="400">
-<img src="screenshots/avatar.jpg" alt="Home Screen" height="400">
+| ![Home Screen](screenshots/home.jpg) | ![Register Screen](screenshots/register.jpg) | ![Find Screen](screenshots/find.jpg) | ![Contacts Screen](screenshots/contacts.jpg)
+|--------------------------------------|---------------------------------------------|--------------------------------------|---------------------------------------------|
+| ![Menu Screen](screenshots/chat.jpg) | ![Menu Screen](screenshots/menu.jpg) | ![Settings Screen](screenshots/settings.jpg) | ![Avatar Screen](screenshots/avatar.jpg) | 
 
 </br>
 
