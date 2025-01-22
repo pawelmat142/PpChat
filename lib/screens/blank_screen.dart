@@ -71,8 +71,8 @@ class _BlankScreenState extends State<BlankScreen> {
                       child: Text('PpChat', style: TextStyle(
                         fontFamily: AvatarService.avatarFont,
                         fontSize: 36,
-                        fontWeight: FontWeight.bold
-                        // color: Colors.black54,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
                       )),
                     ),
 
