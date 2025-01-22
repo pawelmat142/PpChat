@@ -44,9 +44,12 @@ Ensure you have the following installed:
 
 To run the app locally using AVD follow these steps:
 
-- create project directory, open it with Android Studio and run in terminal: 
+- create project directory, open it with console and run: 
 ```
-git clone https://github.com/pawelmat142/ppChat.git .
+git clone https://github.com/pawelmat142/ppChat.git ./
+```
+- open project with Android Studio and run in terminal:
+```
 flutter pub get
 ```
 - open Device Manager
@@ -85,7 +88,7 @@ open ios/Runner.xcworkspace
 
 - Create account with nickname and password
 - Find contact `pawelmat142`
-- Send me invitation
+- Send me invitation :)
 
 </br>
 
