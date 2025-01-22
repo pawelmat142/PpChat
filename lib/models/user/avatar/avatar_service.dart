@@ -15,9 +15,7 @@ import 'package:path_provider/path_provider.dart';
 
 abstract class AvatarService {
 
-  // static const String avatarFont = 'Rubik Spray Paint';
-  // static const String avatarFont = 'Concert One';
-  static const String avatarFont = 'Luckiest Guy';
+  static const String avatarFont = 'Fredoka';
 
   static const Map<String, Color> colorsPalette = {
     'blue': Color(0xFF2196F3),
@@ -150,7 +148,9 @@ abstract class AvatarService {
 
   static Future<void> deleteMyAvatarImageInFsStorage() async {
     final myImageUrl = Me.reference.get.avatar.imageUrl;
-    if (myImageUrl == '') return;
+    if (myImageUrl == '') {
+      return;
+    }
     final imageRef = FirebaseStorage.instance.refFromURL(myImageUrl);
     await imageRef.delete();
     log('deleted image in storage');

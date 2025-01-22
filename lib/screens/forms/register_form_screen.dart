@@ -47,7 +47,7 @@ class RegisterFormScreen extends StatelessWidget {
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text('REGISTRATION'),
+        title: const Text('Registration'),
       ),
 
       body: ReactiveForm(
@@ -58,7 +58,7 @@ class RegisterFormScreen extends StatelessWidget {
 
             PpTextField(
                 fieldName: Fields.nickname,
-                labelHint: 'NICKNAME',
+                labelHint: 'Nickname',
                 requiredMsg: 'Login is required.',
                 minLengthMsg: 'Login must have at least 6 characters',
                 onSubmitted: () => form.focus(Fields.renickname)
@@ -66,14 +66,14 @@ class RegisterFormScreen extends StatelessWidget {
 
             PpTextField(
                 fieldName: Fields.renickname,
-                labelHint: 'REPEAT NICKNAME',
+                labelHint: 'Repeat nickname',
                 mustEqualMsg: 'Repeat nickname must equal nickname',
                 onSubmitted: () => form.focus(Fields.password)
             ),
 
             PpTextField(
                 fieldName: Fields.password,
-                labelHint: 'PASSWORD',
+                labelHint: 'Password',
                 requiredMsg: 'Password is required.',
                 minLengthMsg: 'Password must have at least 6 characters',
                 passwordMode: true,
@@ -82,7 +82,7 @@ class RegisterFormScreen extends StatelessWidget {
 
             PpTextField(
                 fieldName: Fields.repassword,
-                labelHint: 'REPEAT PASSWORD',
+                labelHint: 'Repeat password',
                 mustEqualMsg: 'Repeat password must equal password',
                 passwordMode: true,
                 onSubmitted: () => _submitForm(context),

@@ -59,6 +59,8 @@ flutter pub get
 flutter run
 ```
 
+</br>
+
 ### 3.2. Mobile device
 
 #### 3.2.1. Android 

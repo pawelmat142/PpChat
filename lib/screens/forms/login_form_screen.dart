@@ -39,7 +39,7 @@ class LoginFormScreen extends StatelessWidget {
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text('LOGIN'),
+        title: const Text('Login'),
       ),
 
       body: ReactiveForm(
@@ -50,7 +50,7 @@ class LoginFormScreen extends StatelessWidget {
 
             PpTextField(
                 fieldName: Fields.nickname,
-                labelHint: 'NICKNAME',
+                labelHint: 'Nickname',
                 requiredMsg: 'Login is required.',
                 minLengthMsg: 'Login must have at least 6 characters',
                 onSubmitted: () => form.focus(Fields.password)
@@ -58,7 +58,7 @@ class LoginFormScreen extends StatelessWidget {
 
             PpTextField(
                 fieldName: Fields.password,
-                labelHint: 'PASSWORD',
+                labelHint: 'Password',
                 requiredMsg: 'Password is required.',
                 minLengthMsg: 'Password must have at least 6 characters',
                 passwordMode: true,
