@@ -29,6 +29,7 @@ Application offers the following functionalities:
 - RSA private key is stored in local storage using <strong>Hive</strong> package.
 - Logging into the same account from another device generates a new key pair and publishes a new public key.
 
+</br>
 
 ## 3. Setup
 
@@ -79,6 +80,12 @@ open ios/Runner.xcworkspace
 - on your iOS device, go to <strong>Settings > General > Device Management,</strong> 
 - in Xcode, choose your connected device from the target device dropdown,
 - Click the <strong>Run</strong> button in Xcode to build and install the app.
+
+## 3.3. Write to me 
+
+- Create account with nickname and password
+- Find contact `pawelmat142`
+- Send me invitation
 
 </br>
 
