@@ -4,7 +4,6 @@ pubspec.lock
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 ios/firebase_app_id_file.json
-lib/firebase_options.dart
 
 # Miscellaneous
 *.class
