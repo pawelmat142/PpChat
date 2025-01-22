@@ -86,6 +86,12 @@ open ios/Runner.xcworkspace
 - in Xcode, choose your connected device from the target device dropdown,
 - Click the <strong>Run</strong> button in Xcode to build and install the app.
 
+### 3.3. Write to me 
+
+- Create account with nickname and password
+- Find contact `pawelmat142` and send me invitation :)
+
+
 </br>
 
 ## 4. Security
