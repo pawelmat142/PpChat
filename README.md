@@ -1,4 +1,4 @@
-# ppChat
+# PpChat
 
 ## 1. Introduction 
 
