@@ -22,8 +22,8 @@ class EditAvatarView extends StatefulWidget {
   final PpUser user;
   const EditAvatarView({
     required this.user,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
 
   @override
   State<EditAvatarView> createState() => _EditAvatarViewState();

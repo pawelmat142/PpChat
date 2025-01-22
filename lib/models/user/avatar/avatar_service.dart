@@ -15,7 +15,7 @@ import 'package:path_provider/path_provider.dart';
 
 abstract class AvatarService {
 
-  static const String avatarFont = 'Fredoka';
+  static const String avatarFont = 'Luckiest Guy';
 
   static const Map<String, Color> colorsPalette = {
     'blue': Color(0xFF2196F3),

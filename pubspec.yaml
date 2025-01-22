@@ -103,8 +103,11 @@ flutter:
     - family: Fredoka
       fonts:
         - asset: assets/fonts/Fredoka/Fredoka-Regular.ttf
-#        - asset: assets/fonts/Fredoka/Fredoka-Bold.ttf
-#        - asset: assets/fonts/Fredoka/Fredoka-Medium.ttf
+        - asset: assets/fonts/Fredoka/Fredoka-Bold.ttf
+        - asset: assets/fonts/Fredoka/Fredoka-Medium.ttf
+    - family: Luckiest Guy
+      fonts:
+        - asset: assets/fonts/LuckiestGuy-Regular.ttf
   # example:
   # fonts:
   #   - family: Schyler

@@ -69,7 +69,7 @@ class _BlankScreenState extends State<BlankScreen> {
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 30),
                       child: Text('PpChat', style: TextStyle(
-                        fontFamily: AvatarService.avatarFont,
+                        fontFamily: 'Fredoka',
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
                         color: Colors.black54,
