@@ -4,6 +4,7 @@ import 'package:flutter_chat_app/components/notifications_info.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
+import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/models/user/avatar/avatar_widget.dart';
 import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
@@ -45,6 +46,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
       spinner.stop(context: context);
       Future.delayed(Duration.zero, ()  {
         PpSnackBar.login();
+        Notifications.navigateIfUnreadNotifications();
       });
     });
   }

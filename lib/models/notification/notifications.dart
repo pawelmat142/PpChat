@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/process/resolve_notifications_process.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
@@ -6,6 +7,8 @@ import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/models/interfaces/fs_collection_model.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 import 'package:provider/provider.dart';
+
+import '../../screens/notifications_screen.dart';
 
 class Notifications extends FsCollectionModel<PpNotification> {
 
@@ -49,6 +52,12 @@ class Notifications extends FsCollectionModel<PpNotification> {
     return index == -1 ? null : get[index];
   }
 
+  static navigateIfUnreadNotifications() {
+    final unreadNotifications = PpNotification.getUnread(Notifications.reference.get);
+    if (unreadNotifications.isNotEmpty) {
+      Navigator.pushNamed(NavigationService.context, NotificationsScreen.id);
+    }
+  }
 
   @override
   CollectionReference<Map<String, dynamic>> get collectionRef => firestore

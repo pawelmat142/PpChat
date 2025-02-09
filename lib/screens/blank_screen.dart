@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
@@ -88,28 +87,28 @@ class _BlankScreenState extends State<BlankScreen> {
                     ),
 
                     // The buttons are used to simplify the login process for testing purposes.
-                    // PpButton(text: 'log aaaaaa',
-                    //   onPressed: () {
-                    //     final authService = getIt.get<AuthenticationService>();
-                    //     authService.login(nickname: 'aaaaaa', password: 'aaaaaa');
-                    //   },
-                    // ),
-                    //
-                    // PpButton(
-                    //   text: 'log bbbbbb',
-                    //   onPressed: () {
-                    //     final authService = getIt.get<AuthenticationService>();
-                    //     authService.login(nickname: 'bbbbbb', password: 'bbbbbb');
-                    //   },
-                    // ),
-                    //
-                    // PpButton(
-                    //   text: 'log cccccc',
-                    //   onPressed: () {
-                    //     final authService = getIt.get<AuthenticationService>();
-                    //     authService.login(nickname: 'cccccc', password: 'cccccc');
-                    //   },
-                    // ),
+                    PpButton(text: 'log aaaaaa',
+                      onPressed: () {
+                        final authService = getIt.get<AuthenticationService>();
+                        authService.login(nickname: 'aaaaaa', password: 'aaaaaa');
+                      },
+                    ),
+
+                    PpButton(
+                      text: 'log bbbbbb',
+                      onPressed: () {
+                        final authService = getIt.get<AuthenticationService>();
+                        authService.login(nickname: 'bbbbbb', password: 'bbbbbb');
+                      },
+                    ),
+
+                    PpButton(
+                      text: 'log cccccc',
+                      onPressed: () {
+                        final authService = getIt.get<AuthenticationService>();
+                        authService.login(nickname: 'cccccc', password: 'cccccc');
+                      },
+                    ),
 
                   ]
                 ),
