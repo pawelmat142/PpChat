@@ -18,6 +18,8 @@ import 'package:rsa_encrypt/rsa_encrypt.dart';
 class Conversation {
 
   final conversationService = getIt.get<ConversationService>();
+  final contactsService = getIt.get<ContactsService>();
+  final logService = getIt.get<LogService>();
   final messageCleaner = MessageCleaner();
 
   Conversation({ required this.contactUid });
@@ -46,6 +48,13 @@ class Conversation {
     await _initializeSettings();
     contactMessagesCollectionRef = conversationService.contactMessagesCollectionRef(contactUid: contactUid);
     await messageCleaner.init(contactUid: contactUid, box: box!);
+  }
+
+  Future<void> refreshPublicKey() async {
+    logService.log('Refresh public key of $contactUid');
+    final keyAsString = await contactsService.getPublicKeyAsString(contactUid);
+    contactPublicKey = HiveRsaPair.stringToRsaPublic(keyAsString);
+    logService.log('Public key refreshed');
   }
 
   _initializeContactPublicKey() {

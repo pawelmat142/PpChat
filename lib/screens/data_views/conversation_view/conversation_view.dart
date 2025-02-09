@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:flutter_chat_app/models/conversation/conversations.dart';
-import 'package:flutter_chat_app/models/user/me.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/message_bubble.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_mock.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_popup_menu.dart';
@@ -16,6 +15,8 @@ import 'package:flutter_chat_app/services/uid.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'package:rsa_encrypt/rsa_encrypt.dart';
+
+import '../../../models/crypto/hive_rsa_pair.dart';
 
 class ConversationView extends StatefulWidget {
   const ConversationView({super.key});
@@ -49,8 +50,8 @@ class _ConversationViewState extends State<ConversationView> {
 
   PpUser? _contactUser;
   PpUser get contactUser => _contactUser!;
-  RSAPrivateKey get myPrivateKey => Me.reference.myPrivateKey;
 
+  late RSAPrivateKey _myPrivateKey;
   late Conversation conversation;
 
   bool initialized = false;
@@ -59,6 +60,7 @@ class _ConversationViewState extends State<ConversationView> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
+      _myPrivateKey = (await HiveRsaPair.getMyPrivateKey())!;
       conversation = await Conversations.reference.openOrCreate(contactUid: contactUser.uid);
       setState(() => initialized = true);
       conversationService.resolveUnresolvedMessages();
@@ -107,7 +109,7 @@ class _ConversationViewState extends State<ConversationView> {
                     .where((m) => m.message != '' && !m.isMock)
                     .map((m) => MessageBubbleInterface(
                       message: m.receiver == Uid.get
-                          ? decrypt(m.message, myPrivateKey)
+                          ? decrypt(m.message, _myPrivateKey)
                           : m.message,
                       my: m.sender == Uid.get,
                       timestamp: m.timestamp,

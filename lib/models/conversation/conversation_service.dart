@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
@@ -134,9 +135,10 @@ class ConversationService {
   }
 
   navigateToConversationView(PpUser contactUser) async {
-    await conversations.openOrCreate(contactUid: contactUser.uid);
+    logService.log('[MSG] Navigation to conversation view ${contactUser.uid}');
+    final Conversation conversation = await conversations.openOrCreate(contactUid: contactUser.uid);
+    await conversation.refreshPublicKey();
     Navigator.pushNamed(NavigationService.context, ConversationView.id, arguments: contactUser);
-    // ConversationView.navigate(contactUser);
   }
 
   PpUser? getContactUserByUid(String contactUid) {

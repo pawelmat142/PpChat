@@ -8,7 +8,6 @@ import 'package:flutter_chat_app/constants/collections.dart';
 import 'package:flutter_chat_app/models/interfaces/fs_document_model.dart';
 import 'package:flutter_chat_app/models/user/pp_user.dart';
 import 'package:flutter_chat_app/services/uid.dart';
-import 'package:pointycastle/asymmetric/api.dart';
 import 'package:provider/provider.dart';
 
 class Me extends FsDocumentModel<PpUser> {
@@ -20,19 +19,18 @@ class Me extends FsDocumentModel<PpUser> {
   String get uid => get.uid;
   String get nickname => get.nickname;
 
-  late RSAPrivateKey _myPrivateKey;
-  RSAPrivateKey get myPrivateKey => _myPrivateKey;
-
   initPrivateKey() async {
     final isKeyCurrent = await HiveRsaPair.isKeyCurrent(get.publicKeyAsString);
-    if (!isKeyCurrent) {
+    if (isKeyCurrent) {
+      log('My public key is current');
+    } else {
+      log('Generate my new key pair');
       final publicKeyAsString = await HiveRsaPair.generatePairAndSaveToHive();
-      await _updateMyPublicKey(publicKeyAsString);
+      await _updateMyPublicKeyFs(publicKeyAsString);
     }
-    _myPrivateKey = (await HiveRsaPair.getMyPrivateKey())!;
   }
 
-  _updateMyPublicKey(String publicKeyAsString) async {
+  _updateMyPublicKeyFs(String publicKeyAsString) async {
     final conversationSettingsService = getIt.get<ConversationSettingsService>();
     final logService = getIt.get<LogService>();
     final deletedMessagesValue = await conversationSettingsService.deleteUnreadMessages();

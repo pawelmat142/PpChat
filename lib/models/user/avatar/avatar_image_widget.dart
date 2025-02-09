@@ -5,8 +5,8 @@ class AvatarImageWidget extends StatelessWidget {
   const AvatarImageWidget({
     required this.size,
     required this.file,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
 
   final double size;
   final File file;

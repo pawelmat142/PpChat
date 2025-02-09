@@ -11,7 +11,7 @@ class PpUser {
   final String role;
   AvatarModel avatar;
   bool logged;
-  final String publicKeyAsString;
+  String publicKeyAsString;
 
   PpUser({
     required this.uid,

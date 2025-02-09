@@ -33,7 +33,6 @@ class Contacts extends FsCollectionModel<PpUser> {
   stopContactUidsListener() {
     if (listenerOn) {
       contactUidsRef.removeListener(_contactUidsListener);
-      contactUidsRef.removeListener(_contactUidsListener);
       listenerOn = false;
       log('[ContactUids] remove listener');
     }

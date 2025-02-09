@@ -16,6 +16,8 @@ import 'package:flutter_chat_app/models/notification/pp_notification.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/uid.dart';
 
+import '../user/pp_user_fields.dart';
+
 class ContactsService {
 
   final _firestore = FirebaseFirestore.instance;
@@ -40,6 +42,15 @@ class ContactsService {
             PpSnackBar.deleted(delay: 200);
           });
         })]);
+  }
+
+  Future<String> getPublicKeyAsString(String contactUid) async {
+    final DocumentSnapshot snapshot = await _firestore
+        .collection(Collections.PpUser).doc(contactUid).get();
+    if (snapshot.exists) {
+      return snapshot.get(PpUserFields.publicKeyAsString);
+    }
+    return '';
   }
 
   _deleteContact(String uid) async {
