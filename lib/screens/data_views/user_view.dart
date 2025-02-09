@@ -151,7 +151,7 @@ class UserView extends StatelessWidget {
 
                   PpButton(text: 'Logout', color: PRIMARY_COLOR_DARKER, onPressed: () {
                     final authService = getIt.get<AuthenticationService>();
-                    authService.onLogout();
+                    authService.logoutPopup();
                   }),
 
                   PpButton(text: 'Delete on this device', color: Colors.deepOrange, onPressed: () {

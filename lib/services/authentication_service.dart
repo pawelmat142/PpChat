@@ -81,7 +81,15 @@ class AuthenticationService {
     }
   }
 
-  void onLogout() async {
+  logoutPopup() {
+    _popup.show('Logout?', buttons: [
+      PopupButton('Yes', onPressed: () async {
+        _onLogout();
+      })
+    ]);
+  }
+
+  void _onLogout() async {
     try {
       _spinner.start();
       final process = LogoutProcess();

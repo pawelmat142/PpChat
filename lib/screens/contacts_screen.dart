@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/components/contacts_tile/contact_tile.dart';
 import 'package:flutter_chat_app/components/notifications_info.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
+import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
 import 'package:flutter_chat_app/models/notification/notifications.dart';
@@ -36,6 +37,9 @@ class _ContactsScreenState extends State<ContactsScreen> {
   PpUser get me => Me.reference.get;
 
   final spinner = getIt.get<PpSpinner>();
+  final popup = getIt.get<Popup>();
+
+  final authService = getIt.get<AuthenticationService>();
 
   @override
   void initState() {
@@ -54,60 +58,66 @@ class _ContactsScreenState extends State<ContactsScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        authService.logoutPopup();
+      } ,
+      child: Scaffold(
 
-      appBar: AppBar(
+        appBar: AppBar(
 
-          leading: IconButton(icon: const Icon(Icons.logout),
-            onPressed: () {
-              final authService = getIt.get<AuthenticationService>();
-              authService.onLogout();
-            },
-          ),
-          title: const Text('Contacts'),
-          actions: [
-            IconButton(
-                onPressed: () => UserView.navigate(user: me),
-                icon: Consumer<Me>(
-                builder: (context, me, child) => me.isNotEmpty ?
-                  AvatarWidget(
-                    uid: me.uid,
-                    model: me.get.avatar,
-                    size: 50)
-                  : const SizedBox(height: 0)
-                ),
+            leading: IconButton(icon: const Icon(Icons.logout),
+              onPressed: () {
+                authService.logoutPopup();
+              },
             ),
+            title: const Text('Contacts'),
+            actions: [
+              IconButton(
+                  onPressed: () => UserView.navigate(user: me),
+                  icon: Consumer<Me>(
+                  builder: (context, me, child) => me.isNotEmpty ?
+                    AvatarWidget(
+                      uid: me.uid,
+                      model: me.get.avatar,
+                      size: 50)
+                    : const SizedBox(height: 0)
+                  ),
+              ),
+            ],
+
+            bottom: const PreferredSize(
+              preferredSize: Size.fromHeight(36),
+              child: NotificationInfo()
+            ),
+        ),
+
+        body: ListView(
+          children: [
+
+            Padding(
+              padding: const EdgeInsets.only(top: BASIC_TOP_PADDING_VALUE),
+              child: Consumer<Contacts>(builder: (context, contacts, child) {
+                return contacts.isNotEmpty
+
+                    ? Column(children: contacts.get.map((u) => ContactTile(u)).toList())
+
+                    : nothingHereWidget();
+              }),
+            ),
+
           ],
+        ),
 
-          bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(36),
-            child: NotificationInfo()
-          ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => FindContact(),
+          elevation: 15,
+          child: const Icon(Icons.search, size: 40),
+        ),
+
       ),
-
-      body: ListView(
-        children: [
-
-          Padding(
-            padding: const EdgeInsets.only(top: BASIC_TOP_PADDING_VALUE),
-            child: Consumer<Contacts>(builder: (context, contacts, child) {
-              return contacts.isNotEmpty
-
-                  ? Column(children: contacts.get.map((u) => ContactTile(u)).toList())
-
-                  : nothingHereWidget();
-            }),
-          ),
-          
-        ],
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => FindContact(),
-        elevation: 15,
-        child: const Icon(Icons.search, size: 40),
-      ),
-
     );
   }
 
