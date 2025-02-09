@@ -12,8 +12,6 @@ import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
 
-import '../services/authentication_service.dart';
-
 class BlankScreen extends StatefulWidget {
   static const String id = 'blank_screen';
 
