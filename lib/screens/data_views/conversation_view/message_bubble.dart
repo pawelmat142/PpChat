@@ -26,8 +26,8 @@ class MessageBubble extends StatefulWidget {
   final MessageBubbleInterface interface;
   const MessageBubble({
     required this.interface,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
 
   @override
   State<MessageBubble> createState() => _MessageBubbleState();

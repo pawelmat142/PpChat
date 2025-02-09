@@ -82,7 +82,7 @@ class ContactTile extends StatelessWidget {
 class Content extends StatelessWidget {
   final String nickname;
   final String text;
-  const Content({Key? key, required this.nickname, required this.text}) : super(key: key);
+  const Content({super.key, required this.nickname, required this.text});
 
   @override
   Widget build(BuildContext context) {

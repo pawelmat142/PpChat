@@ -7,7 +7,7 @@ import 'package:flutter_chat_app/models/conversation/pp_message.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class UnreadMessages extends StatefulWidget {
-  const UnreadMessages({required this.contactUid, Key? key}) : super(key: key);
+  const UnreadMessages({required this.contactUid, super.key});
 
   final String contactUid;
 

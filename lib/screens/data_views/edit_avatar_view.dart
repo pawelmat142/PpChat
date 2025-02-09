@@ -249,8 +249,8 @@ class ColorCircle extends StatelessWidget {
     required this.colorKey,
     required this.size,
     required this.onTap,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
   final String colorKey;
   final double size;
   final void Function(String colorKey)? onTap;

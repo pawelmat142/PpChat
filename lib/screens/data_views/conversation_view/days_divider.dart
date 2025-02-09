@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class DaysDivider extends StatelessWidget {
   final String date;
-  const DaysDivider({required this.date, Key? key}) : super(key: key);
+  const DaysDivider({required this.date, super.key});
 
   @override
   Widget build(BuildContext context) {

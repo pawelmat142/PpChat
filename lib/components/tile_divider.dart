@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 
 class TileDivider extends StatelessWidget {
-  const TileDivider({Key? key}) : super(key: key);
+  const TileDivider({super.key});
 
   @override
   Widget build(BuildContext context) {

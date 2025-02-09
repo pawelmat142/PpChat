@@ -7,8 +7,8 @@ import 'package:flutter_chat_app/models/user/avatar/avatar_service.dart';
 class AvatarModelWidget extends StatelessWidget {
   const AvatarModelWidget(this.model, {
     required this.size,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
 
   final double size;
   final AvatarModel model;
