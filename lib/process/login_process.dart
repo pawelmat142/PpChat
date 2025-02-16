@@ -40,7 +40,7 @@ class LoginProcess extends LogProcess {
 
     await Notifications.reference.start();
     log('[LoginProcess] [Notifications] initialized');
-    await notificationService.setBadgesNumberToUnreadNotificationsNumber();
+    await notificationService.refreshBadgeCounter();
 
     final conversationService = getIt.get<ConversationService>();
     await conversationService.login();

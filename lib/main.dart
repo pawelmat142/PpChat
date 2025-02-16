@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_settings_view.dart';
 import 'package:flutter_chat_app/screens/data_views/user_view.dart';
-import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/hive_service.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
@@ -27,8 +27,6 @@ void main() async {
 
   await HiveService.init();
 
-  NotificationController.initAwesomeNotifications();
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -47,6 +45,8 @@ void main() async {
   );
 
   await initGetIt();
+
+  await PpNotificationService.init();
 }
 
 class MyApp extends StatelessWidget {

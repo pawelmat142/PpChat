@@ -40,6 +40,7 @@ class _BlankScreenState extends State<BlankScreen> {
 
     subscription = FGBGEvents.instance.stream.listen((event) {
       appService.isAppInBackground = event == FGBGType.background;
+      notificationService.refreshBadgeCounter();
     });
   }
 

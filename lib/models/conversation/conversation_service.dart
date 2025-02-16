@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/models/conversation/conversation.dart';
 import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
@@ -37,7 +36,6 @@ class ConversationService {
 
   StreamSubscription? _messagesObserver;
 
-  // ConversationsOld get conversations => _state.conversations;
   Conversations conversations = Conversations.reference;
   Contacts get contacts => Contacts.reference;
 
@@ -137,8 +135,6 @@ class ConversationService {
 
   navigateToConversationView(PpUser contactUser) async {
     logService.log('[MSG] Navigation to conversation view ${contactUser.uid}');
-    final Conversation conversation = await conversations.openOrCreate(contactUid: contactUser.uid);
-    await conversation.refreshPublicKey();
     Navigator.pushNamed(NavigationService.context, ConversationView.id, arguments: contactUser);
   }
 

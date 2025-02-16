@@ -26,8 +26,6 @@ Future<void> initGetIt() async {
 
   getIt.registerLazySingleton(() => DeletedAccountService());
 
-  getIt.registerLazySingleton(() => PpNotificationService());
-
   getIt.registerLazySingleton(() => InvitationService());
 
   getIt.registerLazySingleton(() => ContactsService());
@@ -43,4 +41,6 @@ Future<void> initGetIt() async {
   getIt.registerLazySingleton(() => GroupConversationService());
 
   getIt.registerSingleton(AuthenticationService());
+
+  getIt.registerSingleton(PpNotificationService());
 }

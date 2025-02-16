@@ -1,5 +1,4 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
@@ -18,33 +17,6 @@ abstract class PayloadTypes {
 }
 
 class NotificationController {
-
-  static const String notificationsChannelKey = 'pp_chat';
-
-  static void dismiss({required String contactUid}) {
-    AwesomeNotifications().dismiss(getIdByUid(contactUid));
-  }
-
-  static int getIdByUid(String uid) {
-    return int.parse(uid.substring(0, 6), radix: 36);
-  }
-
-  static initAwesomeNotifications() {
-    AwesomeNotifications().initialize(
-        null, //default icon
-        [
-          NotificationChannel(
-              channelKey: notificationsChannelKey,
-              channelName: 'PpChat notifications',
-              channelDescription: 'PpChat notifications',
-              // channelShowBadge: true,
-              // defaultColor: PRIMARY_COLOR,
-              ledColor: Colors.white
-          )
-        ],
-        debug: true
-    );
-  }
 
   /// Use this method to detect when a new notification or a schedule is created
   @pragma("vm:entry-point")
