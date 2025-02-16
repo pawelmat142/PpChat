@@ -4,8 +4,6 @@ import 'package:flutter_chat_app/models/contact/contacts.dart';
 import 'package:flutter_chat_app/models/notification/notifications.dart';
 import 'package:flutter_chat_app/screens/data_views/conversation_view/conversation_view.dart';
 import 'package:flutter_chat_app/screens/data_views/notification_view.dart';
-import 'package:flutter_chat_app/services/app_service.dart';
-import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_chat_app/services/navigation_service.dart';
 
@@ -23,36 +21,6 @@ class NotificationController {
 
   static const String notificationsChannelKey = 'pp_chat';
 
-  static void notifyMessage({required String contactUid}) {
-    if (!getIt.get<AppService>().isAppInBackground) {
-      if (NavigationService.isUserConversationOpen(contactUid)) return;
-      // if (NavigationService.isContactsOpen) return;
-    }
-    AwesomeNotifications().createNotification(content: NotificationContent(
-        id: getIdByUid(contactUid), //unique id for each contact
-        channelKey: notificationsChannelKey,
-        title: 'You have new message...',
-        actionType: ActionType.Default,
-        payload: {
-          PayloadFields.uid: contactUid,
-          PayloadFields.type: PayloadTypes.message
-        }
-      ));
-  }
-
-  static void notifyInvitation({required String contactUid}) {
-    AwesomeNotifications().createNotification(content: NotificationContent(
-        id: getIdByUid(contactUid), //unique id for each contact
-        channelKey: notificationsChannelKey,
-        title: 'You have new invitation...',
-        actionType: ActionType.Default,
-        payload: {
-          PayloadFields.uid: contactUid,
-          PayloadFields.type: PayloadTypes.invitation
-        }
-    ));
-  }
-
   static void dismiss({required String contactUid}) {
     AwesomeNotifications().dismiss(getIdByUid(contactUid));
   }
@@ -60,7 +28,6 @@ class NotificationController {
   static int getIdByUid(String uid) {
     return int.parse(uid.substring(0, 6), radix: 36);
   }
-
 
   static initAwesomeNotifications() {
     AwesomeNotifications().initialize(
@@ -70,7 +37,7 @@ class NotificationController {
               channelKey: notificationsChannelKey,
               channelName: 'PpChat notifications',
               channelDescription: 'PpChat notifications',
-              channelShowBadge: true,
+              // channelShowBadge: true,
               // defaultColor: PRIMARY_COLOR,
               ledColor: Colors.white
           )
@@ -79,36 +46,22 @@ class NotificationController {
     );
   }
 
-  static initListeners() {
-    AwesomeNotifications().setListeners(
-        onActionReceivedMethod:         NotificationController.onActionReceivedMethod,
-        onNotificationCreatedMethod:    NotificationController.onNotificationCreatedMethod,
-        onNotificationDisplayedMethod:  NotificationController.onNotificationDisplayedMethod,
-        onDismissActionReceivedMethod:  NotificationController.onDismissActionReceivedMethod
-    );
-  }
-
   /// Use this method to detect when a new notification or a schedule is created
   @pragma("vm:entry-point")
   static Future <void> onNotificationCreatedMethod(ReceivedNotification receivedNotification) async {
-    // print('NOTIFICATION CONTROLLER');
-    // print('onNotificationCreatedMethod');
-    // Your code goes here
+    print('NOTIFICATION CONTROLLER onNotificationCreatedMethod');
   }
 
   /// Use this method to detect every time that a new notification is displayed
   @pragma("vm:entry-point")
   static Future <void> onNotificationDisplayedMethod(ReceivedNotification receivedNotification) async {
-    // print('NOTIFICATION CONTROLLER');
-    // print('onNotificationDisplayedMethod');
-    // Your code goes here
+    print('NOTIFICATION CONTROLLER onNotificationDisplayedMethod');
   }
 
   /// Use this method to detect if the user dismissed a notification
   @pragma("vm:entry-point")
   static Future <void> onDismissActionReceivedMethod(ReceivedAction receivedAction) async {
-    // print('NOTIFICATION CONTROLLER');
-    // print('onDismissActionReceivedMethod');
+    print('NOTIFICATION CONTROLLER onDismissActionReceivedMethod');
   }
 
   /// Use this method to detect when the user taps on a notification or action button

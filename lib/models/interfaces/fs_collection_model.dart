@@ -37,15 +37,15 @@ abstract class FsCollectionModel<T> with ChangeNotifier {
   bool get isEmpty => _state.isEmpty;
 
 
-  updateOne(T item) {
+  updateOne(T item) async {
     final docRef = collectionRef.doc(docIdFromItem(item));
-    docRef.set(toMap(item)).onError((error, stackTrace) => errorHandler(error, stackTrace, 'updateOne'));
+    await docRef.set(toMap(item)).onError((error, stackTrace) => errorHandler(error, stackTrace, 'updateOne'));
     log('[$runtimeType] updateOne');
   }
 
-  deleteOne(T item) {
+  deleteOne(T item) async {
     final docRef = collectionRef.doc(docIdFromItem(item));
-    docRef.delete().onError((error, stackTrace) => errorHandler(error, stackTrace, 'deleteOne'));
+    await docRef.delete().onError((error, stackTrace) => errorHandler(error, stackTrace, 'deleteOne'));
     log('[$runtimeType] deleteOne');
   }
 

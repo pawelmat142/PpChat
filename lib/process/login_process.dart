@@ -1,3 +1,4 @@
+import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/models/user/pp_user_service.dart';
 import 'package:flutter_chat_app/services/authentication_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
@@ -14,6 +15,7 @@ class LoginProcess extends LogProcess {
   final userService = getIt.get<PpUserService>();
   final authService = getIt.get<AuthenticationService>();
   final logService = getIt.get<LogService>();
+  final notificationService = getIt.get<PpNotificationService>();
 
   process() async {
     log('[LoginProcess] [START]');
@@ -38,6 +40,7 @@ class LoginProcess extends LogProcess {
 
     await Notifications.reference.start();
     log('[LoginProcess] [Notifications] initialized');
+    await notificationService.setBadgesNumberToUnreadNotificationsNumber();
 
     final conversationService = getIt.get<ConversationService>();
     await conversationService.login();

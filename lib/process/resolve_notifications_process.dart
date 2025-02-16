@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_app/dialogs/pp_snack_bar.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/constants/collections.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_chat_app/services/uid.dart';
 class ResolveNotificationsProcess extends LogProcess {
 
   final _invitationService = getIt.get<InvitationService>();
+  final _notificationService = getIt.get<PpNotificationService>();
 
   Me get me => Me.reference;
 
@@ -97,7 +99,7 @@ class ResolveNotificationsProcess extends LogProcess {
       final notification = notificationsToFlush.first;
       switch (notification.type) {
         case PpNotificationTypes.invitation:
-          NotificationController.notifyInvitation(contactUid: notification.documentId);
+          _notificationService.notifyInvitation(contactUid: notification.documentId);
           break;
         case PpNotificationTypes.invitationAcceptance:
           PpSnackBar.invitationAcceptances();

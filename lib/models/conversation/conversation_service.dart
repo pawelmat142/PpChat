@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/models/conversation/conversation.dart';
-import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/dialogs/popup.dart';
 import 'package:flutter_chat_app/dialogs/spinner.dart';
@@ -25,6 +25,7 @@ class ConversationService {
   final popup = getIt.get<Popup>();
   final spinner = getIt.get<PpSpinner>();
   final logService = getIt.get<LogService>();
+  final notificationService = getIt.get<PpNotificationService>();
 
   static CollectionReference get messagesCollectionRef => firestore
       .collection(Collections.PpUser).doc(Uid.get)
@@ -105,7 +106,7 @@ class ConversationService {
       }
     }
 
-    NotificationController.notifyMessage(contactUid: messages.values.first.sender);
+    notificationService.notifyMessage(contactUid: messages.values.first.sender);
 
     await _deleteResolvedMessagesInFs(resolvedMessages.keys.toList());
   }

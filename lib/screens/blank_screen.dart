@@ -1,16 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/models/notification/pp_notification_service.dart';
 import 'package:flutter_chat_app/screens/contacts_screen.dart';
 import 'package:flutter_chat_app/screens/forms/register_form_screen.dart';
 import 'package:flutter_chat_app/constants/styles.dart';
 import 'package:flutter_chat_app/screens/forms/elements/pp_button.dart';
 import 'package:flutter_chat_app/screens/forms/login_form_screen.dart';
 import 'package:flutter_chat_app/services/app_service.dart';
-import 'package:flutter_chat_app/services/awesome_notifications/notification_controller.dart';
 import 'package:flutter_chat_app/services/get_it.dart';
 import 'package:flutter_chat_app/services/log_service.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
+
+import '../services/authentication_service.dart';
 
 class BlankScreen extends StatefulWidget {
   static const String id = 'blank_screen';
@@ -25,15 +27,15 @@ class _BlankScreenState extends State<BlankScreen> {
 
   final appService = getIt.get<AppService>();
   final logService = getIt.get<LogService>();
+  final notificationService = getIt.get<PpNotificationService>();
   log(String txt) => logService.log(txt);
 
   late StreamSubscription<FGBGType> subscription;
 
-
   @override
   void initState() {
     super.initState();
-    NotificationController.initListeners();
+    notificationService.initListeners();
     ContactsScreen.navigate(context);
 
     subscription = FGBGEvents.instance.stream.listen((event) {
@@ -46,7 +48,6 @@ class _BlankScreenState extends State<BlankScreen> {
     subscription.cancel();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
